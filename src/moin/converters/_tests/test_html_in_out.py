@@ -16,11 +16,14 @@ from . import serialize, XMLNS_RE3
 from moin.converters.html_in import Converter as HTML_IN
 from moin.converters.html_out import Converter as HTML_OUT
 from moin.log import getLogger
+from moin.utils.render import RenderContext
 from moin.utils.tree import html, moin_page, xlink
 
 logger = getLogger(__name__)
 
 etree = pytest.importorskip("lxml.etree")  # noqa
+
+render_context = RenderContext(allow_style_attributes=True, use_nonces=False, convert_inline_style=False)
 
 
 class Base:
@@ -48,7 +51,7 @@ class Base:
 class TestConverter(Base):
     def setup_class(self):
         self.conv_html_dom = HTML_IN()
-        self.conv_dom_html = HTML_OUT()
+        self.conv_dom_html = HTML_OUT(render_context)
 
     data = [
         ("<html><div><p>Test</p></div></html>", '/div/div[p="Test"]'),

@@ -127,7 +127,7 @@ class Converter(ConverterBase):
         return cls(**kwargs)
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(*kwargs)
+        super().__init__(**kwargs)
 
         # TODO: create class containing all table attributes
         self.table_tableclass = ""

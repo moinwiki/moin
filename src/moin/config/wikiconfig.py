@@ -111,7 +111,7 @@ class Config(DefaultConfig):
 
     # Read about SECURITY ISSUES in the docs before uncommenting the line below that allows users
     # to edit style attributes in HTML and Markdown items
-    # allow_style_attributes = True
+    allow_style_attributes = True
 
     # Password checker configuration
     # - Default: passwords are required to be => 8 characters with minimum of 5 unique characters
@@ -143,12 +143,30 @@ class Config(DefaultConfig):
     # for users who self-register
     user_email_verification = False
 
-    # Content security policy, setting will be enforced. If value is empty, CSP header will not be set at all
-    # content_security_policy = ""
-
-    # Content security policy in report-only mode, the report_uri directive will be added automatically.
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for configuration details.
-    # content_security_policy_report_only = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';"
+    #
+    # Content Security Policy
+    #
+    csp_profiles = {
+        "default": {
+            # enforced rules
+            "rules": {},
+            # report-only rules
+            "rules-report-only": {
+                "default-src": ["http://localhost:*", "moinmo.in", "*.moinmo.in", "http://www.xkcd.com"],
+                "script-src": "'strict-dynamic' @nonce @self",
+                "style-src-attr": "@nonce",
+                "style-src-elem": "@self @nonce",
+                "base-uri": "'none'",
+                "form-action": "@self",
+                "frame-ancestors": "@self",
+                "frame-src": ["@self", "http://www.xkcd.com", "http://www.xkcd.com", "https://moinmo.in"],
+                "object-src": ["@self", "http://www.xkcd.com", "http://static.moinmo.in", "https://moinmo.in"],
+                # "trusted-types": "elix moin svgedit",
+                # "require-trusted-types-for": "'script'",
+                "report-uri": "/+cspreport/log",
+            },
+        }
+    }
 
     # Limit of reports logged per day; a negative value means no limit.
     # content_security_policy_limit_per_day = 100

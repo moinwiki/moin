@@ -191,14 +191,9 @@ See utils.html for more macros.
         <button class="moin-button" id="upload-file-btn" form="{{ form_name }}">{{ _("Upload") }}</button>
         <div id="jfu-progress" class="hidden">
             <p class="jfu-bar"></p>
-         </div>
-     </div>
- {%- endmacro %}
-
- {% macro file_uploader_scripts() %}
-    <script src="{{ url_for('static', filename='js/vendor/jquery.ui.widget.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}"></script>
- {%- endmacro %}
+        </div>
+    </div>
+{%- endmacro %}
 
 {#- Show a list of names that will be affected by a recursive action; delete, destroy, rename #}
 {%- macro list_subitems(subitem_names, action) %}

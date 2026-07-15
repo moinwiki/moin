@@ -1,4 +1,5 @@
 <!DOCTYPE html>{# this is html5, xmlish variant #}
+{% import "utils.html" as utils with context %}
 {% import "snippets.html" as snippets with context %}
 {%- set head = snippets.head() %}
 {%- set scripts = snippets.scripts() %}
@@ -51,6 +52,11 @@
 
                 {{ favicon }}
 
+                <script {{ utils.nonce() }}">
+                    window.elixNonce = "{{ csp_nonce() }}";
+                    window.svgeditNonce = "{{ csp_nonce() }}";
+                </script>
+
                 {%- block theme_stylesheets %}
                     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
                     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
@@ -63,6 +69,13 @@
                     <link media="all" rel="stylesheet" href="{{ theme_static('css/theme.css') }}">
                     {{ stylesheets }}
                 {%- endblock %}
+                {% if css_classes %}
+                    <style {{ utils.nonce() }}">
+                      {% for name, definition in css_classes.items() %}
+                        .{{ name }} { {{ definition }} }
+                      {% endfor %}
+                    </style>
+                {% endif %}
                 {%- if cfg.custom_css_path -%}
                     <link media="all" rel="stylesheet" href="{{ url_for('serve.files', name='wiki_local', filename='custom.css') }}">
                 {%- endif -%}
@@ -86,13 +99,13 @@
         </div>
 
         {%- block body_scripts %}
-            <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='js/jquery.i18n.min.js') }}"></script>
-            <script src="{{ url_for('frontend.template', filename='dictionary.js') }}"></script>
-            <script src="{{ url_for('static', filename='js/jquery.autosize.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='js/common.js') }}"></script>
-            <script type="module" src="{{ url_for('static', filename='js/svgeditor.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/jquery.min.js') }}" {{ utils.nonce() }}></script>
+            <script src="{{ url_for('static', filename='js/jquery.i18n.min.js') }}" {{ utils.nonce() }}"></script>
+            <script src="{{ url_for('frontend.template', filename='dictionary.js') }}" {{ utils.nonce() }}"></script>
+            <script src="{{ url_for('static', filename='js/jquery.autosize.min.js') }}" {{ utils.nonce() }}"></script>
+            <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}" {{ utils.nonce() }}"></script>
+            <script src="{{ url_for('static', filename='js/common.js') }}" {{ utils.nonce() }}"></script>
+            <script type="module" src="{{ url_for('static', filename='js/svgeditor.js') }}" {{ utils.nonce() }}"></script>
             {{- scripts }}
         {%- endblock %}
 

@@ -308,13 +308,31 @@ class Converter(ConverterBase, html_in.HtmlTags):
             return attrib
         return {}
 
+    def replace_text_align_style(self, attrib):
+        alignment = attrib.get("style")
+        if alignment == "text-align: left;":
+            alignment_class = "left"
+        elif alignment == "text-align: right;":
+            alignment_class = "right"
+        elif alignment == "text-align: center;":
+            alignment_class = "center"
+        else:
+            alignment_class = None
+        if alignment_class:
+            classes = attrib.get(moin_page.class_, "").split()
+            classes.append(alignment_class)
+            del attrib["style"]
+            attrib["class"] = " ".join(classes)
+
     def visit_th(self, element):
-        attrib = self.verify_align_style(element.attrib)
-        return self.new_copy(moin_page.table_cell_head, element, attrib=attrib)
+        self.replace_text_align_style(element.attrib)
+        # attrib = self.verify_align_style(element.attrib)
+        return self.new_copy(moin_page.table_cell_head, element, {})
 
     def visit_td(self, element):
-        attrib = self.verify_align_style(element.attrib)
-        return self.new_copy(moin_page.table_cell, element, attrib=attrib)
+        self.replace_text_align_style(element.attrib)
+        # attrib = self.verify_align_style(element.attrib)
+        return self.new_copy(moin_page.table_cell, element, {})
 
     def visit(self, element):
         # Our element can be converted directly, just by changing the namespace

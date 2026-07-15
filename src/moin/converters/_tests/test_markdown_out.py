@@ -6,11 +6,13 @@ MoinMoin - moin.converters.markdown_out tests.
 """
 
 import pytest
-from moin.converters.markdown_out import Converter
-from moin.utils.tree import html, moin_page, xlink, xml, xinclude
-from . import XMLNS_RE, TAGSTART_RE
+
 from emeraldtree import ElementTree as ET
 from moin.converters import ElementException
+from moin.converters.markdown_out import Converter
+from moin.utils.render import RenderContext
+from moin.utils.tree import html, moin_page, xlink, xml, xinclude
+from . import XMLNS_RE, TAGSTART_RE
 
 
 class Base:
@@ -19,8 +21,13 @@ class Base:
     )
     output_namespaces = {moin_page: "page"}
 
+    render_context = RenderContext(allow_style_attributes=True, use_nonces=False, convert_inline_style=False)
+
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
+
+    def setup_class(self):
+        self.conv = Converter(self.render_context)
 
     def handle_input(self, input):
         i = self.input_re.sub(r"\1 " + self.input_namespaces, input)
@@ -36,8 +43,6 @@ class Base:
 
 
 class TestConverter(Base):
-    def setup_class(self):
-        self.conv = Converter()
 
     data = [
         ("<page:p>Text</page:p>", "Text\n"),

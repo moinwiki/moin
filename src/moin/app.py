@@ -41,7 +41,7 @@ from moin.error import ConfigurationError
 from moin.apps.frontend.views import bad_request
 from moin.i18n import i18n_init
 from moin.search import SearchForm
-from moin.security.csp import set_csp_nonce
+from moin.security.csp import configure_csp, set_csp_nonce
 from moin.storage.middleware import protecting, indexing, routing
 from moin.themes import setup_jinja_env, themed_error, ThemeSupport
 from moin.utils import get_xstatic_module_path_map
@@ -121,6 +121,7 @@ class MoinApp(Flask):
         # create global counter to limit content security policy reports, prevent spam
         self.csp_count: int = 0
         self.csp_last_date: str = ""
+        configure_csp(self.cfg)
 
         clock.stop("create_app total")
         del clock

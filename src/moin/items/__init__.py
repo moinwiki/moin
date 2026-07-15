@@ -104,6 +104,7 @@ from moin.utils.names import CompositeName, split_fqname
 from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
 from moin.utils.pysupport import load_package_modules
 from moin.utils.registry import RegistryBase
+from moin.utils.render import RenderContext
 
 from .content import content_registry, Content, NonExistentContent, Draw, Text
 
@@ -1529,6 +1530,10 @@ class Default(Contentful):
             html_head_meta["keywords"] = ", ".join(self.meta[TAGS])
         if SUMMARY in self.meta and self.meta[SUMMARY]:
             html_head_meta["description"] = self.meta[SUMMARY]
+        context = RenderContext(
+            allow_style_attributes=current_app.cfg.allow_style_attributes, convert_inline_style=True, use_nonces=True
+        )
+        markup = self.content.render_data(context)
         return render_template(
             "show.html",
             item=self,
@@ -1538,7 +1543,8 @@ class Default(Contentful):
             rev=self.rev,
             contenttype=self.contenttype,
             rev_navigation_ids_dates=rev_navigation_ids_dates,
-            data_rendered=safe_markup(self.content.render_data()),
+            data_rendered=safe_markup(markup),
+            css_classes=context.css_classes,
             html_head_meta=html_head_meta,
             item_is_deleted=item_is_deleted,
             may=item_may,
@@ -1625,7 +1631,9 @@ class Default(Contentful):
         item = self
         flaskg.edit_utils = edit_utils = Edit_Utils(self)
 
-        def make_previews(item: Item, data: bytes | str | None) -> tuple[list[PreviewDiffItem] | None, str | None]:
+        def make_previews(
+            item: Item, data: bytes | str | None, css_classes: dict[str, str]
+        ) -> tuple[list[PreviewDiffItem] | None, str | None]:
             if data is None:
                 # TODO: make preview button inactive for empty items, see #1539
                 flash(_("No preview available for empty items."), "error")
@@ -1641,7 +1649,14 @@ class Default(Contentful):
                     ]
                 else:
                     preview_diffs = None
-                preview_rendered = item.content.render_data(preview=data)
+                render_context = RenderContext(
+                    preview=data,
+                    allow_style_attributes=current_app.cfg.allow_style_attributes,
+                    css_classes=css_classes,
+                    convert_inline_style=True,
+                    use_nonces=True,
+                )
+                preview_rendered = item.content.render_data(render_context)
                 return preview_diffs, preview_rendered
             finally:
                 close_file(old_item.rev.data)
@@ -1650,6 +1665,7 @@ class Default(Contentful):
 
         # these will be updated if user has clicked Preview
         preview_diffs = preview_rendered = None
+        css_classes: dict[str, str] = {}
 
         if request.values.get("cancel"):
             edit_utils.delete_draft()
@@ -1735,7 +1751,7 @@ class Default(Contentful):
                     # user has clicked Preview button, create diff and rendered item
                     edit_utils.put_draft(data if isinstance(data, str) else None)
                     # prepare data previews
-                    preview_diffs, preview_rendered = make_previews(item, data)
+                    preview_diffs, preview_rendered = make_previews(item, data, css_classes)
                     # update content form text data if data originated from a file upload
                     if data and form["content_form"]["data_file"] and "data_text" in form["content_form"]:
                         form["content_form"]["data_text"] = data
@@ -1861,6 +1877,7 @@ class Default(Contentful):
             preview_supported=preview_supported,
             preview_diffs=preview_diffs or "",
             preview_rendered=preview_rendered or "",
+            css_classes=css_classes,
             edit_rows=edit_rows,
             is_modify_text=is_modify_text,
             draft_data=draft_data,
