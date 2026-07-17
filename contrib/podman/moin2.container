@@ -1,0 +1,21 @@
+[Unit]
+Description=Moin2 container
+
+[Container]
+ContainerName=moin2
+Image=moin2
+Pull=never
+PublishPort=8000:8000
+Retry=1
+RetryDelay=10s
+Volume=%h/workspace/moin/wiki:/app/wiki
+User=1000
+Group=1000
+UserNS=keep-id:uid=1000,gid=1000
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

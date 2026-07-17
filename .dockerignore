@@ -1,0 +1,9 @@
+.git/
+.tox/
+.venv
+.*_cache/
+*.log
+build/
+docs/
+src/
+node_modules

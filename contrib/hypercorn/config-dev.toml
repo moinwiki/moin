@@ -1,0 +1,5 @@
+bind = "0.0.0.0:5000"
+debug = true
+loglevel = "DEBUG"
+worker_class = "asyncio"
+workers = 2
