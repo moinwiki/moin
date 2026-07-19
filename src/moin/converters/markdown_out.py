@@ -377,12 +377,18 @@ class Converter(ConverterBase):
 
         Transcluded objects are expanded in output because Markdown does not support transclusions.
         """
-        href = elem.get(xinclude.href, elem.get(xlink.href, ""))
-        if isinstance(href, Iri):
-            href = str(href)
-            href = urllib.parse.unquote(href)
-            if href.startswith("/+get/+"):
-                href = href.split("/")[-1]
+        data_href = elem.get(html.data_href)
+        use_data_href = elem.get(xinclude.href) is None and data_href is not None
+        href = elem.get(xinclude.href, data_href if use_data_href else elem.get(xlink.href, ""))
+        href_is_iri = isinstance(href, Iri)
+        if href_is_iri:
+            href = urllib.parse.unquote(str(href))
+        if use_data_href:
+            # Expanded transclusions point xlink:href at a revisioned +get URL.
+            # data-href retains the source item name needed for editable Markdown.
+            href = urllib.parse.urlsplit(urllib.parse.unquote(str(href))).path.lstrip("/")
+        elif href_is_iri and href.startswith("/+get/+"):
+            href = href.split("/")[-1]
         href = href.split("wiki.local:")[-1]
         if len(elem) and isinstance(elem[0], str):
             # alt text for objects is enclosed within <object...>...</object>

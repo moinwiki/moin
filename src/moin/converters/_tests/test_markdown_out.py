@@ -207,6 +207,16 @@ class TestConverter(Base):
             '<page:object xlink:href="photo.jpg" html:alt="A photo"><page:span>ignored</page:span></page:object>',
             "![A photo](photo.jpg)",
         ),
+        (
+            '<page:object xlink:href="/+get/+abcdef/audio.mp3" html:data-href="/help-common/audio.mp3" '
+            'html:alt="Audio" html:class="moin-transclusion"></page:object>',
+            "![Audio](help-common/audio.mp3)",
+        ),
+        (
+            '<page:object xlink:href="/+get/+abcdef/video.mp4" html:data-href="/help-common/video.mp4?do=show" '
+            'html:alt="Video" html:class="moin-transclusion"></page:object>',
+            "![Video](help-common/video.mp4)",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
