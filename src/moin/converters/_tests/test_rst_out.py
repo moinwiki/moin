@@ -155,6 +155,14 @@ class TestConverter(Base):
             '<page:page><page:body>A<page:list page:item-label-generate="unordered"><page:list-item><page:list-item-body><page:p>A</page:p><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p>A<page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body>A</page:list-item-body></page:list-item></page:list>A</page:body></page:page>',
             "A\n* A\n\n  A\n* A\n\n  A\n\n  A\n* A\nA",
         ),
+        (
+            '<page:page><page:body><page:p xml:id="example">This is an example crossreference target.</page:p></page:body></page:page>',
+            ".. _example:\n\nThis is an example crossreference target.\n",
+        ),
+        (
+            '<page:page><page:body><page:p>Internal crossreferences, like <page:a xlink:href="wiki.local:#example">example</page:a>.</page:p><page:p xml:id="example">This is an example crossreference target.</page:p></page:body></page:page>',
+            "Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
