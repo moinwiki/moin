@@ -52,7 +52,7 @@
 
                 {{ favicon }}
 
-                <script {{ utils.nonce() }}">
+                <script {{ utils.nonce() }}>
                     window.elixNonce = "{{ csp_nonce() }}";
                     window.svgeditNonce = "{{ csp_nonce() }}";
                 </script>
