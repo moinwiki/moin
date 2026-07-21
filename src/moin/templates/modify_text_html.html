@@ -11,8 +11,8 @@
     {% import "utils.html" as utils with context %}
 
     {% macro extra_head() %}
-        <script src="{{ url_for('static', filename='js/ckeditor5.umd.js') }}" {{ utils.nonce() }}"></script>
-        <script src="{{ url_for('static', filename='js/editor.js') }}" {{ utils.nonce() }}"></script>
+        <script src="{{ url_for('static', filename='js/ckeditor5.umd.js') }}" {{ utils.nonce() }}></script>
+        <script src="{{ url_for('static', filename='js/editor.js') }}" {{ utils.nonce() }}></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/ckeditor5.css') }}">
         {#- prevent ckeditor css from making body font-size 12px #}
         <style>body {font-size: 1em;}</style>
