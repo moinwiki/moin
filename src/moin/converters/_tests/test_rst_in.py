@@ -164,7 +164,7 @@ class TestConverter:
     :width: 200
     :scale: 50
     :alt: alternate text""",
-            '<span xml:id="biohazard-logo" /><xinclude:include html:alt="alternate text" html:height="50" html:width="100" xinclude:href="wiki.local:images/biohazard.png" />',
+            '<xinclude:include html:alt="alternate text" html:height="50" html:width="100" xinclude:href="wiki.local:images/biohazard.png" xml:id="biohazard-logo" />',
         ),
         (
             "abc |test| cba\n\n.. |test| image:: test.png",
@@ -350,7 +350,7 @@ class TestConverter:
         ("Abra test__ arba\n\n.. __: http://python.org", '<p>Abra <a xlink:href="http://python.org">test</a> arba</p>'),
         (
             "Abra\n\n.. _example:\n\nAbra example_ arba\n",
-            '<p>Abra</p><span xml:id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
+            '<p>Abra</p><p xml:id="example">Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
         ),
         (
             """
@@ -360,7 +360,7 @@ Abra example_ arba
 .. _alias:
 
 text""",
-            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span xml:id="alias" /><span xml:id="example" /><p>text</p>',
+            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span xml:id="alias" /><p xml:id="example">text</p>',
         ),
         (  # A reference_ with no matching target links to a local Wiki item.
             "wiki references: `item`_, `namespace/item`_, `ns/item/subitem`_, `../sibling`_, `/subitem`_",
@@ -518,7 +518,7 @@ text""",
         # admonitions (hint, info, warning, error, ...)
         (
             '.. note::\n   :name: note-id\n\n   An admonition of type "note"',
-            '<span xml:id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition>',
+            '<admonition type="note" xml:id="note-id"><p>An admonition of type "note"</p></admonition>',
         ),
         # use an attention for a generic admonition
         (
@@ -530,10 +530,10 @@ text""",
         # Moin uses admonitions also for system messages
         (
             "Unbalanced *inline markup.",
-            '<p>Unbalanced <span xml:id="problematic-1" /><a html:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
-            '<span xml:id="system-message-1" /><admonition type="caution">'
+            '<p>Unbalanced <a html:class="red" xlink:href="#system-message-1" xml:id="problematic-1">*</a>inline markup.</p>'
+            '<admonition type="caution" xml:id="system-message-1">'
             '<p html:class="moin-title">System Message: WARNING/2 (rST input line 1) '
-            '<span xml:id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
+            '<a xlink:href="#problematic-1" xml:id="system-message-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition>",
         ),
