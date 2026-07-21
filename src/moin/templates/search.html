@@ -85,6 +85,6 @@
 {% endblock %}
 
 {% block body_scripts %}
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}" {{ utils.nonce() }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}" {{ utils.nonce() }}"></script>
 {% endblock %}

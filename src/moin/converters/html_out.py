@@ -10,7 +10,7 @@ Convert an internal document tree into an HTML tree.
 
 from __future__ import annotations
 
-from typing import Any, Final, TYPE_CHECKING
+from typing import Any, Container, Final, TYPE_CHECKING
 
 import re
 
@@ -19,15 +19,17 @@ from urllib.parse import urlencode
 from babel import Locale
 
 from moin import current_app, flaskg, wikiutil
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CHARSET
+from moin.constants.keys import LANGUAGE
+from moin.converters._util import StyleAttrFilter, StyleConverter
 from moin.converters.base import ConverterBase
 from moin.i18n import _
-from moin.log import getLogger
 from moin.items import Item
+from moin.log import getLogger
 from moin.utils.iri import Iri
-from moin.utils.tree import html, moin_page, xlink, xml
-from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CHARSET
 from moin.utils.mime import Type, type_moin_document
-from moin.constants.keys import LANGUAGE
+from moin.utils.render import RenderContext
+from moin.utils.tree import html, moin_page, Name, xlink, xml
 
 from . import default_registry, ElementException
 
@@ -35,22 +37,6 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 logger = getLogger(__name__)
-
-
-# strings not allowed in style attributes
-SUSPECT = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
-
-
-def style_attr_filter(style: str) -> str:
-    """
-    If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
-    """
-    if current_app.cfg.allow_style_attributes:
-        s = "".join(style.strip().lower().split())
-        if any(x in s for x in SUSPECT):
-            return " /*style suppressed, failed test for suspect strings*/ "
-        return style
-    return ""
 
 
 def convert_getlink_to_showlink(href):
@@ -90,7 +76,9 @@ def mark_item_as_transclusion(elem, href_or_item):
 
 
 class Attribute:
-    """Adds the attribute with the HTML namespace to the output."""
+    """
+    Adds the attribute with the HTML namespace to the output.
+    """
 
     __slots__ = "key"
 
@@ -102,7 +90,9 @@ class Attribute:
 
 
 class Attributes:
-    """Convert element attributes."""
+    """
+    Convert element attributes.
+    """
 
     # This class is also used in ``markdown_out.py`` and ``includes.py``.
 
@@ -116,8 +106,12 @@ class Attributes:
     visit_id = Attribute("id")
     visit_type = Attribute("type")  # IE8 needs <object... type="image/svg+xml" ...> to display SVG images
 
-    def __init__(self, element):
+    def __init__(
+        self, element, style_attr_filter: StyleAttrFilter, style_converter: StyleConverter | None = None
+    ) -> None:
         self.element = element
+        self.style_attr_filter = style_attr_filter
+        self.style_converter = style_converter
         # Detect if the namespace of the element matches either the input
         # or the output:
         self.default_uri_input = self.default_uri_output = None
@@ -133,17 +127,26 @@ class Attributes:
         if self.default_uri_input:
             return self.element.get(name)
 
-    def convert(self):
+    def convert(self, whitelist: Container[str] | None = None) -> dict:
         new = {}
-        new_default = {}
+        new_default: dict[ET.QName, str] = {}
 
         for key, value in self.element.attrib.items():
-            if key == html.style:
-                if not (value := style_attr_filter(value)):
+            if whitelist and key.name not in whitelist:
+                continue
+
+            if key == html.style or key == moin_page.style:
+                # filter out bad style attributes
+                if not (value := self.style_attr_filter(value)):
                     continue
+                # convert inline style into CSS classes
+                class_names = self.style_converter(value) if self.style_converter else None
+                if class_names:
+                    new[ET.QName("class", html.namespace)] = " ".join(class_names)
+                continue
+
             if key.uri == moin_page:
-                # We never have _ in attribute names, so ignore them instead of
-                # create ambigues matches.
+                # We never have _ in attribute names, so ignore them instead of creating ambiguous matches.
                 if "_" not in key.name:
                     n = "visit_" + key.name.replace("-", "_")
                     visitor = getattr(self, n, None)
@@ -176,8 +179,23 @@ class Converter(ConverterBase):
 
     namespaces_visit: Final = {moin_page: "moinpage"}
 
+    def __init__(self, context: RenderContext, **kwargs: Any) -> None:
+        super().__init__()
+        self.context = context
+        self.style_attr_filter = StyleAttrFilter(context.allow_style_attributes)
+        self.style_converter = StyleConverter() if context.convert_inline_style else None
+
     def __call__(self, element: Any) -> Any:
-        return self.visit(element)
+        result = self.visit(element)
+        # toplevel element of conversion result is expected to have html namespace
+        if result.tag.uri != html:
+            raise ElementException("Not a HTML document")
+        if self.style_converter:
+            self.context.css_classes |= self.style_converter.css_classes
+        return result
+
+    def make_attributes(self, elem) -> Attributes:
+        return Attributes(elem, self.style_attr_filter, self.style_converter)
 
     def do_children(self, element):
         new = []
@@ -198,8 +216,11 @@ class Converter(ConverterBase):
         html_tagname = element.get(moin_page.html_tag)
         if html_tagname:
             tag = html(html_tagname)
+        # Unknown elements have a tag of type QName but we require Name instances
+        if not isinstance(tag, Name):
+            tag = Name(tag.name, tag.uri)
         # Convert attributes and children:
-        attrib_new = Attributes(element).convert()
+        attrib_new = self.make_attributes(element).convert()
         attrib_new.update(attrib)
         children = self.do_children(element)
         return tag(attrib_new, children)
@@ -248,7 +269,7 @@ class Converter(ConverterBase):
     }
 
     def visit_moinpage_admonition(self, elem):
-        """Used by reST and docbook."""
+        # Used by reST and docbook
         attrib = {}
         cls = elem.attrib.pop(moin_page.type, None)
         if cls in self.valid_admonition_classes:
@@ -385,7 +406,7 @@ class Converter(ConverterBase):
         return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-block"})
 
     def visit_moinpage_list(self, elem):
-        attrib = Attributes(elem)
+        attrib = self.make_attributes(elem)
         attrib_new = attrib.convert()
         generate = attrib.get("item-label-generate")
 
@@ -443,7 +464,7 @@ class Converter(ConverterBase):
         list-item tag.name for entire list where moinwiki and reST have one list-item tag.name for
         each entry in list.
         """
-        attrib = Attributes(elem)
+        attrib = self.make_attributes(elem)
         attrib_new = attrib.convert()
         ret = html.dl(attrib=attrib_new)
         for item in elem:
@@ -473,7 +494,7 @@ class Converter(ConverterBase):
             # Nothing else worked...try using <object>
             return "object"
 
-    object_attr_whitelist: Final = ["width", "height", "alt", "class", "data-href", "style", "title"]
+    object_attr_whitelist: Final = {"width", "height", "alt", "class", "data-href", "style", "title"}
 
     def visit_moinpage_object(self, elem):
         """
@@ -483,17 +504,14 @@ class Converter(ConverterBase):
         and follow html5 rules to place right attributes within img and object tags.
         """
         href = elem.get(xlink.href, None)
-        attrib = {}
 
-        for key in elem.attrib:
-            if key.name in self.object_attr_whitelist:
-                if key.name == "style":
-                    attrib[key] = style_attr_filter(elem.attrib[key])
-                else:
-                    attrib[key] = elem.attrib[key]
+        # TODO: might we lose any relevant attributes?
+        attrib = self.make_attributes(elem).convert(self.object_attr_whitelist)
+
         mimetype = Type(_type=elem.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
         if elem.get(moin_page.type_):
             del elem.attrib[moin_page.type_]
+
         # Get the object type
         obj_type = self.eval_object_type(mimetype, href)
 
@@ -524,6 +542,7 @@ class Converter(ConverterBase):
             else:
                 # is an object
                 new_elem = html.object(attrib=attrib)
+
             # alt attr is invalid within object, audio, and video tags , append alt text to existing child
             # alt text will be transclusion alt field, item meta summary, or item name
             if new_elem.get(html.alt):
@@ -539,6 +558,7 @@ class Converter(ConverterBase):
         if obj_type == "object" and getattr(href, "scheme", None):
             # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
             return mark_item_as_transclusion(new_elem, href)
+
         return new_elem
 
     def visit_moinpage_p(self, elem):
@@ -623,7 +643,7 @@ class Converter(ConverterBase):
         return self.new_copy(html.strong, elem)
 
     def visit_moinpage_table(self, elem):
-        attrib = Attributes(elem).convert()
+        attrib = self.make_attributes(elem).convert()
         ret = html.table(attrib=attrib)
         caption = 1 if elem[0].tag.name == "caption" else 0
         for idx, item in enumerate(elem):
@@ -857,7 +877,7 @@ class ConverterPage(Converter):
 
         label = self._id.gen_id("note")  # 1, 2, 3, ...
         ID = f'note-{self._id.get_id("note-placement")}-{label}'  # note-1-1, note-1-2, ...
-        attrib = Attributes(elem).convert()
+        attrib = self.make_attributes(elem).convert()
         if attrib.get(html.id_):
             ID = attrib[html.id]
 

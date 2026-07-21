@@ -6,6 +6,15 @@
 
 {% import "forms.html" as forms with context %}
 
+{% macro nonce() -%}
+nonce="{{ csp_nonce() }}"
+{%- endmacro %}
+
+{% macro file_uploader_scripts() %}
+    <script src="{{ url_for('static', filename='js/vendor/jquery.ui.widget.js') }}" {{ nonce() }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}" {{ nonce() }}"></script>
+{%- endmacro %}
+
 {# "item" must be passed because of flakey jinja2 context passing #}
 {% macro rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item', item=item) %}
     {% set prior_rev, current_rev, next_rev, prior_mtime, current_mtime, next_mtime = rev_navigation_ids_dates %}

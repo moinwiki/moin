@@ -19,16 +19,18 @@ except ImportError:
 
 @dataclass
 class CrawlResult:
-    """Represent the result of a GET in the crawl, written to crawl.csv when the spider closes."""
+    """
+    Represent the result of a GET in the crawl, written to crawl.csv when the spider closes.
+    """
 
-    url: Iri = ""
-    from_url: Iri = ""
+    url: Iri = field(default_factory=Iri)
+    from_url: Iri = field(default_factory=Iri)
     from_text: str = ""  # link text, if any
     from_type: str = ""  # attribute name where this link was found
-    response_code: int = ""
+    response_code: int = 0
     response_exc: str = ""  # exception, if any
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.url:
             self.url = Iri(self.url)
         if self.from_url:
@@ -36,7 +38,7 @@ class CrawlResult:
         if self.response_code:
             self.response_code = int(self.response_code)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'url="{str(self.url)}", from_url="{str(self.from_url)}", '
             + f"from_text={repr(self.from_text)}, "
@@ -44,13 +46,14 @@ class CrawlResult:
             + f'response_code={self.response_code}, response_exc="{self.response_exc}"'
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CrawlResult({str(self)})"
 
 
 @dataclass
 class CrawlResultMatch(CrawlResult):
-    """Class for matching against CrawlResult.
+    """
+    Class for matching against CrawlResult.
 
     If initialized with a relative URL, prepend CRAWL_START for matching,
     e.g., '/html' -> 'http://127.0.0.1:9080/help-en/html'.
@@ -59,7 +62,8 @@ class CrawlResultMatch(CrawlResult):
     url_path_components: list[str] = field(default_factory=list)  # list of path components to match against
 
     def match(self, other: CrawlResult) -> bool:
-        """Return True if:
+        """
+        Return True if:
 
         - For each of my non-None fields, the other object has the exact same value.
         - If url_path_components is set, require at least one of them to appear in other.url.path.
@@ -77,7 +81,9 @@ class CrawlResultMatch(CrawlResult):
 
     @staticmethod
     def _relative_to_absolute(url: Iri):
-        """Prepend CRAWL_START to a relative URL."""
+        """
+        Prepend CRAWL_START to a relative URL.
+        """
         if url and not url.scheme:
             url_path = url.path.fullquoted if url.path else ""
             return Iri(

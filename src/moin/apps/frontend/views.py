@@ -116,6 +116,7 @@ from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.mimetype import MimeType
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
+from moin.utils.render import RenderContext
 from moin.utils.tree import html, docbook, xlink, xml
 
 if TYPE_CHECKING:
@@ -700,10 +701,10 @@ def show_item(item_name: str, rev: str) -> ResponseBase | str:
     except AccessDenied:
         abort(403)
     except FieldNotUniqueError:
-        revs = flaskg.storage.documents(**fqname.query)
-        fq_names = []
-        for rev in revs:
-            fq_names.extend(rev.fqnames)
+        revisions = flaskg.storage.documents(**fqname.query)
+        fq_names: list[CompositeName] = []
+        for revision in revisions:
+            fq_names.extend(revision.fqnames)
         return render_template(
             "link_list_no_item_panel.html",
             headline=_("Items with {field} {value}").format(field=fqname.field, value=fqname.value),
@@ -886,7 +887,7 @@ def convert_item(item_name):
                 item.contenttype in CONTENTTYPE_NO_EXPANSION and form["new_type"].value in CONTENTTYPE_NO_EXPANSION
             ):
                 # expand DOM only when converting to dissimilar item types (moin and creole are similar)
-                dom = item.content._expand_document(dom)
+                dom = item.content._expand_document(dom, RenderContext())
 
         conv_out = reg.get(type_moin_document, Type(form["new_type"].value))
         out = conv_out(dom)

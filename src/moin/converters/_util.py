@@ -8,7 +8,7 @@ MoinMoin - converter utilities.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Final
 
 from emeraldtree import ElementTree as ET
 
@@ -124,7 +124,7 @@ class _Stack:
         if bottom:
             self._list.append(self.Item(bottom))
         self.iter_content = iter_content
-        self.last_lineno_attr = 0
+        self.last_lineno = 0
         self._add_lineno = add_lineno
 
     def __len__(self):
@@ -178,3 +178,53 @@ class _Stack:
         """
         attrib = kwargs.get("attrib", {})
         return self._list[-1].name in names and set(attrib.items()).issubset(set(self._list[-1].elem.attrib.items()))
+
+
+class StyleConverter:
+    """
+    Helps converting use of inline CSS styling into (document specific) CSS classes.
+    """
+
+    def __init__(self, prefix: str = "_sr_") -> None:
+        self.prefix = prefix
+        self.styles: list[str] = []
+
+    def __call__(self, style: str) -> list[str]:
+        res: list[str] = []
+        for s in style.split(";"):
+            s = s.strip()
+            if not s:
+                continue
+            s = ": ".join([w.strip() for w in s.split(":", 1)])
+            try:
+                ix = self.styles.index(s)
+            except ValueError:
+                ix = len(self.styles)
+                self.styles.append(s)
+            res.append(f"{self.prefix}{ix}")
+        return res
+
+    @property
+    def css_classes(self):
+        return {f"{self.prefix}{c}": s for c, s in enumerate(self.styles)}
+
+
+# strings not allowed in style attributes
+SUSPECT: Final = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
+
+
+class StyleAttrFilter:
+
+    def __init__(self, allow_style_attributes: bool) -> None:
+        self.allow_style_attributes = allow_style_attributes
+
+    def __call__(self, style: str) -> str:
+        """
+        If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
+        """
+        if self.allow_style_attributes:
+            s = "".join(style.strip().lower().split())
+            if any(x in s for x in SUSPECT):
+                return " /*style suppressed, failed test for suspect strings*/ "
+            return style
+        return ""

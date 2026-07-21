@@ -629,16 +629,24 @@ class Converter(ConverterBase):
             # Docutils <subtitle>
             # TODO: find out whether the parent is <page>.
             return self.open_moinpage_h(elem)
+
+        target_id = elem.get(xml.id)
+        anchor = ""
+        # Add paragraph IDs as explicit rST targets
+        if target_id:
+            self.headings.append(target_id)
+            anchor = f".. _{target_id}:\n\n"
+
         ret = ""
         if self.status[-1] == "text":
             self.status.append("p")
             set = self.define_references()
             if self.last_closed == "text":
-                ret = ReST.p * 2 + self.open_children(elem) + ReST.p + set
+                ret = ReST.p * 2 + anchor + self.open_children(elem) + ReST.p + set
             elif self.last_closed:
-                ret = ReST.p + self.open_children(elem) + ReST.p + set
+                ret = ReST.p + anchor + self.open_children(elem) + ReST.p + set
             else:
-                ret = self.open_children(elem) + ReST.p + set
+                ret = anchor + self.open_children(elem) + ReST.p + set
         elif self.status[-1] == "table":
             self.status.append("p")
             if (
@@ -651,15 +659,15 @@ class Converter(ConverterBase):
                 and self.last_closed != "line_break"
             ):
                 # and self.last_closed != 'p':
-                ret = ReST.linebreak + self.open_children(elem)
+                ret = ReST.linebreak + anchor + self.open_children(elem)
             elif self.last_closed == "p" or self.last_closed == "line_break":
-                ret = self.open_children(elem)
+                ret = anchor + self.open_children(elem)
             else:
-                ret = self.open_children(elem)
+                ret = anchor + self.open_children(elem)
         elif self.status[-1] == "list":
             self.status.append("p")
             if self.last_closed and self.last_closed == "list_item_label":
-                ret = self.open_children(elem)
+                ret = anchor + self.open_children(elem)
             elif (
                 self.last_closed
                 and self.last_closed != "list_item"
@@ -670,6 +678,7 @@ class Converter(ConverterBase):
                 ret = (
                     ReST.linebreak
                     + " " * (len("".join(self.list_item_labels)) + len(self.list_item_labels))
+                    + anchor
                     + self.open_children(elem)
                 )
             elif self.last_closed and self.last_closed == "p":
@@ -677,15 +686,16 @@ class Converter(ConverterBase):
                 ret = (
                     "\n"
                     + " " * (len("".join(self.list_item_labels)) + len(self.list_item_labels))
+                    + anchor
                     + self.open_children(elem)
                 )
             else:
-                ret = self.open_children(elem)
+                ret = anchor + self.open_children(elem)
             if not self.delete_newlines:
                 ret += "\n"
         else:
             self.status.append("p")
-            ret = self.open_children(elem)
+            ret = anchor + self.open_children(elem)
         self.status.pop()
         return ret
 

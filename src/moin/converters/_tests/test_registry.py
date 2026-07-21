@@ -7,7 +7,6 @@ MoinMoin - moin.converters.default_registry tests.
 
 import pytest
 
-from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 from moin.converters import default_registry
 from moin.converters.text_in import Converter as TextInConverter
 from moin.converters.moinwiki_in import Converter as MoinwikiInConverter
@@ -22,6 +21,9 @@ from moin.converters.macro import Converter as MacroConverter
 from moin.converters.include import Converter as IncludeConverter
 from moin.converters.link import ConverterExternOutput as LinkConverterExternOutput
 from moin.converters.link import ConverterItemRefs as LinkConverterItemRefs
+
+from moin.utils.mime import Type, type_moin_document, type_moin_wiki
+from moin.utils.render import RenderContext
 
 
 @pytest.mark.parametrize(
@@ -45,7 +47,8 @@ from moin.converters.link import ConverterItemRefs as LinkConverterItemRefs
     ],
 )
 def test_converter_finder(type_input, type_output, expected_class):
-    conv = default_registry.get(type_input, type_output)
+    args = {"context": RenderContext()}
+    conv = default_registry.get(type_input, type_output, **args)
     assert isinstance(conv, expected_class)
 
 
@@ -54,7 +57,7 @@ def test_converter_finder(type_input, type_output, expected_class):
     [
         # DOM converters, which depend on keyword argument to default_registry.get
         (dict(macros="expandall"), MacroConverter),
-        (dict(includes="expandall"), IncludeConverter),
+        (dict(includes="expandall", context=RenderContext()), IncludeConverter),
         (dict(links="extern"), LinkConverterExternOutput),
         (dict(items="refs"), LinkConverterItemRefs),
     ],

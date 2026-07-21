@@ -8,9 +8,9 @@ Create a virtual environment and install Moin 2 and all requirements in developm
 
 Usage for installation:
 
-    <python> quickinstall.py (where <python> is any Python 3.10+ executable)
+    <python> quickinstall.py (where <python> is any Python 3.11+ executable)
 
-Requires: Python 3.10+, pip
+Requires: Python 3.11+, pip
 
 The first run of quickinstall.py creates these files or symlinks in the repo root:
 
@@ -53,7 +53,7 @@ import venv
 from abc import ABC, abstractmethod
 from collections import Counter
 
-MIN_PYTHON_VERSION = (3, 10)
+MIN_PYTHON_VERSION = (3, 11)
 
 WIN_INFO = "m.bat, activate.bat, and deactivate.bat are created by quickinstall.py"
 NIX_INFO = "the m bash script and the activate symlink are created by quickinstall.py"

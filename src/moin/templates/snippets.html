@@ -3,8 +3,6 @@ Wiki Administrators should use a copy of this template to customize a wiki.
 See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custom-snippets-html-template
 #}
 
-{% import theme("utils.html") as utils with context %}
-
 {# Logo in the theme header #}
 {% macro logo() -%}
     <img src="{{ url_for('static', filename='logos/moinmoin.svg') }}" width=64 id="moin-img-logo" alt="Logo">

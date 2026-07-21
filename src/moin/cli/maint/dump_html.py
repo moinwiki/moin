@@ -32,19 +32,17 @@ The raw data for all items is stored in the +get subdirectory.
 
 from __future__ import annotations
 
-import shutil
+from html import escape
+from pathlib import Path
 import re
+import shutil
+from urllib.parse import quote, urlparse
 
 import click
 from flask import render_template
 from flask.cli import FlaskGroup
-
-from pathlib import Path
-from urllib.parse import urlparse
-
-from whoosh.query import Every, Regex
-
 from werkzeug.exceptions import Forbidden
+from whoosh.query import Every, Regex
 
 from moin import current_app, flaskg, log
 from moin.app import create_app, before_wiki, setup_user_anon
@@ -147,11 +145,8 @@ def Dump(
             shutil.copytree(module_path_map[xs_dir], html_root / "+serve" / xs_dir)
 
         # copy directories for theme's static files
-        if theme == "topside_cms":
-            # topside_cms uses topside CSS files
-            from_dir = moinmoin / "themes" / "topside" / "static"
-        else:
-            from_dir = moinmoin / "themes" / theme / "static"
+        asset_theme = "topside" if theme == "topside_cms" else theme
+        from_dir = moinmoin / "themes" / asset_theme / "static"
         to_dir = html_root / "_themes" / theme
         shutil.copytree(from_dir, to_dir)
 
@@ -404,7 +399,7 @@ def create_index_page(
     links = []
     names.sort(key=lambda item: item[0])
     for name in names:
-        links.append(f'<li><a href="{name[1]}">{name[0]}</a></li>')
+        links.append(f'<li><a href="{quote(name[1])}">{escape(name[0])}</a></li>')
     name_links = "<h1>Index</h1><ul>{0}</ul>".format("\n".join(links))
 
     try:

@@ -14,13 +14,27 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
+from moin.converters._util import StyleConverter
 from moin.converters.html_out import Converter, ConverterPage, ElementException
 from moin.log import getLogger
+from moin.utils.render import RenderContext
 from moin.utils.tree import html, moin_page, xml, xlink
 
 logger = getLogger(__name__)
 
 etree = pytest.importorskip("lxml.etree")  # noqa
+
+render_context = RenderContext(allow_style_attributes=True, use_nonces=False, convert_inline_style=False)
+
+
+def test_style_converter():
+    converter = StyleConverter()
+    assert converter("color: green") == ["_sr_0"]
+    assert converter.css_classes == {"_sr_0": "color: green"}
+    assert converter("color:  green") == ["_sr_0"]
+    assert converter.css_classes == {"_sr_0": "color: green"}
+    assert converter("color:red;  font-weight : bold ;") == ["_sr_1", "_sr_2"]
+    assert converter.css_classes == {"_sr_0": "color: green", "_sr_1": "color: red", "_sr_2": "font-weight: bold"}
 
 
 class Base:
@@ -49,8 +63,9 @@ class Base:
 
 
 class TestConverter(Base):
+
     def setup_class(self):
-        self.conv = Converter()
+        self.conv = Converter(render_context)
 
     data = [
         ("<page:page><page:body><page:p>Test</page:p></page:body></page:page>", '/div[p="Test"]'),
@@ -273,18 +288,19 @@ class TestConverter(Base):
     def test_part(self, input, xpath):
         self.do(input, xpath)
 
-    data = [
-        (
-            '<page><body><p style="font-size: 1em">Text</p></body></page>',
-            '/div/p[@style="font-size: 1em"][text()="Text"]',
-        ),
-        (
-            '<page><body><p style="color: black; font-size: 1em">Text</p></body></page>',
-            '/div/p[@style="color: black; font-size: 1em"][text()="Text"]',
-        ),
-    ]
-
-    @pytest.mark.parametrize("input,xpath", data)
+    @pytest.mark.parametrize(
+        "input,xpath",
+        [
+            (
+                '<page><body><p style="font-size: 1em">Text</p></body></page>',
+                '/div/p[@style="font-size: 1em"][text()="Text"]',
+            ),
+            (
+                '<page><body><p style="color: black; font-size: 1em">Text</p></body></page>',
+                '/div/p[@style="color: black; font-size: 1em"][text()="Text"]',
+            ),
+        ],
+    )
     def test_style(self, input, xpath):
         self.do(input, xpath)
 
@@ -321,8 +337,9 @@ class TestConverter(Base):
 
 
 class TestConverterPage(Base):
+
     def setup_class(self):
-        self.conv = ConverterPage()
+        self.conv = ConverterPage(render_context)
 
     data = [
         # Footnotes are replaced by a footnote-reference and rendered at the page bottom.
@@ -375,7 +392,7 @@ class TestConverterPage(Base):
         # pytest.skip("this test requires footnote plugin")  # XXX TODO
         self.do(input, xpath)
 
-    @pytest.mark.xfail
     def test_unknown(self):
         page = ET.XML(f"<page:unknown {self.input_namespaces}/>")
-        pytest.raises(ElementException, self.conv.__call__, page)
+        with pytest.raises(ElementException):
+            self.conv(page)

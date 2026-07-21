@@ -14,16 +14,16 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import re
-import urllib.request
 import urllib.parse
-import urllib.error
 
 from emeraldtree import ElementTree as ET
 
-from moin.converters import html_out
+from moin.converters._util import StyleAttrFilter
 from moin.converters.base import ConverterBase
+from moin.converters.html_out import Attributes
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.render import RenderContext
 from moin.utils.tree import moin_page, xlink, xinclude, html
 
 from . import default_registry, ElementException
@@ -90,18 +90,25 @@ class Converter(ConverterBase):
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls(**kwargs)
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, context: RenderContext, **kwargs: Any) -> None:
         super().__init__(*kwargs)
-        self.list_item_labels = [""]
-        self.list_item_label = ""
+        self.status: list[str] = ["text"]
+        self.last_closed: str | None = None
+        self.list_item_labels: list[str] = [""]
+        self.list_item_label: str = ""
         self.list_level = 0
-        self.footnotes = []  # tuple of (name, text)
+        self.footnotes: list[tuple[str, str]] = []  # tuple of (name, text)
         self.footnote_number = 0  # incremented if a footnote name was not passed
+        self.style_attr_filter = StyleAttrFilter(context.allow_style_attributes)
 
     def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
-        self.list_item_label = []
+        self.list_item_labels = [""]
+        self.list_item_label = ""
+        self.list_level = 0
+        self.footnotes.clear()
+        self.footnote_number = 0
         content = self.open(root)
         while "\n\n\n" in content:
             content = content.replace("\n\n\n", "\n\n")
@@ -113,6 +120,9 @@ class Converter(ConverterBase):
             notes = "\n".join(notes)
             content += "\n\n" + notes + "\n"
         return content
+
+    def make_attributes(self, elem) -> Attributes:
+        return Attributes(elem, self.style_attr_filter)
 
     def open_children(self, elem, join_char=""):
         childrens_output = []
@@ -157,7 +167,7 @@ class Converter(ConverterBase):
 
     def html_inline_element(self, tagname, elem, attrib={}):
         STRIP_NS_RE = re.compile(r"\{[^}]*\}")
-        attrs = html_out.Attributes(elem).convert() | attrib
+        attrs = self.make_attributes(elem).convert() | attrib
         starttag = [tagname]
         starttag += [f'{k}="{v}"' for (k, v) in attrs.items()]
         starttag = " ".join(starttag)
@@ -455,7 +465,7 @@ class Converter(ConverterBase):
         tagname = elem.attrib.get(moin_page("html-tag"))
         if tagname:
             return self.html_inline_element(tagname, elem)
-        if html_out.Attributes(elem).convert():
+        if self.make_attributes(elem).convert():
             # use <span> to represent attributes
             return self.html_inline_element("span", elem)
         return self.open_children(elem)
@@ -485,19 +495,30 @@ class Converter(ConverterBase):
 
     def open_moinpage_table_header(self, elem):
         # used for reST to moinwiki conversion, maybe others that generate table head
-        separator = []
+        separators = []
         for th in elem[0]:
-            if th.attrib.get(moin_page.style, None) == "text-align: center;":
-                separator.append(":----:")
-            elif th.attrib.get(moin_page.style, None) == "text-align: left;":
-                separator.append(":-----")
-            elif th.attrib.get(moin_page.style, None) == "text-align: right;":
-                separator.append("-----:")
-            else:
-                separator.append("------")
-        separator = Markdown.table_marker.join(separator)
+            separator = "------"
+            # handle alignment using inline style
+            if style := th.attrib.get(moin_page.style, None):
+                if style == "text-align: center;":
+                    separator = ":----:"
+                elif style == "text-align: left;":
+                    separator = ":-----"
+                elif style == "text-align: right;":
+                    separator = "-----:"
+            # handle alignment using CSS class
+            elif class_ := th.attrib.get(moin_page.class_, None):
+                css_classes = class_.split(" ")
+                if "center" in css_classes:
+                    separator = ":----:"
+                elif "left" in css_classes:
+                    separator = ":-----"
+                elif "right" in css_classes:
+                    separator = "-----:"
+            separators.append(separator)
+        hdr_separator = Markdown.table_marker.join(separators)
         ret = self.open_children(elem)
-        ret = ret + "{0}{1}{0}\n".format(Markdown.table_marker, separator)
+        ret = ret + "{0}{1}{0}\n".format(Markdown.table_marker, hdr_separator)
         return ret
 
     def open_moinpage_table_body(self, elem):

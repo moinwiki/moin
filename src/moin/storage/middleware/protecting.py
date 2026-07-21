@@ -289,6 +289,10 @@ class ProtectingMiddleware:
     def has_item(self, name):
         return self.indexer.has_item(name)
 
+    def existing_items(self, names):
+        # existence is not ACL-gated (same as has_item), so delegate directly
+        return self.indexer.existing_items(names)
+
     def __getitem__(self, name):
         item = self.indexer[name]
         return ProtectedItem(self, item)

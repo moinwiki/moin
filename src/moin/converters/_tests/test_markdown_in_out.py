@@ -18,9 +18,10 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.utils.tree import moin_page, xlink, xinclude, html, xml
 from moin.converters.markdown_in import Converter as ConverterIn
 from moin.converters.markdown_out import Converter as ConverterOut
+from moin.utils.render import RenderContext
+from moin.utils.tree import moin_page, xlink, xinclude, html, xml
 
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
 
@@ -52,6 +53,8 @@ class TestConverter:
         xml.namespace: "xml",
     }
 
+    render_context = RenderContext(allow_style_attributes=True, use_nonces=False, convert_inline_style=False)
+
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
@@ -69,7 +72,7 @@ class TestConverter:
     def do(self, input, output, args={}):
         conv_in = ConverterIn()
         out = conv_in(input, "text/x-markdown;charset=utf-8", **args)
-        conv_out = ConverterOut()
+        conv_out = ConverterOut(self.render_context)
         out = conv_out(self.handle_input(self.serialize_strip(out)), **args)
         # assert self.handle_output(out) == output
         assert (

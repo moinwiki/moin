@@ -587,7 +587,7 @@ Developers may update the help files or add new files through the normal edit pr
 When editing is complete run one or more of::
 
     moin maint-reduce-revisions  # updates all items in all namespaces
-    moin maint-reduce-revisions -q <item-name> -n help-en --test true # lists selected items, no updates
+    moin maint-reduce-revisions -q <item-name> -n help-en --test  # lists selected items, no updates
     moin maint-reduce-revisions -q <item-name> -n help-en  # updates selected items
 
 Dump all the English help files to the version controlled directory::

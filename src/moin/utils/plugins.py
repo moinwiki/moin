@@ -12,16 +12,19 @@ MoinMoin - Plugin loader.
 
 from __future__ import annotations
 
-from typing import Generator
+from typing import Generator, TYPE_CHECKING
 
 import os
 import sys
-import importlib
+import importlib.util
 import hashlib
 
 from moin import error
 from moin.utils import pysupport
 from moin.utils.mimetype import MimeType
+
+if TYPE_CHECKING:
+    from moin.config import WikiConfigProtocol
 
 
 class PluginError(Exception):
@@ -36,7 +39,7 @@ class PluginAttributeError(PluginError):
     """Raised when a plugin does not contain an attribute."""
 
 
-def importPlugin(cfg, kind, name, function="execute"):
+def importPlugin(cfg: WikiConfigProtocol, kind: str, name: str, function="execute"):
     """Import a wiki or built-in plugin.
 
     Returns the <function> attribute from a plugin module <name>.
@@ -65,7 +68,7 @@ def importPlugin(cfg, kind, name, function="execute"):
         return importBuiltinPlugin(kind, name, function)
 
 
-def importWikiPlugin(cfg, kind, name, function="execute"):
+def importWikiPlugin(cfg: WikiConfigProtocol, kind: str, name: str, function="execute"):
     """Import plugin from the wiki data directory
 
     See importPlugin docstring.
@@ -78,7 +81,7 @@ def importWikiPlugin(cfg, kind, name, function="execute"):
     return importNameFromPlugin(moduleName, function)
 
 
-def importBuiltinPlugin(kind, name, function="execute"):
+def importBuiltinPlugin(kind: str, name: str, function="execute"):
     """Import built-in plugin from the MoinMoin package.
 
     See importPlugin docstring.
@@ -89,7 +92,7 @@ def importBuiltinPlugin(kind, name, function="execute"):
     return importNameFromPlugin(moduleName, function)
 
 
-def importNameFromPlugin(moduleName, name):
+def importNameFromPlugin(moduleName: str, name: str):
     """Return the <name> attribute from the <moduleName> module;
     raise PluginAttributeError if the name does not exist.
 
@@ -114,7 +117,7 @@ def importNameFromPlugin(moduleName, name):
         return module
 
 
-def builtinPlugins(kind):
+def builtinPlugins(kind: str):
     """Gets a list of modules in moin.'kind'
 
     :param kind: what kind of modules we look for
@@ -125,7 +128,7 @@ def builtinPlugins(kind):
     return pysupport.importName(modulename, "modules")
 
 
-def wikiPlugins(kind, cfg):
+def wikiPlugins(kind: str, cfg: WikiConfigProtocol) -> dict[str, str]:
     """
     Gets a dict containing the names of all plugins of <kind>
     as the key and the containing module name as the value.
@@ -155,7 +158,7 @@ def wikiPlugins(kind, cfg):
     return result
 
 
-def getPlugins(kind, cfg):
+def getPlugins(kind: str, cfg: WikiConfigProtocol) -> list[str]:
     """Gets a list of plugin names of kind
 
     :param kind: what kind of modules we look for
@@ -195,8 +198,8 @@ def _gen_possible_module_names_from_mimetype(mimetype: MimeType) -> Generator[st
     yield "application_octet_stream"
 
 
-def searchAndImportPlugin(cfg, type, name, what=None):
-    type2classname = {}
+def searchAndImportPlugin(cfg: WikiConfigProtocol, type: str, name: str, what: str | None = None):
+    type2classname: dict[str, str] = {}
     if what is None:
         what = type2classname[type]
     mt = MimeType(name)
@@ -213,7 +216,7 @@ def searchAndImportPlugin(cfg, type, name, what=None):
 
 
 @pysupport.makeThreadSafe
-def _loadPluginModule(cfg):
+def _loadPluginModule(cfg: WikiConfigProtocol) -> None:
     """
     import all plugin modules
 
