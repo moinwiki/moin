@@ -217,6 +217,12 @@ class TestConverter(Base):
             'html:alt="Video" html:class="moin-transclusion"></page:object>',
             "![Video](help-common/video.mp4)",
         ),
+        (
+            '<page:object xinclude:href="wiki.local:audio.mp3" html:data-href="/help-common/audio.mp3" '
+            'html:alt="help-common/audio.mp3" html:class="moin-transclusion">'
+            "Your Browser does not support HTML5 audio/video element.</page:object>",
+            "![audio.mp3](help-common/audio.mp3)",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
