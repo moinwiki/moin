@@ -11,8 +11,8 @@ nonce="{{ csp_nonce() }}"
 {%- endmacro %}
 
 {% macro file_uploader_scripts() %}
-    <script src="{{ url_for('static', filename='js/vendor/jquery.ui.widget.js') }}" {{ nonce() }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}" {{ nonce() }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/jquery.ui.widget.js') }}" {{ nonce() }}></script>
+    <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}" {{ nonce() }}></script>
 {%- endmacro %}
 
 {# "item" must be passed because of flakey jinja2 context passing #}
