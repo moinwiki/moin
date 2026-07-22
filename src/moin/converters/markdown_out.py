@@ -377,16 +377,24 @@ class Converter(ConverterBase):
 
         Transcluded objects are expanded in output because Markdown does not support transclusions.
         """
-        href = elem.get(xinclude.href, elem.get(xlink.href, ""))
-        if isinstance(href, Iri):
-            href = str(href)
-            href = urllib.parse.unquote(href)
-            if href.startswith("/+get/+"):
-                href = href.split("/")[-1]
+        data_href = elem.get(html.data_href)
+        use_data_href = data_href is not None
+        href = data_href if use_data_href else elem.get(xinclude.href, elem.get(xlink.href, ""))
+        href_is_iri = isinstance(href, Iri)
+        if href_is_iri:
+            href = urllib.parse.unquote(str(href))
+        if use_data_href:
+            # Expanded transclusions point xlink:href at a revisioned +get URL.
+            # data-href retains the source item name needed for editable Markdown.
+            href = urllib.parse.urlsplit(urllib.parse.unquote(str(href))).path.lstrip("/")
+        elif href_is_iri and href.startswith("/+get/+"):
+            href = href.split("/")[-1]
         href = href.split("wiki.local:")[-1]
         if len(elem) and isinstance(elem[0], str):
             # alt text for objects is enclosed within <object...>...</object>
-            alt = elem[0]
+            # Expanded audio/video objects contain browser fallback text rather
+            # than a useful Markdown label. Use the source filename instead.
+            alt = href.rsplit("/", 1)[-1] if use_data_href else elem[0]
         else:
             alt = elem.attrib.get(html.alt, "")
         title = elem.attrib.get(html.title_, "")
