@@ -889,7 +889,7 @@ def convert_item(item_name):
                 # expand DOM only when converting to dissimilar item types (moin and creole are similar)
                 dom = item.content._expand_document(dom, RenderContext())
 
-        conv_out = reg.get(type_moin_document, Type(form["new_type"].value))
+        conv_out = reg.get(type_moin_document, Type(form["new_type"].value), context=RenderContext())
         out = conv_out(dom)
     except Exception:
         logger.exception("Error converting item: %s", item.fqname)
