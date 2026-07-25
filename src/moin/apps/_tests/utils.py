@@ -46,6 +46,14 @@ def login(client: FlaskClient, username: str, password: str, next: str = "http:/
     assert client.get_cookie("session")
 
 
+def convert_item(
+    client: FlaskClient, item_name: str, data: dict[str, Any], expected_status_code: int = 302
+) -> TestResponse:
+    response = client.post(url_for("frontend.convert_item", item_name=item_name), data=data)
+    assert response.status_code == expected_status_code
+    return response
+
+
 def modify_item(
     client: FlaskClient, item_name: str, data: dict[str, Any], expected_status_code: int = 302
 ) -> TestResponse:
