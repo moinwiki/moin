@@ -17,7 +17,14 @@ from flask import url_for
 from werkzeug.datastructures import FileStorage
 
 from moin import current_app, flaskg, user
-from moin.apps._tests.utils import create_user, login, modify_item, make_modify_form_data, set_user_in_client_session
+from moin.apps._tests.utils import (
+    create_user,
+    login,
+    convert_item,
+    modify_item,
+    make_modify_form_data,
+    set_user_in_client_session,
+)
 from moin.apps.frontend import views
 
 if TYPE_CHECKING:
@@ -377,16 +384,23 @@ class TestFrontendNew:
     def test_modify_item_show_preview(self, client):
 
         create_user("björn", "Xiwejr622")
-
-        content = "New item content."
-
         login(client, "björn", "Xiwejr622")
-
         modify_item(
             client,
             "quokka",
-            make_modify_form_data("quokka", content=content, preview="Preview"),
+            make_modify_form_data("quokka", content="New item content.", preview="Preview"),
             expected_status_code=200,
+        )
+
+    def test_convert_item_to_markdown(self, client):
+        create_user("björn", "Xiwejr622")
+        login(client, "björn", "Xiwejr622")
+        modify_item(client, "test1", make_modify_form_data("test1", content="moin test."))
+        convert_item(
+            client,
+            "test1",
+            # form data for for template "convert.html"
+            {"new_type": "text/x-markdown;charset=utf-8", "comment": "test"},
         )
 
 
