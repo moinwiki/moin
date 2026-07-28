@@ -525,6 +525,9 @@ class Converter(ConverterBase):
         alt = ""
 
         if href:
+            if not isinstance(href, Iri):
+                href = Iri(href)
+
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
 

@@ -781,7 +781,7 @@ class Converter(ConverterBase):
         <footnoteref linkend='fn' /> --> <noteref xlink:href='#fn' />
         """
         attrib = self.get_standard_attributes(element)
-        attrib[xlink.href] = "#" + element.get("linkend")
+        attrib[xlink.href] = Iri(fragment=element.get("linkend"))
         return self.new(moin_page.noteref, attrib, children=[])
 
     def visit_docbook_informalequation(self, element, depth):

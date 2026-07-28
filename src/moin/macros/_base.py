@@ -10,13 +10,12 @@ import re
 
 from werkzeug.exceptions import abort
 
-from moin.constants.keys import CURRENT, CONTENTTYPE
-from moin.utils import iri
-from moin.items import Item
-from moin.utils.tree import html, moin_page, xlink
+from moin.constants.keys import CURRENT, CONTENTTYPE, TAGS
 from moin.i18n import _
+from moin.items import Item
+from moin.utils.iri import Iri
+from moin.utils.tree import html, moin_page, xlink
 from moin.storage.middleware.exceptions import AccessDenied
-from moin.constants.keys import TAGS
 
 
 def get_item_names(name="", startswith="", kind="files", skiptag="", tag="", regex=None):
@@ -218,7 +217,7 @@ class MacroPageLinkListBase(MacroBlockBase):
 
             fqname = pagename.fullname
             # This link can never reach pagelinks
-            url = str(iri.Iri(scheme="wiki", authority="", path="/" + fqname))
+            url = Iri(scheme="wiki", authority="", path=f"/{fqname}")
 
             if display == "FullPath":
                 linkname = fqname
@@ -275,7 +274,7 @@ class MacroMultiLinkListBase(MacroBlockBase):
             pos_namespace_cut = len(namespace) + 1
 
         item_list = moin_page.list(attrib={moin_page.item_label_generate: "unordered"})
-        initials_link = moin_page.a(attrib={xlink.href: "#idx-top"}, children=["top"])
+        initials_link = moin_page.a(attrib={xlink.href: Iri(fragment="idx-top")}, children=["top"])
         initials_linklist.extend([initials_link, moin_page.strong(children=[" | "])])
 
         for itemname in itemnames:
@@ -290,17 +289,20 @@ class MacroMultiLinkListBase(MacroBlockBase):
                     children=[
                         initial_letter,
                         moin_page.a(
-                            attrib={moin_page.class_: "moin-align-right", xlink.href: "#idx-top"}, children=["^"]
+                            attrib={moin_page.class_: "moin-align-right", xlink.href: Iri(fragment="idx-top")},
+                            children=["^"],
                         ),
                     ],
                 )
                 result_body.append(header_with_anchor)
-                initials_link = moin_page.a(attrib={xlink.href: "#idx-" + initial_letter}, children=[initial_letter])
+                initials_link = moin_page.a(
+                    attrib={xlink.href: Iri(fragment=f"idx-{initial_letter}")}, children=[initial_letter]
+                )
                 initials_linklist.extend([initials_link, moin_page.strong(children=[" | "])])
 
             # build and add itemname link
             fqname = itemname.fullname
-            url = str(iri.Iri(scheme="wiki", authority="", path="/" + fqname))
+            url = Iri(scheme="wiki", authority="", path=f"/{fqname}")
             linkname = fqname[pos_namespace_cut:]
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])
             item_body = moin_page.list_item_body(children=[pagelink])
@@ -314,7 +316,7 @@ class MacroMultiLinkListBase(MacroBlockBase):
             attrib={moin_page.id: "idx-top", moin_page.class_: "moin-align-left"},
             children=[_("Index of {what}").format(what=namespace_name)],
         )
-        initials_link_end = moin_page.a(attrib={xlink.href: "#idx-bottom"}, children=["bottom"])
+        initials_link_end = moin_page.a(attrib={xlink.href: Iri(fragment="idx-bottom")}, children=["bottom"])
         initials_linklist.append(initials_link_end)
         initials_links_span = moin_page.span(attrib={moin_page.class_: "moin-align-right"}, children=initials_linklist)
         result_body.insert(0, moin_page.p(children=[initials_begin, initials_links_span]))
@@ -332,7 +334,7 @@ class MacroNumberPageLinkListBase(MacroBlockBase):
         for num, pagename in num_pagenames:
             num_code = moin_page.code(children=[f"{num:6d} "])
             # This link can never reach pagelinks
-            url = str(iri.Iri(scheme="wiki", authority="", path="/" + pagename))
+            url = Iri(scheme="wiki", authority="", path=f"/{pagename}")
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[pagename])
             item_body = moin_page.list_item_body(children=[num_code, pagelink])
             item = moin_page.list_item(children=[item_body])

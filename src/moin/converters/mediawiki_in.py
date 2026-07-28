@@ -505,7 +505,7 @@ class Converter(ConverterMacro):
             if footnote_begin.endswith("/>"):  # empty tag -> additional reference to footnote with ID
                 attrib = {}
                 if "name" in arguments:
-                    attrib[xlink.href] = "#" + arguments["name"]
+                    attrib[xlink.href] = Iri(fragment=arguments["name"])
                 stack.top_append(moin_page.noteref(attrib=attrib))
             else:
                 attrib = {moin_page.note_class: "footnote"}

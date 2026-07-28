@@ -24,6 +24,7 @@ from markupsafe import escape
 from moin.converters.base import ConverterBase
 from moin.i18n import _
 from moin.log import getLogger
+from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import html, moin_page, xlink, xml
 
@@ -416,7 +417,7 @@ class Converter(ConverterBase, HtmlTags):
             uri = "".join([self.base_url, element.get(html.src)])
         else:
             uri = element.get(html.src)
-        attrib[xlink.href] = uri
+        attrib[xlink.href] = Iri(uri)
         return moin_page.object(attrib)
 
     def visit_xhtml_object(self, element):
@@ -428,7 +429,7 @@ class Converter(ConverterBase, HtmlTags):
             uri = "".join([self.base_url, element.get(html.data)])
         else:
             uri = element.get(html.data)
-        attrib[xlink.href] = uri
+        attrib[xlink.href] = Iri(uri)
         return moin_page.object(attrib)
 
     def visit_xhtml_audio(self, element):

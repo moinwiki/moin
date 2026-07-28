@@ -458,7 +458,7 @@ class Converter(ConverterMacro):
             attrib[xinclude.href] = target
             element = xinclude.include(attrib=attrib)
         else:
-            attrib[xlink.href] = object_url
+            attrib[xlink.href] = Iri(object_url)
             element = moin_page.object(
                 attrib=attrib, children=("Your Browser does not support HTML5 audio/video element.",)
             )
@@ -482,7 +482,7 @@ class Converter(ConverterMacro):
 
         if not escaped_url:
             # this url is NOT escaped
-            attrib = {xlink.href: url_target}
+            attrib = {xlink.href: Iri(url_target)}
             element = moin_page.a(attrib=attrib, children=(url_target,))
             stack.top_append(element)
         else:

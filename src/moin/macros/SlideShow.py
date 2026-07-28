@@ -7,6 +7,7 @@ Create a link to start a slide show for the current item.
 
 from flask import url_for
 from moin.i18n import _
+from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.macros._base import MacroInlineBase
 
@@ -17,5 +18,5 @@ class Macro(MacroInlineBase):
         # Visible label for the slide show link
         children = [moin_page.span(attrib=attrib), _(" Start Slide Show")]
         url = url_for("frontend.slide_item", item_name=page_url.path[1:])
-        result = moin_page.a(attrib={xlink.href: url, moin_page.class_: "moin-no-print"}, children=children)
+        result = moin_page.a(attrib={xlink.href: Iri(url), moin_page.class_: "moin-no-print"}, children=children)
         return result
