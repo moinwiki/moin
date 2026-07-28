@@ -24,8 +24,8 @@ from markupsafe import escape
 from moin.converters.base import ConverterBase
 from moin.i18n import _
 from moin.log import getLogger
-from moin.utils.tree import html, moin_page, xlink, xml
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import html, moin_page, xlink, xml
 
 from . import default_registry
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
@@ -409,29 +409,26 @@ class Converter(ConverterBase, HtmlTags):
         """
         <img src="URI" /> --> <object xlink:href="URI />
         """
-        key = xlink.href
         attrib = self.convert_attributes(element)
         # adding type_ attrib makes html_out create an image tag rather than an object tag
         attrib[moin_page.type_] = "image/"
         if self.base_url:
-            attrib[key] = "".join([self.base_url, element.get(html.src)])
+            uri = "".join([self.base_url, element.get(html.src)])
         else:
-            attrib[key] = element.get(html.src)
+            uri = element.get(html.src)
+        attrib[xlink.href] = uri
         return moin_page.object(attrib)
 
     def visit_xhtml_object(self, element):
         """
         <object data="href"></object> --> <object xlink="href" />
         """
-        key = xlink.href
         attrib = {}
         if self.base_url:
-            attrib[key] = "".join([self.base_url, element.get(html.data)])
+            uri = "".join([self.base_url, element.get(html.data)])
         else:
-            attrib[key] = element.get(html.data)
-
-        # Convert the href attribute into unicode
-        attrib[key] = str(attrib[key])
+            uri = element.get(html.data)
+        attrib[xlink.href] = uri
         return moin_page.object(attrib)
 
     def visit_xhtml_audio(self, element):

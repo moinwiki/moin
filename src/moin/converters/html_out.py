@@ -44,7 +44,7 @@ def convert_getlink_to_showlink(href: str) -> str:
     If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
     """
     if href.startswith("/"):
-        return re.sub(r"\+get/\+[0-9a-fA-F]+/", "", href)
+        href = re.sub(r"\+get/\+[0-9a-fA-F]+/", "", href)
     return href
 
 
@@ -522,11 +522,14 @@ class Converter(ConverterBase):
         # The return element
         new_elem = None
 
+        alt = ""
+
         if href:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
-        alt = convert_getlink_to_showlink(str(href))
-        alt = re.sub(r"^/", "", alt)
+
+            alt = convert_getlink_to_showlink(str(href))
+            alt = re.sub(r"^/", "", alt)
 
         if obj_type == "img":
             # Images must have alt attribute in html5, but if user did not specify then default to url
