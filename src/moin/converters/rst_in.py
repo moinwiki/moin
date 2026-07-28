@@ -416,6 +416,11 @@ class NodeVisitor:
         self.open_moin_page_node(moin_page.figure(), node)
 
     def depart_figure(self, node):
+        # HTML5 requires <figcaption> to be the first or last child of <figure>
+        figcaption = self.current_node.find(moin_page.figcaption)
+        if figcaption is not None:
+            self.current_node.remove(figcaption)
+            self.current_node.append(figcaption)
         self.close_moin_page_node()
 
     def visit_footer(self, node):
