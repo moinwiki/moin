@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 logger = getLogger(__name__)
 
 
-def convert_getlink_to_showlink(href):
+def convert_getlink_to_showlink(href: str) -> str:
     """
     If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
     """
@@ -127,9 +127,9 @@ class Attributes:
         if self.default_uri_input:
             return self.element.get(name)
 
-    def convert(self, whitelist: Container[str] | None = None) -> dict:
+    def convert(self, whitelist: Container[str] | None = None) -> dict[ET.QName, Iri | str]:
         new = {}
-        new_default: dict[ET.QName, str] = {}
+        new_default: dict[ET.QName, Iri | str] = {}
 
         for key, value in self.element.attrib.items():
             if whitelist and key.name not in whitelist:
