@@ -457,14 +457,20 @@ class Converter(ConverterBase):
             * a caption, figures have captions, images do not
             * optional text (may be several)
         """
-        ret = self.open_children(elem).replace("image", "figure")
-        ret = ret.split("\n")
+        figcaption = elem.find(moin_page.figcaption)
+        if figcaption is not None:
+            # reST expects the caption before the optional text
+            elem.remove(figcaption)
+            elem.insert(1, figcaption)
+
+        rst = self.open_children(elem).replace("image", "figure")
+        rst = rst.split("\n")
         lines = []
-        for r in ret:
-            if r.startswith(("   ", "..")) or not r:
-                lines.append(r)
+        for line in rst:
+            if line.startswith(("   ", "..")) or not line:
+                lines.append(line)
             else:
-                lines.append("   " + r)
+                lines.append("   " + line)
         return "\n".join(lines)
 
     def open_moinpage_figcaption(self, elem):
