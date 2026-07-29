@@ -31,8 +31,7 @@ import tarfile
 import zipfile
 import tempfile
 
-from io import BytesIO
-from array import array
+from io import BytesIO, StringIO
 from operator import attrgetter
 
 from flask import request, url_for, Response, abort
@@ -199,9 +198,9 @@ def content_registry_disable(contenttype_disabled: list[str]) -> None:
 
 
 def conv_serialize(doc: Element, namespaces: dict[str, str], method: str = "html") -> str:
-    out = array("u")
-    doc.write(out.fromunicode, namespaces=namespaces, method=method)
-    return out.tounicode()
+    out = StringIO()
+    doc.write(out.write, namespaces=namespaces, method=method)
+    return out.getvalue()
 
 
 class Content:

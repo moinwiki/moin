@@ -401,7 +401,7 @@ class Converter(ConverterBase):
         """
         <noteref xlink:href='#fn' /> --> <footnoteref linkend='fn' />
         """
-        href = element.get(xlink.href, None)
+        href = str(element.get(xlink.href, "#noteref with missing href"))
         return self.new(docbook.footnoteref, attrib={docbook.linkend: href.removeprefix("#")}, children=[])
 
     def visit_moinpage_object(self, element):

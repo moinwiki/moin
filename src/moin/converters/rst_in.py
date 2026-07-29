@@ -436,7 +436,7 @@ class NodeVisitor:
         # insert the referenced footnote here
         refid = node["refid"]
         if refid in self.footnote_ids:
-            attrib = {xlink.href: f"#{refid}"}
+            attrib = {xlink.href: Iri(fragment=refid)}
             self.open_moin_page_node(moin_page.noteref(attrib=attrib))
             self.close_moin_page_node()
             raise nodes.SkipNode
@@ -657,9 +657,8 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_problematic(self, node):
-        if node.hasattr("refid"):
-            refuri = f"#{node['refid']}"
-            attrib = {xlink.href: refuri, html.class_: "red"}
+        if refid := node.get("refid", None):
+            attrib = {xlink.href: Iri(fragment=refid), html.class_: "red"}
             self.open_moin_page_node(moin_page.a(attrib=attrib), node)
         else:
             self.open_moin_page_node(moin_page.span(attrib={html.class_: "red"}))
@@ -822,9 +821,9 @@ class NodeVisitor:
         self.current_node.append(f"System Message: {title}")
         if node.hasattr("line"):
             self.current_node.append(f" ({node['source']} line {node['line']}) ")
-        if node.get("backrefs", []):
-            backrefuri = f"#{node['backrefs'][0]}"
-            self.open_moin_page_node(moin_page.a(attrib={xlink.href: backrefuri}), node)
+        if backrefs := node.get("backrefs", []):
+            backref_uri = Iri(fragment=backrefs[0])
+            self.open_moin_page_node(moin_page.a(attrib={xlink.href: backref_uri}), node)
             self.current_node.append("backlink")
             self.close_moin_page_node()  # </a>
         self.close_moin_page_node()  # </p>

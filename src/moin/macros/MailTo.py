@@ -10,6 +10,7 @@ obfuscated string passed as the first macro argument.
 
 from moin import flaskg
 
+from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.macros._base import MacroInlineBase, fail_message
 from moin.mail.sendmail import decodeSpamSafeEmail
@@ -39,7 +40,7 @@ class Macro(MacroInlineBase):
         if flaskg.user.valid:
             # Decode address and generate a mailto: link
             email = decodeSpamSafeEmail(email)
-            result = moin_page.a(attrib={xlink.href: f"mailto:{email}"}, children=[text or email])
+            result = moin_page.a(attrib={xlink.href: Iri(f"mailto:{email}")}, children=[text or email])
         else:
             # Unknown user (or spambot): return the text as given in the macro args.
             if text:

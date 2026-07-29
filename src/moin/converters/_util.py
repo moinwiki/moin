@@ -8,7 +8,7 @@ MoinMoin - converter utilities.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, Iterator, Self
 
 from emeraldtree import ElementTree as ET
 
@@ -61,7 +61,7 @@ def decode_data(data: Any, contenttype: str | None = None) -> str:
     return data
 
 
-def normalize_split_text(text):
+def normalize_split_text(text: str) -> list[str]:
     """
     Normalize line endings and split text into a list of lines.
     """
@@ -70,7 +70,7 @@ def normalize_split_text(text):
     return lines
 
 
-class _Iter:
+class _Iter(Iterator):
     """
     Iterator with push-back support.
 
@@ -81,16 +81,16 @@ class _Iter:
     add an attribute used by JavaScript to auto-scroll the edit textarea.
     """
 
-    def __init__(self, parent, startno=0):
-        self.__finished = False
+    def __init__(self, parent: list[str], startno: int = 0) -> None:
+        self.__finished: bool = False
         self.__parent = iter(parent)
-        self.__prepend = []
+        self.__prepend: list[str] = []
         self.lineno = startno
 
-    def __iter__(self):
+    def __iter__(self) -> Self:
         return self
 
-    def __next__(self):
+    def __next__(self) -> str:
         if self.__finished:
             raise StopIteration
 
@@ -104,7 +104,7 @@ class _Iter:
             self.__finished = True
             raise
 
-    def push(self, item):
+    def push(self, item: str) -> None:
         self.__prepend.append(item)
         self.lineno -= 1
 

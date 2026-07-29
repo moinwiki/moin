@@ -253,6 +253,10 @@ class TestConverter(Base):
     data = [
         ('<page><body><object xlink:href="href"/></body></page>', '/div/object[@data="href"]'),
         (
+            '<page><body><object xlink:href="https://moinmoi.in"/></body></page>',
+            '/div/object[@data="https://moinmoi.in"]',
+        ),
+        (
             '<page><body><object xlink:href="href.png" page:type="image/png"/></body></page>',
             '/div/img[@src="href.png"]',
         ),

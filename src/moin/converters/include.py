@@ -224,8 +224,7 @@ class Converter(ConverterBase):
         # Descendants (body, div, p, include, page, etc.) are processed by recursing through DOM
 
         # stack is used to detect transclusion loops
-        page_href_new = elem.get(moin_page.page_href)
-        if page_href_new:
+        if page_href_new := elem.get(moin_page.page_href):
             page_href_new = Iri(page_href_new)
             if page_href_new != page_href:
                 page_href = page_href_new
@@ -240,8 +239,6 @@ class Converter(ConverterBase):
                 # we have already recursed several levels and found a transclusion: "{{SomePage}}" or <<Include(...)>>
                 # process the transclusion and add it to the DOM.  Subsequent recursions will traverse through
                 # the transclusion's elements.
-                href = elem.get(xinclude.href)
-                xpointer = elem.get(xinclude.xpointer)
 
                 xp_include_pages = None
                 xp_include_sort = None
@@ -250,7 +247,7 @@ class Converter(ConverterBase):
                 xp_include_heading = None
                 xp_include_level = None
 
-                if xpointer:
+                if xpointer := elem.get(xinclude.xpointer):
                     # we are working on an <<Include(abc)>> macro, not a {{transclusion}}
                     xp = XPointer(xpointer)
                     xp_include = None
@@ -291,7 +288,8 @@ class Converter(ConverterBase):
                                 xp_include_level = data
 
                 included_elements: list[ET.Element] = []
-                if href:
+                pages: list[tuple[Item, Iri]] = []
+                if href := elem.get(xinclude.href):
                     # We have a single page to transclude or include
                     href = Iri(href)
                     link = Iri(scheme="wiki", authority="")
@@ -301,24 +299,22 @@ class Converter(ConverterBase):
                         else:
                             path = href.path[1:]
                     elif href.scheme == "wiki.local":
-                        page = page_href
                         path = href.path
                         if path[0] == "":
                             # /subitem
-                            tmp = page.path[1:]
+                            tmp = page_href.path[1:]
                             tmp.extend(path[1:])
                             path = tmp
                         elif path[0] == "..":
                             # ../sisteritem
-                            path = page.path[1:] + path[1:]
+                            path = page_href.path[1:] + path[1:]
                     else:
                         raise ValueError("can't handle xinclude for schemes other than wiki or wiki.local")
 
                     link.path = path
 
                     if flaskg.user.may.read(str(path)):
-                        page = Item.create(str(path))
-                        pages = ((page, link),)
+                        pages = [(Item.create(str(path)), link)]
                     else:
                         # ACLs prevent user from viewing a transclusion - show message
                         message = moin_page.p(children=(_("Access Denied, transcluded content suppressed.")))
@@ -337,7 +333,7 @@ class Converter(ConverterBase):
                         pagelist = pagelist[xp_include_skipitems:]
                     if xp_include_items is not None:
                         pagelist = pagelist[xp_include_items + 1 :]
-                    pages = ((Item.create(p), Iri(scheme="wiki", authority="", path="/" + p)) for p in pagelist)
+                    pages = [(Item.create(p), Iri(scheme="wiki", authority="", path="/" + p)) for p in pagelist]
                     if not pagelist:
                         msg = _('Error: no items found matching "<<Include({0})>>"').format(xp_include_pages)
                         attrib = {html.class_: "moin-error"}
@@ -349,8 +345,8 @@ class Converter(ConverterBase):
                         p_href.path = IriPath("/" + "/".join(p_href.path))
                     if p_href in self.stack:
                         # we have a transclusion loop, create an error message showing list of pages forming loop
-                        loop = self.stack[self.stack.index(p_href) :]
-                        loop = [f"{ref.path[1:]}" for ref in loop if ref is not None] + [page.name]
+                        segment = self.stack[self.stack.index(p_href) :]
+                        loop = [f"{ref.path[1:]}" for ref in segment if ref is not None] + [page.name]
                         msg = "Error: Transclusion loop via: " + ", ".join(loop)
                         attrib = {html.class_: "moin-error"}
                         strong = ET.Element(moin_page.strong, attrib, (msg,))

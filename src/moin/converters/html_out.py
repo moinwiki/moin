@@ -39,12 +39,12 @@ if TYPE_CHECKING:
 logger = getLogger(__name__)
 
 
-def convert_getlink_to_showlink(href):
+def convert_getlink_to_showlink(href: str) -> str:
     """
     If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
     """
     if href.startswith("/"):
-        return re.sub(r"\+get/\+[0-9a-fA-F]+/", "", href)
+        href = re.sub(r"\+get/\+[0-9a-fA-F]+/", "", href)
     return href
 
 
@@ -127,9 +127,9 @@ class Attributes:
         if self.default_uri_input:
             return self.element.get(name)
 
-    def convert(self, whitelist: Container[str] | None = None) -> dict:
+    def convert(self, whitelist: Container[str] | None = None) -> dict[ET.QName, Iri | str]:
         new = {}
-        new_default: dict[ET.QName, str] = {}
+        new_default: dict[ET.QName, Iri | str] = {}
 
         for key, value in self.element.attrib.items():
             if whitelist and key.name not in whitelist:
@@ -522,11 +522,17 @@ class Converter(ConverterBase):
         # The return element
         new_elem = None
 
+        alt = ""
+
         if href:
+            if not isinstance(href, Iri):
+                href = Iri(href)
+
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
-        alt = convert_getlink_to_showlink(str(href))
-        alt = re.sub(r"^/", "", alt)
+
+            alt = convert_getlink_to_showlink(str(href))
+            alt = re.sub(r"^/", "", alt)
 
         if obj_type == "img":
             # Images must have alt attribute in html5, but if user did not specify then default to url
@@ -898,7 +904,7 @@ class ConverterPage(Converter):
     def visit_moinpage_noteref(self, elem):
         # additional references to a note (footnote, ...)
         top = self._special_stack[-1]  # SpecialPage instance `special_root`
-        href = elem.get(xlink.href, "#noteref with missing href")
+        href = str(elem.get(xlink.href, "#noteref with missing href"))
         label = top._footnote_labels.get(href[1:], href)
         child = html.a(attrib={html.href: href}, children=[label])
         return html.sup(attrib={html.role: "doc-noteref"}, children=[child])

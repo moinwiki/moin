@@ -40,7 +40,11 @@ from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter
 
 if TYPE_CHECKING:
+    from emeraldtree import ElementTree as ET
     from moin.converters._args import Arguments
+    from moin.converters._util import _Stack, _Iter
+    from moin.utils.tree import Name
+    from typing import Generator
     from typing_extensions import Self
 
 
@@ -74,7 +78,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def block_head_repl(self, _iter_content, stack, head, head_head, head_text):
+    def block_head_repl(self, _iter_content, stack: _Stack, head, head_head, head_text) -> None:
         stack.clear()
 
         attrib = {moin_page.outline_level: str(len(head_head))}
@@ -84,7 +88,7 @@ class Converter(ConverterMacro):
     # Matches an empty (only whitespaces) line.
     block_line = r"(?P<line> ^ \s* $ )"
 
-    def block_line_repl(self, _iter_content, stack, line):
+    def block_line_repl(self, _iter_content, stack: _Stack, line) -> None:
         stack.clear()
 
     # Matches the beginning of a list. All lines within a list are handled by
@@ -99,7 +103,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def block_list_repl(self, iter_content, stack, list):
+    def block_list_repl(self, iter_content, stack: _Stack, list) -> None:
         iter_content.push(list)
 
         for line in iter_content:
@@ -130,7 +134,7 @@ class Converter(ConverterMacro):
         $
     """
 
-    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=None):
+    def block_macro_repl(self, _iter_content, stack: _Stack, macro, macro_name, macro_args=None) -> None:
         """Handles macros using the placeholder syntax."""
         stack.clear()
         elem = self.macro(macro_name, macro_args, macro, True)
@@ -166,8 +170,10 @@ class Converter(ConverterMacro):
         ^ (?P<escape> ~ )? (?P<rest> }}} \s* ) $
     """
 
-    def block_nowiki_lines(self, iter_content):
-        """Unescaping generator for the lines in a nowiki block"""
+    def block_nowiki_lines(self, iter_content) -> Generator[str]:
+        """
+        Unescaping generator for the lines in a nowiki block
+        """
 
         for line in iter_content:
             match = self.nowiki_end_re.match(line)
@@ -177,8 +183,10 @@ class Converter(ConverterMacro):
                 line = match.group("rest")
             yield line
 
-    def block_nowiki_repl(self, iter_content, stack, nowiki):
-        """Handles a complete nowiki block"""
+    def block_nowiki_repl(self, iter_content: _Iter, stack: _Stack, nowiki) -> None:
+        """
+        Handles a complete nowiki block
+        """
 
         stack.clear()
 
@@ -223,7 +231,7 @@ class Converter(ConverterMacro):
 
     block_separator = r"(?P<separator> ^ \s* ---- \s* $ )"
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class="moin-hr3"):
+    def block_separator_repl(self, _iter_content, stack: _Stack, separator, hr_class="moin-hr3"):
         stack.clear()
         stack.top_append(moin_page.separator(attrib={moin_page.class_: hr_class}))
 
@@ -233,7 +241,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def block_table_repl(self, iter_content, stack, table):
+    def block_table_repl(self, iter_content, stack: _Stack, table):
         stack.clear()
 
         element = moin_page.table()
@@ -254,7 +262,7 @@ class Converter(ConverterMacro):
 
         stack.clear()
 
-    def block_table_row(self, content, stack):
+    def block_table_row(self, content, stack: _Stack) -> None:
         element = moin_page.table_row()
         stack.push(element)
 
@@ -265,7 +273,7 @@ class Converter(ConverterMacro):
 
     block_text = r"(?P<text> .+ )"
 
-    def block_text_repl(self, _iter_content, stack, text):
+    def block_text_repl(self, _iter_content, stack: _Stack, text) -> None:
         if stack.top_check("table", "table-body", "list"):
             stack.clear()
 
@@ -281,7 +289,7 @@ class Converter(ConverterMacro):
     # there must be no : in front of the // avoids italic rendering in urls
     # with unknown protocols
 
-    def inline_emph_repl(self, stack, emph):
+    def inline_emph_repl(self, stack, emph) -> None:
         if not stack.top_check("emphasis"):
             stack.push(moin_page.emphasis())
         else:
@@ -289,7 +297,7 @@ class Converter(ConverterMacro):
 
     inline_insert = r"(?P<insert> (?<!:)__ )"
 
-    def inline_insert_repl(self, stack, insert):
+    def inline_insert_repl(self, stack: _Stack, insert) -> None:
         # creole docs suggest u, but ins is consistent with moinwiki and html5 ins/u docs
         if not stack.top_check("ins"):
             stack.push(moin_page.ins())
@@ -298,7 +306,7 @@ class Converter(ConverterMacro):
 
     inline_strong = r"(?P<strong> \*\* )"
 
-    def inline_strong_repl(self, stack, strong):
+    def inline_strong_repl(self, stack: _Stack, strong) -> None:
         if not stack.top_check("strong"):
             stack.push(moin_page.strong())
         else:
@@ -306,13 +314,13 @@ class Converter(ConverterMacro):
 
     inline_linebreak = r"(?P<linebreak> \\\\ )"
 
-    def inline_linebreak_repl(self, stack, linebreak):
+    def inline_linebreak_repl(self, stack: _Stack, linebreak) -> None:
         element = moin_page.line_break()
         stack.top_append(element)
 
     inline_escape = r"(?P<escape> ~ (?P<escaped_char>\S) )"
 
-    def inline_escape_repl(self, stack, escape, escaped_char):
+    def inline_escape_repl(self, stack: _Stack, escape, escaped_char) -> None:
         stack.top_append(escaped_char)
 
     inline_link = r"""
@@ -341,14 +349,14 @@ class Converter(ConverterMacro):
 
     def inline_link_repl(
         self,
-        stack,
+        stack: _Stack,
         link,
         link_url=None,
         link_item=None,
         link_text=None,
         link_interwiki_site=None,
         link_interwiki_item=None,
-    ):
+    ) -> None:
         """Handle all kinds of links."""
         if link_interwiki_site:
             if is_known_wiki(link_interwiki_site):
@@ -400,7 +408,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_macro_repl(self, stack, macro, macro_name, macro_args=None):
+    def inline_macro_repl(self, stack: _Stack, macro, macro_name, macro_args=None) -> None:
         """Handles macros using the placeholder syntax."""
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
@@ -413,7 +421,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_nowiki_repl(self, stack, nowiki, nowiki_text):
+    def inline_nowiki_repl(self, stack: _Stack, nowiki, nowiki_text) -> None:
         stack.top_append(moin_page.literal(children=(nowiki_text,)))
 
     inline_object = r"""
@@ -435,7 +443,9 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_object_repl(self, stack, object, object_page=None, object_url=None, object_text=None):
+    def inline_object_repl(
+        self, stack: _Stack, object, object_page: str | None = None, object_url: str | None = None, object_text=None
+    ) -> None:
         """Handles objects included in the page."""
         attrib = {}
         if object_text:
@@ -448,7 +458,7 @@ class Converter(ConverterMacro):
             attrib[xinclude.href] = target
             element = xinclude.include(attrib=attrib)
         else:
-            attrib[xlink.href] = object_url
+            attrib[xlink.href] = Iri(object_url)
             element = moin_page.object(
                 attrib=attrib, children=("Your Browser does not support HTML5 audio/video element.",)
             )
@@ -467,12 +477,12 @@ class Converter(ConverterMacro):
         )
     """ % dict(uri_schemes="|".join(URI_SCHEMES))
 
-    def inline_url_repl(self, stack, url, url_target, escaped_url=None):
+    def inline_url_repl(self, stack: _Stack, url: str, url_target: str, escaped_url: str | None = None) -> None:
         """Handle raw urls in text."""
 
         if not escaped_url:
             # this url is NOT escaped
-            attrib = {xlink.href: url_target}
+            attrib = {xlink.href: Iri(url_target)}
             element = moin_page.a(attrib=attrib, children=(url_target,))
             stack.top_append(element)
         else:
@@ -499,7 +509,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def list_end_repl(self, _iter_content, stack, end):
+    def list_end_repl(self, _iter_content: _Iter, stack: _Stack, end: str) -> None:
         stack.clear()
 
     # Matches a single list item
@@ -514,7 +524,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def list_item_repl(self, _iter_content, stack, item, item_head, item_text):
+    def list_item_repl(self, _iter_content: _Iter, stack: _Stack, item: str, item_head: str, item_text: str) -> None:
         list_level = len(item_head)
         list_type = item_head[-1]
 
@@ -565,13 +575,13 @@ class Converter(ConverterMacro):
         )
     """
 
-    def tablerow_cell_repl(self, stack, cell, cell_text, cell_head=None):
+    def tablerow_cell_repl(self, stack: _Stack, cell: str, cell_text: str, cell_head: str | None = None) -> None:
         """
         Creole has feature that allows table headings to be either row based or column based.
 
         We avoid use of HTML5 row based thead tag and apply CSS styling to any cell marked as a heading.
         """
-        attrib = {}
+        attrib: dict[Name, str] = {}
         if cell_head:
             attrib[moin_page.class_] = "moin-thead"
         element = moin_page.table_cell(attrib=attrib)
@@ -621,14 +631,14 @@ class Converter(ConverterMacro):
     # Table row
     tablerow_re = re.compile(tablerow, re.X | re.U)
 
-    def _apply(self, match, prefix, *args):
+    def _apply(self, match, prefix, *args) -> None:
         """
         Call the _repl method for the last matched group with the given prefix.
         """
         data = {k: v for k, v in match.groupdict().items() if v is not None}
         getattr(self, f"{prefix}_{match.lastgroup}_repl")(*args, **data)
 
-    def parse_block(self, iter_content, arguments):
+    def parse_block(self, iter_content: _Iter, arguments: Arguments | None) -> ET.Element:
         attrib = {}
         if arguments:
             for key, value in arguments.keyword.items():
@@ -646,9 +656,10 @@ class Converter(ConverterMacro):
 
         return body
 
-    def parse_inline(self, text, stack, inline_re=inline_re):
-        """Recognize inline elements within the given text"""
-
+    def parse_inline(self, text: str, stack: _Stack, inline_re=inline_re) -> None:
+        """
+        Recognize inline elements within the given text
+        """
         pos = 0
         for match in inline_re.finditer(text):
             # Handle leading text
@@ -660,7 +671,7 @@ class Converter(ConverterMacro):
         # Handle trailing text
         stack.top_append_ifnotempty(text[pos:])
 
-    def macro_text(self, text):
+    def macro_text(self, text) -> ET.Element:
         """
         Return an ET tree branch representing the markup present in the input text. Used for FootNotes, etc.
         """
