@@ -515,6 +515,21 @@ text""",
         self.do(input, output)
 
     data = [
+        (
+            ".. image:: png\n   :alt: alternate text png\n   :align: center\n   :height: 100\n   :width: 200\n",
+            '<xinclude:include html:alt="alternate text png" html:class="center" html:height="100" html:width="200" xinclude:href="wiki.local:png" />',
+        ),
+        (
+            ".. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n\n   Moin Logo\n\n   This logo replaced the MoinMoin Man\n   logo long ago.\n",
+            '<figure><xinclude:include html:alt="alternate text png" html:height="100" html:width="200" xinclude:href="wiki.local:png" /><p>This logo replaced the MoinMoin Man\nlogo long ago.</p><figcaption>Moin Logo</figcaption></figure>',
+        ),
+    ]
+
+    @pytest.mark.parametrize("input,output", data)
+    def test_object(self, input, output):
+        self.do(input, output)
+
+    data = [
         # admonitions (hint, info, warning, error, ...)
         (
             '.. note::\n   :name: note-id\n\n   An admonition of type "note"',
