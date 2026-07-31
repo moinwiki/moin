@@ -1,5 +1,5 @@
 import { __vitePreload } from "../_virtual/_vite/preload-helper.js";
-import { n, o } from "../node_modules/browser-fs-access/dist/index.modern.js";
+import { fileOpen as n, fileSave as o } from "../node_modules/browser-fs-access/dist/index.modern.js";
 //#region src/editor/extensions/ext-opensave/ext-opensave.js
 /**
 * @file ext-opensave.js
@@ -201,7 +201,8 @@ var ext_opensave_default = {
 				}
 				svgCanvas.setSvgOption("apply", true);
 				const svg = "<?xml version=\"1.0\"?>\n" + svgCanvas.svgCanvasToString();
-				const blob = b64toBlob(svgCanvas.encode64(svg), "image/svg+xml");
+				const b64Data = svgCanvas.encode64(svg);
+				const blob = b64toBlob(b64Data, "image/svg+xml");
 				try {
 					if (type === "save" && handle !== null) handle = await o(blob, {
 						fileName: "untitled.svg",

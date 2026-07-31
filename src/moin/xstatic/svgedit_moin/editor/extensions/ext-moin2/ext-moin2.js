@@ -6,7 +6,7 @@
 // The content of this file is in parts derived from:
 // <https://github.com/SVG-Edit/svgedit/blob/master/src/editor/extensions/ext-opensave/ext-opensave.js>
 
-import { __vitePreload } from "../_virtual/preload-helper.js";
+import { __vitePreload } from "../_virtual/_vite/preload-helper.js";
 
 const name = 'moin2';
 

@@ -131,7 +131,6 @@ var ext_polystar_default = {
 				showPanel(false, "polygon");
 				$id("starNumPoints").addEventListener("change", (event) => {
 					setAttr("point", event.target.value);
-					const orient = "point";
 					const point = event.target.value;
 					let i = selElems.length;
 					while (i--) {
@@ -157,15 +156,13 @@ var ext_polystar_default = {
 								let polyPoints = "";
 								for (let s = 0; point >= s; s++) {
 									let angle = 2 * Math.PI * (s / point);
-									if (orient === "point") angle -= Math.PI / 2;
-									else if (orient === "edge") angle = angle + Math.PI / point - Math.PI / 2;
+									angle -= Math.PI / 2;
 									let x = circumradius * Math.cos(angle) + cx;
 									let y = circumradius * Math.sin(angle) + cy;
 									polyPoints += x + "," + y + " ";
 									if (!isNaN(inradius)) {
 										angle = 2 * Math.PI * (s / point) + Math.PI / point;
-										if (orient === "point") angle -= Math.PI / 2;
-										else if (orient === "edge") angle = angle + Math.PI / point - Math.PI / 2;
+										angle -= Math.PI / 2;
 										angle += radialshift;
 										x = inradius * Math.cos(angle) + cx;
 										y = inradius * Math.sin(angle) + cy;

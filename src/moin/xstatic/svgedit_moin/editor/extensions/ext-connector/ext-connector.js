@@ -141,7 +141,9 @@ var ext_connector_default = {
 		* @returns {void}
 		*/
 		const updatePoints = (line, conn, bb, altBB, pre, altPre) => {
-			const pt = getBBintersect(altBB.x + altBB.width / 2, altBB.y + altBB.height / 2, bb, getOffset(pre, line));
+			const srcX = altBB.x + altBB.width / 2;
+			const srcY = altBB.y + altBB.height / 2;
+			const pt = getBBintersect(srcX, srcY, bb, getOffset(pre, line));
 			setPoint(line, conn.is_start ? 0 : "end", pt.x, pt.y, true);
 			const pt2 = getBBintersect(pt.x, pt.y, altBB, getOffset(altPre, line));
 			setPoint(line, conn.is_start ? "end" : 0, pt2.x, pt2.y, true);
@@ -156,7 +158,8 @@ var ext_connector_default = {
 				bb.x = startX + diffX;
 				bb.y = startY + diffY;
 				dataStorage.put(line, `${pre}_bb`, bb);
-				updatePoints(line, conn, bb, dataStorage.get(line, `${altPre}_bb`), pre, altPre);
+				const altBB = dataStorage.get(line, `${altPre}_bb`);
+				updatePoints(line, conn, bb, altBB, pre, altPre);
 			}
 		};
 		const findConnectors = (elems = []) => {
@@ -216,7 +219,9 @@ var ext_connector_default = {
 				dataStorage.put(line, `${pre}_bb`, bb);
 				const altPre = isStart ? "end" : "start";
 				const bb2 = dataStorage.get(line, `${altPre}_bb`);
-				const pt = getBBintersect(bb2?.x + bb2?.width / 2, bb2?.y + bb2?.height / 2, bb, getOffset(pre, line));
+				const srcX = bb2?.x + bb2?.width / 2;
+				const srcY = bb2?.y + bb2?.height / 2;
+				const pt = getBBintersect(srcX, srcY, bb, getOffset(pre, line));
 				setPoint(line, isStart ? 0 : "end", pt.x, pt.y, true);
 				const pt2 = getBBintersect(pt.x, pt.y, dataStorage.get(line, `${altPre}_bb`), getOffset(altPre, line));
 				setPoint(line, isStart ? "end" : 0, pt2.x, pt2.y, true);
@@ -414,8 +419,10 @@ var ext_connector_default = {
 						elem = pline;
 					}
 				}
-				if (elem?.id.startsWith("conn_")) updateConnectors([getElement(dataStorage.get(elem, "c_start"))]);
-				else updateConnectors(svgCanvas.getSelectedElements());
+				if (elem?.id.startsWith("conn_")) {
+					const start = getElement(dataStorage.get(elem, "c_start"));
+					updateConnectors([start]);
+				} else updateConnectors(svgCanvas.getSelectedElements());
 			},
 			IDsUpdated(input) {
 				const remove = [];

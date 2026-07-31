@@ -1,4 +1,4 @@
-import { dragmove } from "./dragmove/dragmove.js";
+import dragmove from "./dragmove/dragmove.js";
 //#region src/editor/extensions/ext-overview_window/ext-overview_window.js
 /**
 * @file ext-overview_window.js
@@ -12,9 +12,11 @@ var ext_overview_window_default = {
 	name: "overview_window",
 	init({ _$ }) {
 		const svgEditor = this;
-		const { $id, $click } = svgEditor.svgCanvas;
+		const { svgCanvas, svgeditPolicy } = svgEditor;
+		const { $id, $click } = svgCanvas;
 		const overviewWindowGlobals = {};
-		$id("sidepanel_content").insertAdjacentHTML("beforeend", "<div id=\"overview_window_content_pane\" style=\"width:100%; word-wrap:break-word;  display:inline-block; margin-top:20px;\"><div id=\"overview_window_content\" style=\"position:relative; padding-left:15px; top:0px;\"><div style=\"background-color:#A0A0A0; display:inline-block; overflow:visible;\"><svg id=\"overviewMiniView\" width=\"132\" height=\"100\" x=\"0\" y=\"0\" viewBox=\"0 0 4800 3600\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><use x=\"0\" y=\"0\" href=\"#svgroot\"> </use></svg><div id=\"overview_window_view_box\" style=\"min-width:50px; min-height:50px; position:absolute; top:30px; left:30px; z-index:5; background-color:rgba(255,0,102,0.3);\"></div></div></div></div>");
+		const propsWindowHtml = svgeditPolicy.createHTML("<div id=\"overview_window_content_pane\"><div id=\"overview_window_content\"><div><svg id=\"overviewMiniView\" width=\"132\" height=\"100\" x=\"0\" y=\"0\" viewBox=\"0 0 4800 3600\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><use x=\"0\" y=\"0\" href=\"#svgroot\"> </use></svg><div id=\"overview_window_view_box\"></div></div></div></div>");
+		$id("sidepanel_content").insertAdjacentHTML("beforeend", propsWindowHtml);
 		const updateViewBox = () => {
 			const { workarea } = svgEditor;
 			const portHeight = parseFloat(getComputedStyle(workarea, null).height.replace("px", ""));
@@ -42,10 +44,9 @@ var ext_overview_window_default = {
 		const updateViewDimensions = function() {
 			const viewWidth = parseFloat(getComputedStyle($id("svgroot"), null).width.replace("px", ""));
 			const viewHeight = parseFloat(getComputedStyle($id("svgroot"), null).height.replace("px", ""));
-			const viewX = 640;
 			const svgWidthOld = parseFloat(getComputedStyle($id("overviewMiniView"), null).width.replace("px", ""));
 			const svgHeightNew = viewHeight / viewWidth * svgWidthOld;
-			$id("overviewMiniView").setAttribute("viewBox", viewX + " 480 " + viewWidth + " " + viewHeight);
+			$id("overviewMiniView").setAttribute("viewBox", "640 480 " + viewWidth + " " + viewHeight);
 			$id("overviewMiniView").setAttribute("height", svgHeightNew);
 			updateViewBox();
 		};

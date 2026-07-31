@@ -50,6 +50,6 @@ var dragmove = function(target, handler, parent, onStart, onEnd, onDrag) {
 	});
 };
 //#endregion
-export { dragmove };
+export { dragmove as default, dragmove };
 
 //# sourceMappingURL=dragmove.js.map

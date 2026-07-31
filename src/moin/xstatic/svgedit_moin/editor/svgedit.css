@@ -629,3 +629,34 @@ ul li.current {
 .dropdown li.tool_button {
   width: 24px;
 }
+
+/* ext-overview_window styling */
+
+#overview_window_content_pane {
+  width: 100%;
+  word-wrap: break-word;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+#overview_window_content {
+  position: relative;
+  padding-left: 15px;
+  top: 0px;
+
+  & > div {
+    background-color: #A0A0A0;
+    display: inline-block;
+    overflow: visible;
+  }
+}
+
+#overview_window_view_box {
+  min-width: 50px;
+  min-height: 50px;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  z-index: 5;
+  background-color: rgba(255, 0, 102, 0.3);
+}
