@@ -1,0 +1,20 @@
+[Unit]
+Description=MoinMoin container
+
+[Container]
+ContainerName=moin
+Image=moin
+Pull=never
+PublishPort=8002:8000
+Retry=1
+RetryDelay=10s
+User=1000
+Group=1000
+UserNS=keep-id:uid=1000,gid=1000
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

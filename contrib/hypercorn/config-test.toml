@@ -1,0 +1,8 @@
+accesslog = "-"
+bind = "127.0.0.1:5000"
+debug = false
+errorlog = "-"
+loglevel = "INFO"
+use_reloader = false
+worker_class = "asyncio"
+workers = 0

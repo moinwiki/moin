@@ -1,0 +1,6 @@
+bind = "0.0.0.0:8000"
+debug = false
+loglevel = "WARNING"
+use_reloader = false
+worker_class = "asyncio"
+workers = 0
