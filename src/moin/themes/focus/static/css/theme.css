@@ -127,10 +127,11 @@ header a, header a:link, header a:visited,
     column-gap: 20pt; }
 
 #moin-content { min-height: 80vh; margin-top: 36pt; }
-#moin-content-data { max-width: 1100pt; margin-right: 18pt; }
+#moin-content-data { margin-right: 18pt; overflow-x: auto; }
 #moin-content-data .moin-permalink { display: none; position: relative;}
 #moin-content-data .moin-permalink::after { display: inline-block;
     color: var(--accent); position: absolute; bottom: -4pt; }
+#moin-content-data :not(table, div) { max-width: 1100px; }
 
 .moin-flash { border-radius: 2pt; margin-right: 18pt; }
 .moin-flash-info { background-color: #e4f2ff; border: 1pt solid var(--accent-light); }
