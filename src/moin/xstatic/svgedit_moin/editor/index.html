@@ -9,14 +9,22 @@
   <!-- No-op until loaded dynamically (could make configurable) -->
   <link rel="icon" href="images/logo.svg">
   <!-- STYLESHEETS (others loaded dynamically) -->
-  <style id="styleoverrides" media="screen"></style>
+  <style id="styleoverrides" media="screen" nonce="TESTNONCE">
+    body { margin:0 }
+    #container { width:100%; height:100vh }
+  </style>
   <link href="./svgedit.css" rel="stylesheet" media="all">
   <!-- Lacking browser support -->
   <script type="module" src="./browser-not-supported.js"></script>
   <title>SVG-edit</title>
+  <!-- Set Nonce values used by Elix and SvgEdit -->
+  <script type="module" nonce="TESTNONCE">
+    window.elixNonce = "TESTNONCE"
+    window.svgeditNonce = "TESTNONCE"
+  </script>
 </head>
 
-<body style="margin:0">
+<body>
   <!-- svgedit container can be positionned anywhere in the DOM
        but it must have a width and a height -->
   <!--
@@ -24,7 +32,7 @@
   <div id="container" style="width:100%;height:550px"></div>
   <h1>End</h1>
   -->
-  <div id="container" style="width:100%;height:100vh"></div>
+  <div id="container"></div>
 </body>
 <!-- If you do not wish to add extensions by URL, you can add calls
       within the following file to svgEditor.setConfig -->

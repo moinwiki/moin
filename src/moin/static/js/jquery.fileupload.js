@@ -27,6 +27,12 @@
 })(function ($) {
   'use strict';
 
+  function noFileInputSupport() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    return input.disabled;
+  }
+
   // Detect file input support, based on
   // https://viljamis.com/2012/file-upload-support-on-mobile/
   $.support.fileInput = !(
@@ -38,7 +44,7 @@
         '|(Kindle/(1\\.0|2\\.[05]|3\\.0))'
     ).test(window.navigator.userAgent) ||
     // Feature detection for all other devices:
-    $('<input type="file"/>').prop('disabled')
+    noFileInputSupport()
   );
 
   // The FileReader API is not actually used, but works as feature detection,
@@ -597,7 +603,9 @@
     },
 
     _initIframeSettings: function (options) {
-      var targetHost = $('<a></a>').prop('href', options.url).prop('host');
+      const anchor = document.createElement('a');
+      anchor.href = options.url;
+      var targetHost = anchor.host;
       // Setting the dataType to iframe enables the iframe transport:
       options.dataType = 'iframe ' + (options.dataType || '');
       // The iframe transport accepts a serialized array as form data:
@@ -1169,7 +1177,7 @@
         restoreFocus = input.is(document.activeElement);
       // Add a reference for the new cloned file input to the data argument:
       data.fileInputClone = inputClone;
-      $('<form></form>').append(inputClone)[0].reset();
+      inputClone.value = inputClone.defaultValue;
       // Detaching allows to insert the fileInput on another form
       // without losing the file input value:
       input.after(inputClone).detach();

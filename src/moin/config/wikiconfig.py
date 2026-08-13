@@ -144,7 +144,7 @@ class Config(DefaultConfig):
     user_email_verification = False
 
     #
-    # Content Security Policy
+    # Content Security Policy Profiles
     #
     csp_profiles = {
         "default": {
@@ -159,10 +159,17 @@ class Config(DefaultConfig):
                 "base-uri": "'none'",
                 "form-action": "@self",
                 "frame-ancestors": "@self",
-                "frame-src": ["@self", "http://www.xkcd.com", "http://www.xkcd.com", "https://moinmo.in"],
-                "object-src": ["@self", "http://www.xkcd.com", "http://static.moinmo.in", "https://moinmo.in"],
-                # "trusted-types": "elix moin svgedit",
-                # "require-trusted-types-for": "'script'",
+                "frame-src": ["@self", "http://www.xkcd.com", "https://moinmo.in", "https://docs.python.org"],
+                "img-src": ["@self", "data:"],
+                "object-src": [
+                    "@self",
+                    "http://www.xkcd.com",
+                    "http://static.moinmo.in",
+                    "https://moinmo.in",
+                    "https://docs.python.org",
+                ],
+                "trusted-types": "elix moin svgedit tablesorter",
+                "require-trusted-types-for": "'script'",
                 "report-uri": "/+cspreport/log",
             },
         }

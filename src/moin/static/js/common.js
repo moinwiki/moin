@@ -8,6 +8,14 @@ function MoinMoin() {
     "use strict";
 }
 
+const moinPolicy = window?.trustedTypes?.createPolicy(
+    'moin',
+    {
+        createHTML: (value) => value
+    }
+)
+window.moinPolicy = moinPolicy;
+
 // Utility function to add a message to moin flash area. Message can be removed by clicking on it.
 MoinMoin.prototype.MOINFLASHINFO = "moin-flash moin-flash-info";
 MoinMoin.prototype.MOINFLASHWARNING = "moin-flash moin-flash-warning";
@@ -199,11 +207,11 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
         // if this is the transcluded item page, do not wrap (avoid creating useless overlay links to same page)
         if (location.pathname !== elem.getAttribute('data-href')) {
             if (elem.tagName === 'DIV') {
-                wrapper = $('<div class="moin-item-wrapper"></div>');
+                wrapper = $(moinPolicy.createHTML('<div class="moin-item-wrapper"></div>'));
             } else {
-                wrapper = $('<span class="moin-item-wrapper"></span>');
+                wrapper = $(moinPolicy.createHTML('<span class="moin-item-wrapper"></span>'));
             }
-            overlayUL = $('<a class="moin-item-overlay-ul"></a>');
+            overlayUL = $(moinPolicy.createHTML('<a class="moin-item-overlay-ul"></a>'));
             $(overlayUL).attr('href', elem.getAttribute('data-href'));
             overlayLR = $(overlayUL).clone(true);
             $(overlayUL).append(rightArrow);
@@ -386,7 +394,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
 
     // create a UL that will be displayed as row of tabs or column of buttons
     var tabs = $('#moin-usersettings'),
-        titles = $('<ul class="moin-tab-titles">'),
+        titles = $(moinPolicy.createHTML('<ul class="moin-tab-titles">')),
         hashTag = window.location.hash,
         tab;
     // for each form on page, create a corresponding LI
@@ -438,7 +446,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             // the values differ
             if (!$('.moin-change-indicator', title).length) {
                 // only add a change indicator if there none
-                title.append($('<span class="moin-change-indicator">*</span>'));
+                title.append($(moinPolicy.createHTML('<span class="moin-change-indicator">*</span>')));
             }
         }
     }
@@ -753,7 +761,7 @@ MoinMoin.prototype.diffScroll = function () {
             $(".moin-diff-highlight").removeClass("moin-diff-highlight");
             // if target has been found, highlight element and scroll to it
             $(target).addClass("moin-diff-highlight");
-            $(target).prepend($('<span id="' + next + '"></span>'));
+            $(target).prepend($(moinPolicy.createHTML('<span id="' + next + '"></span>')));
             window.location.href = url + "#" + next;
             return false;
         });

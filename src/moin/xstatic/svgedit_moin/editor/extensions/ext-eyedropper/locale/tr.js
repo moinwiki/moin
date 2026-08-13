@@ -1,13 +1,12 @@
-const tr = {
-  name: "renkseçici",
-  buttons: [
-    {
-      title: "Renk Seçim Aracı",
-      key: "I"
-    }
-  ]
+//#region src/editor/extensions/ext-eyedropper/locale/tr.js
+var tr_default = {
+	name: "renkseçici",
+	buttons: [{
+		title: "Renk Seçim Aracı",
+		key: "I"
+	}]
 };
-export {
-  tr as default
-};
+//#endregion
+export { tr_default as default };
+
 //# sourceMappingURL=tr.js.map

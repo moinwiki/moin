@@ -1,13 +1,12 @@
-const en = {
-  name: "eyedropper",
-  buttons: [
-    {
-      title: "Eye Dropper Tool",
-      key: "I"
-    }
-  ]
+//#region src/editor/extensions/ext-eyedropper/locale/en.js
+var en_default = {
+	name: "eyedropper",
+	buttons: [{
+		title: "Eye Dropper Tool",
+		key: "I"
+	}]
 };
-export {
-  en as default
-};
+//#endregion
+export { en_default as default };
+
 //# sourceMappingURL=en.js.map
