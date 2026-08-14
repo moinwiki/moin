@@ -19,9 +19,20 @@ from whoosh.query import Term, And, Every
 
 from moin import current_app, flaskg, log
 from moin.i18n import _
-from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
+from moin.constants.keys import (
+    NAME,
+    NAME_EXACT,
+    NAMESPACE,
+    COMMENT,
+    MTIME,
+    REVID,
+    ALL_REVS,
+    PARENTID,
+    LATEST_REVS,
+    ITEMID,
+)
 from moin.themes import get_editor_info, render_template
-from moin.items import Item
+from moin.items import Item, NonExistentContent
 from moin.utils.crypto import cache_key
 from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
@@ -85,7 +96,19 @@ def atom(item_name: str) -> Response:
             previous_revid = rev.meta.get(PARENTID)
             this_rev = rev
             try:
-                hl_item = Item.create(name, rev_id=this_revid)
+                # Look up by itemid, not by this revision's historical name:
+                # if the item has since been renamed, a name-based lookup
+                # for an old revision fails (the current item no longer
+                # answers to that name) and Item.create silently falls back
+                # to a DummyItem/NonExistentContent. itemid is stable across
+                # renames.
+                hl_item = Item.create(f"@itemid/{rev.meta[ITEMID]}", rev_id=this_revid)
+                if isinstance(hl_item.content, NonExistentContent):
+                    # Genuinely gone (not just renamed) -- the index still
+                    # has this revision, but storage does not. Raise a clear
+                    # error rather than let an AttributeError from deep in
+                    # the call below stand in for the real cause.
+                    raise LookupError(f"revision {this_revid} of {name!r} is indexed but missing from storage")
                 if previous_revid is not None:
                     # HTML diff for subsequent revisions
                     previous_rev = item[previous_revid]
