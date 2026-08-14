@@ -9,7 +9,7 @@ MoinMoin - Tests for moin.items
 import pytest
 
 from moin._tests import become_trusted, update_item
-from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry, _build_contenttype_query
+from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry, _build_contenttype_query, wiki_matches
 from moin.utils.names import CompositeName
 from moin.constants.keys import (
     ITEMTYPE,
@@ -554,6 +554,21 @@ def test_build_contenttype_query_skips_unknown_group():
     # should not raise, even though None and an unknown name are not real groups
     query = _build_contenttype_query([None, "not-a-real-group"])
     assert query is not None
+
+
+def test_wiki_matches_empty_item_name():
+    """
+    An empty item_name (e.g. a namespace root with no item name of its
+    own, such as /+similar_names/help-common) used to crash with
+    IndexError: list index out of range -- wiki_matches() fell back to
+    words[0]/words[-1] without checking the word list from splitting the
+    (empty) item name was actually non-empty.
+    """
+    fq_name = CompositeName("", NAME_EXACT, "")
+    start, end, matches = wiki_matches(fq_name, set())
+    assert start == ""
+    assert end == ""
+    assert matches == {}
 
 
 coverage_modules = ["moin.items"]
