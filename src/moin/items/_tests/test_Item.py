@@ -9,7 +9,7 @@ MoinMoin - Tests for moin.items
 import pytest
 
 from moin._tests import become_trusted, update_item
-from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
+from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry, _build_contenttype_query
 from moin.utils.names import CompositeName
 from moin.constants.keys import (
     ITEMTYPE,
@@ -542,6 +542,18 @@ class TestItem:
         item.delete("Moving item to trash.")
         item = Item.create(new_name)
         assert item.meta[TRASH]
+
+
+def test_build_contenttype_query_skips_unknown_group():
+    """
+    A selected_groups value that isn't a real content_registry key (e.g. None,
+    from a form submission with no contenttype selected) must be skipped
+    rather than raising a KeyError. Regression test for a crash reachable via
+    a plain POST to /+index/<item>/ with a blank/invalid contenttype field.
+    """
+    # should not raise, even though None and an unknown name are not real groups
+    query = _build_contenttype_query([None, "not-a-real-group"])
+    assert query is not None
 
 
 coverage_modules = ["moin.items"]
