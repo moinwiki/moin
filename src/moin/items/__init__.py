@@ -647,6 +647,9 @@ def _build_contenttype_query(groups: list[str]) -> Query:
     """
     queries = []
     for g in groups:
+        # skip invalid group values (e.g. None) instead of raising KeyError
+        if g not in content_registry.groups:
+            continue
         for e in content_registry.groups[g]:
             ct_unicode = str(e.content_type)
             queries.append(Term(CONTENTTYPE, ct_unicode))
