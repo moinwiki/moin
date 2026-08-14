@@ -473,3 +473,28 @@ class TestUsersettings:
         )
         form = FormClass.from_flat(request_form)
         return form
+
+
+def test_cspreport_get_does_not_crash(client):
+    """
+    Regression test: before_wiki()/teardown_wiki() skip environment setup
+    for /+cspreport/log unconditionally, since only the dedicated
+    cspreport() view is meant to handle that path. Previously that view
+    was registered POST-only, so the path itself wasn't special to
+    Werkzeug's routing -- a GET fell through to the generic show_item
+    catch-all instead, which does need flaskg.storage, and crashed with
+    AttributeError: storage since setup was skipped for it too.
+    cspreport() is now registered for all methods and rejects non-POST
+    itself with 405, so it -- not show_item -- is always the one handling
+    this path, regardless of method.
+    """
+    rv = client.get(url_for("frontend.cspreport"))
+    assert rv.status_code == 405
+
+    # the real (POST) CSP report path must still work
+    rv = client.post(
+        url_for("frontend.cspreport"),
+        data=json.dumps({"csp-report": {"document-uri": "http://localhost/"}}),
+        content_type="application/csp-report",
+    )
+    assert rv.status_code == 204
