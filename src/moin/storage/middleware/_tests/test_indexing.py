@@ -163,6 +163,57 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         assert len(revids) == 1  # we still have the revision, cleared
         assert revid in revids  # it is still same revid
 
+    def test_overwrite_revision_waits_out_concurrent_writer(self, monkeypatch):
+        """
+        Regression test: overwrite=True forces the synchronous (non-async)
+        writer path in index_revision(), and that path used to call
+        ix.writer() with no timeout -- so a writer already holding the
+        index's write lock (e.g. a concurrent login/edit on the same
+        site updating a user profile) made this raise an immediate,
+        unhandled whoosh.index.LockError instead of just waiting
+        briefly, as seen in production via an ERROR email triggered by a
+        real login.
+        """
+        import threading
+        import time
+
+        from moin.storage.middleware import indexing as indexing_module
+
+        monkeypatch.setattr(indexing_module, "INDEXER_TIMEOUT", 2.0)
+
+        item_name = "foo"
+        data = b"bar"
+        newdata = b"baz"
+        item = self.get_item(item_name)
+        meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, COMMENT: "spam"}
+        rev = item.store_revision(meta, BytesIO(data), return_rev=True)
+        revid = rev.revid
+
+        # hold the write lock ourselves, simulating a concurrent writer
+        lock = self.imw.ix[ALL_REVS].lock("WRITELOCK")
+        assert lock.acquire()
+
+        def release_soon():
+            time.sleep(0.3)
+            lock.release()
+
+        releaser = threading.Thread(target=release_soon)
+        releaser.start()
+        try:
+            start = time.monotonic()
+            meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, COMMENT: "no spam", REVID: revid}
+            item.store_revision(meta, BytesIO(newdata), overwrite=True)
+            elapsed = time.monotonic() - start
+        finally:
+            releaser.join()
+
+        # must have actually waited for the lock, not failed instantly
+        assert elapsed >= 0.25
+        item = self.get_item(item_name)
+        rev = item.get_revision(revid)
+        assert rev.meta[COMMENT] == "no spam"
+        assert rev.data.read() == newdata
+
     def test_destroy_revision(self):
         item, item_name, revid0, revid1, revid2 = self.store_three_revisions()
         query = Term(NAME_EXACT, item_name)
