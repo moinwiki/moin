@@ -4,7 +4,7 @@
 import pytest
 
 from moin import current_app, flaskg
-from moin.themes import ThemeSupport
+from moin.themes import ThemeSupport, get_current_theme
 from moin.user import User
 
 from moin._tests import wikiconfig
@@ -38,3 +38,28 @@ def test_get_user_home(_test_user, theme_supp):
     assert display_name == "lemmy"
     assert title == "lemmy @ Self"
     assert not exists
+
+
+@pytest.mark.usefixtures("_req_ctx")
+def test_get_current_theme_recovers_from_incomplete_registry():
+    """
+    Regression test: if flask_theme's ThemeManager.themes is incomplete
+    (e.g. a race in its own refresh() during mass worker recycling on an
+    httpd reload -- one thread's `self._themes = {}` can orphan another
+    thread's in-progress population), get_current_theme()'s existing
+    fallback retried the *same* lookup for the already-default theme and
+    crashed identically with an unhandled KeyError. It should instead
+    force a registry refresh and retry once more before giving up.
+    """
+    default_theme = current_app.cfg.theme_default
+    assert default_theme in current_app.theme_manager.themes
+
+    # simulate the race: the registry looks populated, but is missing
+    # every entry, including the default theme's
+    current_app.theme_manager._themes = {}
+
+    theme = get_current_theme()
+    assert theme.identifier == default_theme
+    # the forced refresh should have restored the full registry, not
+    # just papered over the one lookup
+    assert default_theme in current_app.theme_manager.themes

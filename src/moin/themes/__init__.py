@@ -61,7 +61,19 @@ def get_current_theme():
             f"Theme {theme_name!r} was not found; using default of {current_app.cfg.theme_default!r} instead."
         )
         theme_name = current_app.cfg.theme_default
-        return get_theme(theme_name)
+        try:
+            return get_theme(theme_name)
+        except KeyError:
+            # theme_name is already the configured default, so this isn't
+            # a bad per-user theme choice -- the registry itself is
+            # incomplete, e.g. flask_theme's ThemeManager.refresh() isn't
+            # thread-safe against concurrent callers (one thread's
+            # `self._themes = {}` can orphan another thread's in-progress
+            # population), which mass worker recycling on an httpd reload
+            # can trigger. Force a rescan and retry once before giving up.
+            logging.warning(f"Default theme {theme_name!r} also not found; forcing a theme registry refresh.")
+            current_app.theme_manager.refresh()
+            return get_theme(theme_name)
 
 
 def render_template(template, **context) -> str:
