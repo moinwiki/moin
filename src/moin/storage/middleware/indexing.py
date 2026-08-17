@@ -644,7 +644,9 @@ class IndexingMiddleware:
         if async_:
             writer = AsyncWriter(self.ix[ALL_REVS])
         else:
-            writer = self.ix[ALL_REVS].writer()
+            # default timeout=0 fails instantly on a concurrent writer
+            # instead of waiting it out (e.g. two near-simultaneous logins).
+            writer = self.ix[ALL_REVS].writer(timeout=INDEXER_TIMEOUT)
         with writer as writer:
             writer.update_document(**doc)  # update, because store_revision() may give us an existing revid
         if force_latest:
@@ -663,7 +665,7 @@ class IndexingMiddleware:
                 if async_:
                     writer = AsyncWriter(self.ix[idx_name])
                 else:
-                    writer = self.ix[idx_name].writer()
+                    writer = self.ix[idx_name].writer(timeout=INDEXER_TIMEOUT)
                 with writer as writer:
                     writer.update_document(**doc)
         # the index changed: drop cached searchers so later reads see fresh data
@@ -673,7 +675,7 @@ class IndexingMiddleware:
         if async_:
             writer = AsyncWriter(self.ix[idx_name])
         else:
-            writer = self.ix[idx_name].writer()
+            writer = self.ix[idx_name].writer(timeout=INDEXER_TIMEOUT)
         with writer as writer:
             # find out itemid related to the revid we want to remove:
             with self.ix[idx_name].searcher() as searcher:
@@ -708,7 +710,9 @@ class IndexingMiddleware:
         if async_:
             writer = AsyncWriter(self.ix[ALL_REVS])
         else:
-            writer = self.ix[ALL_REVS].writer()
+            # default timeout=0 fails instantly on a concurrent writer
+            # instead of waiting it out (e.g. two near-simultaneous logins).
+            writer = self.ix[ALL_REVS].writer(timeout=INDEXER_TIMEOUT)
         with writer as writer:
             writer.delete_by_term(REVID, revid)
         for idx_name in [LATEST_REVS, LATEST_META]:
