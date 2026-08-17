@@ -68,6 +68,9 @@ MIMETYPES_MORE = {
     ".targz": "application/x-gtar",
 }
 
+# Extensions we deliberately assigned a MIME type to above; Pygments must not override these.
+_MIMETYPES_EXPLICIT = frozenset(MIMETYPES_MORE)
+
 # Add all MIME type patterns from Pygments
 for name, short, patterns, mime in pygments.lexers.get_all_lexers():
     for pattern in patterns:
@@ -75,7 +78,12 @@ for name, short, patterns, mime in pygments.lexers.get_all_lexers():
             if pattern in ("*.txt",):
                 # Some Pygments lexers claim *.txt for types other than text/plain; skip those.
                 continue
-            MIMETYPES_MORE[pattern[1:]] = mime[0]
+            ext = pattern[1:]
+            if ext in _MIMETYPES_EXPLICIT:
+                # Don't let a Pygments lexer override a MIME type we picked deliberately,
+                # e.g. pygments/pygments#3093 made the XML lexer claim *.svg.
+                continue
+            MIMETYPES_MORE[ext] = mime[0]
 
 for ext, mimetype in sorted(MIMETYPES_MORE.items()):
     mimetypes.add_type(mimetype, ext, True)
