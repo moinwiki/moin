@@ -306,11 +306,21 @@ def lookup():
     return Response(html, status)
 
 
-@frontend.route("/+cspreport/log", methods=["POST"])
+@frontend.route("/+cspreport/log", methods=["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"])
 def cspreport():
     """
     content security policy report receiver
+
+    Registered for all methods, not just POST, so this exact rule -- not
+    the generic show_item catch-all -- is the one Werkzeug matches for
+    /+cspreport/log regardless of method. before_wiki()/teardown_wiki()
+    skip environment setup for this path unconditionally, so falling
+    through to show_item for a non-POST request would crash on missing
+    setup (e.g. flaskg.storage) instead of cleanly rejecting the request.
     """
+    if request.method != "POST":
+        abort(405)
+
     if request.content_type not in ["application/csp-report"]:
         abort(400, f"Invalid content type '{request.content_type}' for CSP report.")
 
