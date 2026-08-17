@@ -49,6 +49,8 @@ from flask_theme import get_themes_list
 from flatland import Form
 from flatland.validation import Validator
 
+from jinja2 import TemplateNotFound
+
 from markupsafe import Markup
 
 import pytz
@@ -3315,7 +3317,12 @@ def template(filename):
 
     used for (but not limited to) translation of javascript / css / html
     """
-    content = render_template(filename)
+    try:
+        content = render_template(filename)
+    except TemplateNotFound:
+        # filename is unvalidated caller input, e.g. a browser probing
+        # for a nonexistent *.js.map.
+        abort(404)
     ct, enc = mimetypes.guess_type(filename)
     response = make_response((content, 200, {"content-type": ct or "text/plain;charset=utf-8"}))
     if ct in ["application/javascript", "text/css", "text/html"]:
@@ -3358,4 +3365,8 @@ def bad_request(error):
 
 @frontend.errorhandler(404)
 def page_not_found(e):
+    if getattr(flaskg, "no_variable_injection", False):
+        # is_static_content() paths skip cfg setup, so the themed
+        # 404.html would itself crash rendering.
+        return e.get_response()
     return render_template("404.html", path=request.path, item_name=e.description), 404

@@ -498,3 +498,34 @@ def test_cspreport_get_does_not_crash(client):
         content_type="application/csp-report",
     )
     assert rv.status_code == 204
+
+
+def test_template_missing_file_returns_404(client):
+    """
+    Regression test: /+template/<filename> passed its filename straight
+    to render_template() with no handling for a template that doesn't
+    exist, crashing with an unhandled TemplateNotFound -- e.g. a browser
+    speculatively probing for a nonexistent *.js.map next to a served
+    .js file. Fixing that exposed a second bug: is_static_content() paths
+    (which /+template/ is one of) skip the before_wiki() setup that
+    injects cfg into the template context, so page_not_found()'s themed
+    404.html crashed too (UndefinedError: 'cfg' is undefined) trying to
+    render the error page itself.
+    """
+    rv = client.get(url_for("frontend.template", filename="does-not-exist.js.map"))
+    assert rv.status_code == 404
+
+    # a real template must still work
+    rv = client.get(url_for("frontend.template", filename="dictionary.js"))
+    assert rv.status_code == 200
+
+
+def test_normal_item_404_is_still_themed(client):
+    """
+    page_not_found()'s plain-response fallback is scoped to
+    is_static_content() paths only -- an ordinary missing item must still
+    get the normal themed 404 page.
+    """
+    rv = client.get(url_for("frontend.show_item", item_name="DoesNotExist"))
+    assert rv.status_code == 404
+    assert b"moin-header" in rv.data
