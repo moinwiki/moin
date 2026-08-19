@@ -557,3 +557,34 @@ def test_show_old_revision_of_renamed_item(client):
     rv = client.get(url_for("frontend.show_item", item_name=new_name, rev=old_revid))
     assert rv.status_code == 200
     assert b"MoinMoin feels unhappy" not in rv.data
+
+
+def test_diff_includes_revisions_from_before_a_rename(client):
+    """
+    Regression test: diff() built its ALL_REVS query from fqname.query, i.e.
+    the item's current name. A rename does not retroactively update older
+    revisions' indexed NAME, so a name-based query -- the normal case, since
+    that's what every link to this page uses -- only matched revisions from
+    after the rename. rev_ids then never contained a pre-rename revid, so
+    requesting a diff against one silently fell through to a different,
+    unrequested revision instead of erroring or honoring the request.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    old_name = "OldDiffName"
+    new_name = "NewDiffName"
+
+    modify_item(client, old_name, make_modify_form_data(old_name, content="AAA\n", comment="first revision"))
+    old_revid = flaskg.storage[old_name][CURRENT].meta[REVID]
+
+    modify_item(client, old_name, make_modify_form_data(old_name, content="BBB\n", comment="before rename"))
+    client.post(url_for("frontend.rename_item", item_name=old_name), data={"target": new_name, "comment": "renamed"})
+    modify_item(client, new_name, make_modify_form_data(new_name, content="CCC\n", comment="after rename"))
+    new_revid = flaskg.storage[new_name][CURRENT].meta[REVID]
+
+    rv = client.get(url_for("frontend.diff", item_name=new_name, rev1=old_revid, rev2=new_revid))
+    assert rv.status_code == 200
+    # the pre-rename revision actually requested must be the one diffed
+    # against, not a different one silently substituted for it
+    assert b"AAA" in rv.data
