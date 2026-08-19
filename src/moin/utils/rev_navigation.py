@@ -6,12 +6,12 @@ Helper to get prior, current, and next revisions and modification times.
 """
 
 from flask import request
-from whoosh.query import Term, And
+from whoosh.query import Term
 from moin import flaskg
-from moin.constants.keys import ALL_REVS, CURRENT, MTIME
+from moin.constants.keys import ALL_REVS, CURRENT, ITEMID, MTIME
 
 
-def prior_next_revs(revid, fqname):
+def prior_next_revs(revid, itemid):
     """
     If viewing a revision other than the current revision,
     return prior, current, and next revision IDs and timestamps; otherwise return None * 6.
@@ -22,8 +22,11 @@ def prior_next_revs(revid, fqname):
         # maintenance scripts, such as dump-html, have request.view_args == {}
         show_revision = False
     if show_revision:
-        terms = [Term(term, value) for term, value in fqname.query.items()]
-        query = And(terms)
+        # Query by itemid, not by the item's current name: a name-based query only
+        # matches revisions indexed under that name, but renaming an item does not
+        # retroactively update older revisions' indexed NAME. itemid is stable
+        # across renames, so this finds the full history either way.
+        query = Term(ITEMID, itemid)
         revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
         rev_ids = []
         mtimes = []

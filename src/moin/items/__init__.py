@@ -1533,7 +1533,7 @@ class Default(Contentful):
         Display an item. If this is not the current revision, page content will be
         prefaced with links to the next-rev and prior-rev.
         """
-        rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.fqname)
+        rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.meta[ITEMID])
         # create extra meta tags for use by web crawlers
         html_head_meta = {}
         if TAGS in self.meta and self.meta[TAGS]:

@@ -17,6 +17,7 @@ from flask import url_for
 from werkzeug.datastructures import FileStorage
 
 from moin import current_app, flaskg, user
+from moin.constants.keys import CURRENT, REVID
 from moin.apps._tests.utils import (
     create_user,
     login,
@@ -529,3 +530,30 @@ def test_normal_item_404_is_still_themed(client):
     rv = client.get(url_for("frontend.show_item", item_name="DoesNotExist"))
     assert rv.status_code == 404
     assert b"moin-header" in rv.data
+
+
+def test_show_old_revision_of_renamed_item(client):
+    """
+    Regression test: prior_next_revs() used to query the search index by the
+    item's current name to build the revision list it then searches for the
+    requested revid. A rename does not retroactively update older revisions'
+    indexed NAME, so a name-based query only finds revisions from after the
+    rename -- and viewing an older revision by its revid (e.g. from a link
+    or bookmark made before the rename) raised an unhandled
+    ValueError: '<revid>' is not in list.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    old_name = "OldRevNavName"
+    new_name = "NewRevNavName"
+
+    modify_item(client, old_name, make_modify_form_data(old_name, comment="first revision"))
+    old_revid = flaskg.storage[old_name][CURRENT].meta[REVID]
+
+    modify_item(client, old_name, make_modify_form_data(old_name, comment="before rename"))
+    client.post(url_for("frontend.rename_item", item_name=old_name), data={"target": new_name, "comment": "renamed"})
+
+    rv = client.get(url_for("frontend.show_item", item_name=new_name, rev=old_revid))
+    assert rv.status_code == 200
+    assert b"MoinMoin feels unhappy" not in rv.data

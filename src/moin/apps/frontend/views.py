@@ -761,7 +761,7 @@ def indexable(item_name, rev):
 
 @presenter("highlight")
 def highlight_item(item):
-    rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args["rev"], item.fqname)
+    rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args["rev"], item.meta[ITEMID])
     item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
     item_may = get_item_permissions(item.fqname, item)
     try:
@@ -785,7 +785,7 @@ def highlight_item(item):
 
 @presenter("meta", add_trail=True)
 def show_item_meta(item):
-    rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args["rev"], item.fqname)
+    rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args["rev"], item.meta[ITEMID])
     item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
     item_may = get_item_permissions(item.fqname, item)
     ret = render_template(
