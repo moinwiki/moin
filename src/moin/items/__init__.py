@@ -204,14 +204,21 @@ def wiki_matches(fq_name, fq_names, start_re=None, end_re=None):
     match = start_re.match(item_name)
     if match:
         start = match.group(1)
-    else:
+    elif words:
         start = words[0]
+    else:
+        # item_name is empty or whitespace-only (e.g. a namespace root with
+        # no item name, such as /+similar_names/help-common) -- nothing to
+        # extract a first word from.
+        start = item_name
 
     match = end_re.search(item_name)
     if match:
         end = match.group(1)
-    else:
+    elif words:
         end = words[-1]
+    else:
+        end = item_name
 
     matches = {}
     subitem = item_name + "/"
