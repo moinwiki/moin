@@ -1930,7 +1930,11 @@ def history(item_name):
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = current_app.cfg.results_per_page
-    terms = [Term(term, value) for term, value in fqname.query.items()]
+    # Query by itemid, not by the item's current name: a name-based query only
+    # matches revisions indexed under that name, but renaming an item does not
+    # retroactively update older revisions' indexed NAME. itemid is stable
+    # across renames, so this finds the full history either way.
+    terms = [Term(ITEMID, item.meta[ITEMID])]
     if bookmark_time:
         terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
