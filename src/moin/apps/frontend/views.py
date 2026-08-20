@@ -2953,10 +2953,9 @@ def diff(item_name):
     Item History or from a Diff display then the two revision IDs selected by the user
     will be processed.
 
-    If the call is made from Item History, then there may be a difference in the
-    display based upon whether the call is made based upon Item Name or
-    Item ID. Calls based on Item IDs will include revisions prior to an item
-    rename and revisions created by Item delete.
+    The revision list used for this diff is looked up by itemid, so it
+    includes history from before an item rename regardless of whether
+    item_name in the URL is a name or an "@itemid/..." reference.
     """
     fqname = split_fqname(item_name)
     try:
@@ -2969,8 +2968,11 @@ def diff(item_name):
     offset = request.values.get("offset", 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get("bookmark", 0))
-    terms = [Term(term, value) for term, value in fqname.query.items()]
-    query = And(terms)
+    # Query by itemid, not by the item's current name: a name-based query only
+    # matches revisions indexed under that name, but renaming an item does not
+    # retroactively update older revisions' indexed NAME. itemid is stable
+    # across renames, so this finds the full history either way.
+    query = Term(ITEMID, item.meta[ITEMID])
     metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None)
     close_file(item.rev.data)
     item = flaskg.storage.get_item(**fqname.query)
