@@ -588,3 +588,31 @@ def test_diff_includes_revisions_from_before_a_rename(client):
     # the pre-rename revision actually requested must be the one diffed
     # against, not a different one silently substituted for it
     assert b"AAA" in rv.data
+
+
+def test_history_shows_revisions_from_before_a_rename(client):
+    """
+    Regression test: history() built its ALL_REVS query from fqname.query,
+    i.e. the item's current name. A rename does not retroactively update
+    older revisions' indexed NAME, so a name-based query -- the normal case,
+    since that's what every link to this page uses -- only matched
+    revisions from after the rename. The Item History page silently
+    dropped everything before it instead of erroring, so nothing signalled
+    the history was incomplete.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    old_name = "OldHistoryName"
+    new_name = "NewHistoryName"
+
+    modify_item(client, old_name, make_modify_form_data(old_name, comment="first revision"))
+    modify_item(client, old_name, make_modify_form_data(old_name, comment="before rename"))
+    client.post(url_for("frontend.rename_item", item_name=old_name), data={"target": new_name, "comment": "renamed"})
+    modify_item(client, new_name, make_modify_form_data(new_name, comment="after rename"))
+
+    rv = client.get(url_for("frontend.history", item_name=new_name))
+    assert rv.status_code == 200
+    assert b"first revision" in rv.data
+    assert b"before rename" in rv.data
+    assert b"after rename" in rv.data
