@@ -62,3 +62,41 @@ def template_exists(templatename):
 
 
 flask_theme.template_exists = template_exists
+
+# Fix ThemeManager.refresh() not being safe against concurrent readers.
+# The original implementation resets self._themes to an empty dict, then
+# repopulates it in place with no lock:
+#
+#     def refresh(self):
+#         self._themes = {}
+#         for theme in starchain(...):
+#             self.themes[theme.identifier] = theme
+#
+# A reader on another thread (e.g. another thread of the same freshly
+# started/recycled mod_wsgi process, taking its first request around the
+# same moment) can observe self._themes as a real, non-None, but still
+# empty dict during that window, and raise a spurious KeyError for a
+# theme -- including the configured default -- that is about to exist a
+# moment later. This is what's behind "KeyError: 'topside'" (or whatever
+# theme_default is set to) crashes.
+#
+# Build the new mapping in a local variable instead, and only publish it
+# via a single attribute assignment once it's complete. A single
+# attribute assignment is atomic (it's just a pointer write under the
+# GIL), so a concurrent reader only ever sees the old, complete mapping
+# or the new, complete mapping -- never a partial one. Concurrent callers
+# of refresh() may end up redundantly building the same mapping more than
+# once, but that's harmless wasted work, not a correctness issue: the
+# old mapping is reclaimed by normal reference counting once its last
+# reader is done with it, no coordination required.
+
+
+def theme_manager_refresh(self):
+    themes = {}
+    for theme in flask_theme.starchain(loader(self.app) for loader in self.loaders):
+        if self.valid_app_id(theme.application):
+            themes[theme.identifier] = theme
+    self._themes = themes
+
+
+flask_theme.ThemeManager.refresh = theme_manager_refresh
