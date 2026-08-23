@@ -1,5 +1,6 @@
 # Copyright: 2008 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
+# Copyright: 2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -329,10 +330,37 @@ class Converter(ConverterBase):
         return self.new_copy(html.em, elem)
 
     def visit_moinpage_figure(self, elem):
-        return self.new_copy(html.figure, elem)
+        attrib = self.make_attributes(elem).convert()
+
+        figure_children = []
+        caption_children = []
+
+        for child in elem:
+            if not isinstance(child, ET.Element):
+                figure_children.append(child)
+                continue
+
+            result = self.visit(child)
+            if result is None:
+                continue
+            elif not isinstance(result, (list, tuple)):
+                result = (result,)
+
+            if child.tag == moin_page.figcaption:
+                # Add title and optional legend in a final <figcaption> to produce valid HTML5
+                caption_children.append(html.p({}, [html.strong({}, result)]))
+            elif child.tag == moin_page.p:
+                caption_children.extend(result)
+            else:
+                figure_children.extend(result)
+
+        if caption_children:
+            figure_children.append(html.figcaption({}, caption_children))
+
+        return html.figure(attrib, figure_children)
 
     def visit_moinpage_figcaption(self, elem):
-        return self.new_copy(html.figcaption, elem)
+        return self.do_children(elem)
 
     def visit_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)

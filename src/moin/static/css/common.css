@@ -679,7 +679,6 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 /* figures */
 
 figure { text-align: center; }
-figcaption { font-weight: bold; }
 
 /* moin-flash */
 .moin-flash { background-color: var(--bg-message); border: 1px solid var(--alert);
