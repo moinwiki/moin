@@ -13,7 +13,7 @@ from calendar import timegm
 
 from moin import current_app
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.forms import DateTimeUNIX, Email, JSON, Names
+from moin.forms import DateTimeUNIX, Email, JSON, Names, Natural
 from moin.utils.names import CompositeName
 from moin.items import Item
 from moin._tests import become_trusted
@@ -124,3 +124,36 @@ def test_email():
     # a boring, ordinary valid address
     valid = Email("someone@example.org")
     assert valid.validate() is True
+
+
+def test_natural():
+    """
+    Regression test: Natural = AnyInteger.validated_by(ValueAtLeast(0))
+    silently dropped AnyInteger's inherited Converted() validator --
+    .validated_by() replaces a class's validator list rather than
+    appending to it. Without Converted() to catch it first, a
+    missing/blank field reached ValueAtLeast(0) with element.value of
+    None, and "None >= 0" raised an unhandled TypeError instead of
+    failing validation normally. Converted() now runs first, so
+    ValueAtLeast(0) never even runs on a missing/blank value.
+    """
+    # missing entirely, e.g. the field wasn't in the POST body at all
+    missing = Natural(None)
+    assert missing.value is None
+    assert missing.validate() is False
+
+    # present but blank, e.g. an empty input box
+    blank = Natural("")
+    assert blank.validate() is False
+
+    # present, but not a valid non-negative integer -- Converted() passes
+    # this through to ValueAtLeast(0), which must still reject it,
+    # without crashing
+    negative = Natural(-1)
+    assert negative.validate() is False
+
+    # zero and positive integers are both fine
+    zero = Natural(0)
+    assert zero.validate() is True
+    positive = Natural(5)
+    assert positive.validate() is True

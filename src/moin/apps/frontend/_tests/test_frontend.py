@@ -665,3 +665,54 @@ def test_register_with_valid_data_succeeds(client):
         },
     )
     assert rv.status_code == 302
+
+
+def test_usersettings_ui_without_natural_fields_does_not_crash(client):
+    """
+    Regression test: Natural = AnyInteger.validated_by(ValueAtLeast(0))
+    silently dropped AnyInteger's inherited Converted() validator, since
+    .validated_by() replaces a validator list rather than appending to
+    it. edit_rows and results_per_page (both Natural, neither optional)
+    had no guard left to catch a missing value before ValueAtLeast(0),
+    so a POST that omits them reached it with a None value and crashed
+    with an unhandled TypeError instead of failing validation normally.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    rv = client.post(url_for("frontend.usersettings"), data={"part": "ui", "css_file": ""})
+    assert rv.status_code == 200
+    assert b"is not correct" in rv.data
+
+
+def test_usersettings_ui_with_negative_value_is_rejected_not_crashed(client):
+    """
+    A present but invalid (negative) value must still be rejected
+    normally -- only the missing/blank case was ever at risk of
+    crashing.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    rv = client.post(
+        url_for("frontend.usersettings"),
+        data={"part": "ui", "css_file": "", "edit_rows": "-1", "results_per_page": "50"},
+    )
+    assert rv.status_code == 200
+    assert b"must be greater than or equal to 0" in rv.data
+
+
+def test_usersettings_ui_with_valid_data_succeeds(client):
+    """
+    A normal, fully valid settings update must still work.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    rv = client.post(
+        url_for("frontend.usersettings"),
+        data={"part": "ui", "css_file": "", "edit_rows": "10", "results_per_page": "25"},
+    )
+    assert rv.status_code == 200
+    assert b'name="edit_rows" value="10"' in rv.data
+    assert b'name="results_per_page" value="25"' in rv.data
