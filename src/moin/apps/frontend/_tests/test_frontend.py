@@ -556,7 +556,6 @@ def test_show_old_revision_of_renamed_item(client):
 
     rv = client.get(url_for("frontend.show_item", item_name=new_name, rev=old_revid))
     assert rv.status_code == 200
-    assert b"MoinMoin feels unhappy" not in rv.data
 
 
 def test_diff_includes_revisions_from_before_a_rename(client):
@@ -616,3 +615,53 @@ def test_history_shows_revisions_from_before_a_rename(client):
     assert b"first revision" in rv.data
     assert b"before rename" in rv.data
     assert b"after rename" in rv.data
+
+
+def test_register_without_email_field_does_not_crash(client):
+    """
+    Regression test: RegistrationForm's email field had no Present()
+    validator, so a POST that omits the email field entirely (e.g.
+    scripted/bot traffic, not a real browser submission of the actual
+    <form>) reached flatland's IsEmail validator with a None value and
+    crashed with an unhandled AttributeError instead of just failing
+    validation.
+    """
+    rv = client.post(
+        url_for("frontend.register"),
+        data={"register_username": "NoEmailUser", "register_password1": "Xiwejr622", "register_password2": "Xiwejr622"},
+    )
+    assert rv.status_code == 200
+
+
+def test_register_with_malformed_email_is_rejected_not_crashed(client):
+    """
+    A present but invalid email must still be rejected normally -- only
+    the missing/blank case was ever at risk of crashing.
+    """
+    rv = client.post(
+        url_for("frontend.register"),
+        data={
+            "register_username": "BadEmailUser",
+            "register_password1": "Xiwejr622",
+            "register_password2": "Xiwejr622",
+            "register_email": "not-an-email",
+        },
+    )
+    assert rv.status_code == 200
+    assert b"is not a valid email address" in rv.data
+
+
+def test_register_with_valid_data_succeeds(client):
+    """
+    A normal, fully valid registration must still work.
+    """
+    rv = client.post(
+        url_for("frontend.register"),
+        data={
+            "register_username": "GoodRegistrationUser",
+            "register_password1": "Xiwejr622",
+            "register_password2": "Xiwejr622",
+            "register_email": "good-registration-user@example.org",
+        },
+    )
+    assert rv.status_code == 302

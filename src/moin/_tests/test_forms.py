@@ -13,7 +13,7 @@ from calendar import timegm
 
 from moin import current_app
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.forms import DateTimeUNIX, JSON, Names
+from moin.forms import DateTimeUNIX, Email, JSON, Names
 from moin.utils.names import CompositeName
 from moin.items import Item
 from moin._tests import become_trusted
@@ -94,3 +94,33 @@ def test_validjson():
         state = dict(fqname=CompositeName(namespace, field, value), itemid=None, meta=meta)
         value = x.validate(state) and y.validate(state)
         assert value == result
+
+
+def test_email():
+    """
+    Regression test: flatland's IsEmail validator does
+    element.value.count("@") with no guard against element.value being
+    None -- e.g. a form submission that omits the field entirely, or
+    leaves it blank -- and used to crash with an unhandled AttributeError
+    instead of reporting the field as invalid. Present() now runs first
+    in the Email field's validator chain, and flatland's validator chain
+    stops at the first failing validator, so IsEmail() never even runs
+    on a missing/blank value.
+    """
+    # missing entirely, e.g. the field wasn't in the POST body at all
+    missing = Email(None)
+    assert missing.value is None
+    assert missing.validate() is False
+
+    # present but blank, e.g. an empty input box
+    blank = Email("")
+    assert blank.validate() is False
+
+    # present, but not a valid email address -- Present() passes this
+    # through to IsEmail(), which must still reject it, without crashing
+    malformed = Email("not-an-email")
+    assert malformed.validate() is False
+
+    # a boring, ordinary valid address
+    valid = Email("someone@example.org")
+    assert valid.validate() is True
