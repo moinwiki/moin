@@ -200,13 +200,14 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        # ('<html><div><img src="uri:test" /></div></html>',
-        #  '/page/body/div/object/@xlink:href="uri:test"'),
         ('<html><div><object data="href"></object></div></html>', '/div/div/object[@data="href"]'),
         (
             '<html><figure><img src="uri:test" /><figcaption>Testbild</figcaption></figure></html>',
-            # <page><body><figure><object xlink:href="uri:test" /><figcaption>Testbild</figcaption></figure></body></page>
-            '/div/figure/figcaption[text()="Testbild"]',
+            '/div/figure/figcaption/p/strong[text()="Testbild"]',
+        ),
+        (
+            '<html><figure><img src="uri:test" /><figcaption>Test image</figcaption><p>Legend text</p></figure></html>',
+            "/div/figure/figcaption/p[text()='Legend text']",
         ),
     ]
 
