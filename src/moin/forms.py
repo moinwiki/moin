@@ -233,9 +233,10 @@ JSON = OptionalMultilineText.with_properties(lang="en", dir="ltr").validated_by(
 URL = String.with_properties(widget=WIDGET_TEXT).validated_by(URLValidator())
 
 Email = (
-    String.using(label=L_("E-Mail"))
-    .with_properties(widget=WIDGET_EMAIL, placeholder=L_("E-Mail address"))
-    .validated_by(IsEmail())
+    String.using(label=L_("E-Mail")).with_properties(widget=WIDGET_EMAIL, placeholder=L_("E-Mail address"))
+    # Present() must come first: flatland's IsEmail.validate() does
+    # element.value.count("@") and requires element .value != Null
+    .validated_by(Present(), IsEmail())
 )
 
 YourEmail = Email.with_properties(placeholder=L_("Your E-Mail address"), autocomplete="off")
