@@ -7,7 +7,7 @@ from typing import Any, TYPE_CHECKING
 
 from flask import url_for
 
-from moin import user
+from moin import current_app, user
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.keys import ITEMID
 
@@ -35,7 +35,10 @@ def create_user(name: str, password: str, pwencoded: bool = False, email: str | 
     user.create_user(name, password, email, is_encrypted=pwencoded)
 
 
-def login(client: FlaskClient, username: str, password: str, next: str = "http://localhost/Home") -> None:
+def login(client: FlaskClient, username: str, password: str, next: str | None = None) -> None:
+    if next is None:
+        # same-origin target derived from the wiki's configured host
+        next = current_app.cfg.interwiki_map["Self"] + "Home"
     response = client.post(
         url_for("frontend.login"),
         follow_redirects=False,

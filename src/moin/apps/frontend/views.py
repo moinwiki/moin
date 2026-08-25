@@ -2517,8 +2517,14 @@ def login():
         form = LoginForm.from_flat(request.form)
         if form.validate():
             flash(_("You are logged in."), "info")
-            nexturl = form["nexturl"]
-            return redirect(str(nexturl))
+            nexturl = str(form["nexturl"])
+            # nexturl is a hidden form field fed from arbitrary POST data.
+            # Only honour it when it points back into this wiki; a crafted
+            # value would otherwise open-redirect a freshly-authenticated
+            # user off-site after login.
+            if not nexturl.startswith(request.host_url) or "/+" in nexturl:
+                nexturl = url_for(".show_root")
+            return redirect(nexturl)
         # this is executed when login fails due to bad ID or pw - app.py > def setup_user does successful logins
         for msg in flaskg._login_messages:
             # flash the error messages for failed login
