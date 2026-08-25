@@ -542,7 +542,13 @@ class Binary(Content):
         if member:  # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType.from_filename(filename)
-            file_to_send = self.get_member(member)
+            try:
+                file_to_send = self.get_member(member)
+            except KeyError:
+                # member is a user-controlled query param naming a file
+                # inside the archive; a name not present is an invalid
+                # request rather than a missing resource
+                abort(400, f"Archive member {member!r} not found.")
             # force attachment download, so it uses attachment_filename
             # otherwise it will use the itemname from the URL for saving
             force_attachment = True

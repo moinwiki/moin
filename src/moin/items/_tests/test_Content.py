@@ -105,6 +105,37 @@ class TestTarItems:
         item = Item.create(item_name, contenttype="application/x-tar")
         assert item.content.get_member("example1.txt").read() == filecontent
 
+    def test_get_member_missing_raises_keyerror(self):
+        # A member name not present in the archive must raise KeyError
+        # (tarfile.extractfile does) rather than being silently served.
+        item_name = "ContainerItem3"
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
+        filecontent = b"abcdefghij"
+        content_length = len(filecontent)
+        item.content.put_member("example1.txt", filecontent, content_length, True, True)
+
+        item = Item.create(item_name, contenttype="application/x-tar")
+        with pytest.raises(KeyError):
+            item.content.get_member("does-not-exist.txt")
+
+    def test_do_get_missing_member_returns_400(self):
+        # _do_get() must surface a missing archive member as 400 rather
+        # than letting the KeyError from get_member() become a 500.
+        # An absent member name is an invalid request parameter, not a
+        # missing resource.
+        item_name = "ContainerItem4"
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
+        filecontent = b"abcdefghij"
+        content_length = len(filecontent)
+        item.content.put_member("example1.txt", filecontent, content_length, True, True)
+
+        item = Item.create(item_name, contenttype="application/x-tar")
+        from flask import current_app
+
+        with current_app.test_client() as client:
+            resp = client.get(f"/+download/{item_name}?member=does-not-exist.txt")
+            assert resp.status_code == 400
+
 
 @pytest.mark.usefixtures("_req_ctx")
 class TestZipMixin:
