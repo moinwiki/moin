@@ -348,17 +348,42 @@ class TestFrontend:
         username = "moin"
         password = "Xiwejr622"
         create_user(username, password)
+        # same-origin target derived from the wiki's own URL, matching the
+        # interwiki_map["Self"] base the test app is configured with
+        nexturl = current_app.cfg.interwiki_map["Self"] + "Home"
         response = self._test_view_post(
             "frontend.login",
             form={
                 "login_username": username,
                 "login_password": password,
-                "login_nexturl": "http://localhost/Home",
+                "login_nexturl": nexturl,
                 "login_submit": "1",
             },
             data=("Redirecting...",),
         )
-        assert response.location == "http://localhost/Home"
+        assert response.location == nexturl
+
+    def test_login_post_open_redirect_blocked(self):
+        # A crafted nexturl pointing off-site must not redirect the freshly
+        # authenticated user away from the wiki; it falls back to the root.
+        username = "moin"
+        password = "Xiwejr622"
+        create_user(username, password)
+        response = self._test_view_post(
+            "frontend.login",
+            form={
+                "login_username": username,
+                "login_password": password,
+                "login_nexturl": "https://evil.example/phish",
+                "login_submit": "1",
+            },
+            data=("Redirecting...",),
+        )
+        # The fallback redirect is root-relative (e.g. "/"), never an
+        # absolute URL, so an off-site host cannot appear in it.
+        assert not response.location.startswith("http")
+        assert "evil.example" not in response.location
+        assert "/+" not in response.location
 
     def test_logout(self):
         self._test_view("frontend.logout", status="302 FOUND", data=["<!doctype html"])
