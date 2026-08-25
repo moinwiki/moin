@@ -1225,6 +1225,24 @@ def _delete_items(itemnames: list[str], comment: str, do_subitems: bool, do_dest
     return result
 
 
+def _ajax_delete_request() -> tuple[list[str], str, bool]:
+    """Validate and extract the common JSON fields for ajaxdelete/ajaxdestroy.
+
+    Raises 400 when the request is not JSON or the itemnames/comment fields
+    are missing, instead of letting an assert or a bare dict lookup turn
+    into an unhandled 500.
+    """
+    if not request.is_json:
+        abort(400, "Expected a JSON request body")
+    data = request.json or {}
+    itemnames = data.get("itemnames")
+    comment = data.get("comment")
+    if not isinstance(itemnames, list) or not isinstance(comment, str):
+        abort(400, "Missing itemnames or comment")
+    do_subitems = data.get("do_subitems", False)
+    return itemnames, comment, do_subitems  # type: ignore[return-value]
+
+
 @frontend.route("/+ajaxdelete", defaults=dict(item_name=""), methods=["POST"])
 @frontend.route("/+ajaxdelete/<itemname:item_name>", methods=["POST"])
 def ajaxdelete(item_name: str) -> Response:
@@ -1237,11 +1255,7 @@ def ajaxdelete(item_name: str) -> Response:
         - itemnames: list of item names and subnames successfully deleted/destroyed in url format
         - messages: formatted success/fail message for each item processed
     """
-    assert request.is_json
-    data = request.json
-    itemnames = data["itemnames"]
-    comment = data["comment"]
-    do_subitems = data.get("do_subitems", False)
+    itemnames, comment, do_subitems = _ajax_delete_request()
     result = _delete_items(itemnames, comment, do_subitems, do_destroy=False)
     return jsonify(result.as_dict())
 
@@ -1258,11 +1272,7 @@ def ajaxdestroy(item_name: str) -> Response:
         - itemnames: list of item names and subnames successfully deleted/destroyed in url format
         - messages: formatted success/fail message for each item processed
     """
-    assert request.is_json
-    data = request.json
-    itemnames = data["itemnames"]
-    comment = data["comment"]
-    do_subitems = data.get("do_subitems", False)
+    itemnames, comment, do_subitems = _ajax_delete_request()
     result = _delete_items(itemnames, comment, do_subitems, do_destroy=True)
     return jsonify(result.as_dict())
 
