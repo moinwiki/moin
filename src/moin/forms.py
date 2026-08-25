@@ -345,7 +345,10 @@ _Integer = Integer.validated_by(Converted())
 
 AnyInteger = _Integer.with_properties(widget=WIDGET_ANY_INTEGER)
 
-Natural = AnyInteger.validated_by(ValueAtLeast(0))
+# Converted() must come first: .validated_by() replaces rather than
+# appends, so it would otherwise drop AnyInteger's inherited None-guard
+# and let a missing field crash ValueAtLeast(0) instead of failing normally.
+Natural = AnyInteger.validated_by(Converted(), ValueAtLeast(0))
 
 SmallNatural = _Integer.with_properties(widget=WIDGET_SMALL_NATURAL)
 
