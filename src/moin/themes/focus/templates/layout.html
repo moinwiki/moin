@@ -84,8 +84,8 @@
 
                 <!-- Breadcrumb - Start -->
                 {#
-                Produce a page trail given a list of recently visited items,
-                and an optional title_name (means current view is a Navigation Link: History, Index, Tags...).
+                Produce a page trail given a list of recently visited items.
+                Utility-view titles such as History, Index, and Tags are not page-trail entries.
                     - if an item has alias names, all alias names must be provided (themes can show, suppress or provide a rollover action)
                     - if an item is not in the default namespace, the namespace will be prefixed to the item name
                     - last item on page trail must show individual links to all parent items
@@ -117,11 +117,6 @@
                                         {%- endfor %}
                                         {{ utils.alias_list(aliases) }}
                                     </li>
-                                    {%- if title_name %}
-                                        <div>
-                                            {{ title_name }}
-                                        </div>
-                                    {%- endif %}
                                 {%- endif %}
                             {%- endfor %}
                         </ul>

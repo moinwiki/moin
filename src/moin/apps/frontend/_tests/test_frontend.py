@@ -16,7 +16,7 @@ import pytest
 from flask import url_for
 from werkzeug.datastructures import FileStorage
 
-from moin import current_app, flaskg, user
+from moin import current_app, flaskg, themes, user
 from moin.constants.keys import CURRENT, REVID
 from moin.apps._tests.utils import (
     create_user,
@@ -555,6 +555,38 @@ def test_normal_item_404_is_still_themed(client):
     rv = client.get(url_for("frontend.show_item", item_name="DoesNotExist"))
     assert rv.status_code == 404
     assert b"moin-header" in rv.data
+
+
+@pytest.mark.parametrize("theme_name", ["topside", "focus"])
+@pytest.mark.parametrize(
+    ("view_name", "special_view_title"),
+    [
+        ("frontend.global_history", "Global History"),
+        ("frontend.index", "Global Index"),
+        ("frontend.global_tags", "Global Tags"),
+    ],
+)
+def test_special_view_title_is_not_appended_to_page_trail(
+    client, monkeypatch, theme_name, view_name, special_view_title
+):
+    """Utility-view titles do not become an extra entry in the item trail."""
+    theme = current_app.theme_manager.themes[theme_name]
+    monkeypatch.setattr(themes, "get_current_theme", lambda: theme)
+    with client.session_transaction() as session:
+        session["trail"] = [("MoinTest/Home", [])]
+
+    rv = client.get(url_for(view_name))
+    assert rv.status_code == 200
+
+    html = rv.get_data(as_text=True)
+    marker = '<div class="moin-breadcrumb">' if theme_name == "focus" else '<ul class="moin-breadcrumb">'
+    end_marker = "<!-- Breadcrumb - End -->" if theme_name == "focus" else "</ul>"
+    start = html.index(marker)
+    end = html.index(end_marker, start)
+    breadcrumb = html[start:end]
+
+    assert 'href="/Home"' in breadcrumb
+    assert special_view_title not in breadcrumb
 
 
 def test_show_old_revision_of_renamed_item(client):
