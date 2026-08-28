@@ -33,7 +33,6 @@ logger = getLogger(__name__)
 if pygments:
 
     class TreeFormatter(pygments.formatter.Formatter):
-
         def _append(self, type, value, element):
             class_ = STANDARD_TYPES.get(type)
             if class_:
@@ -59,7 +58,6 @@ if pygments:
                 self._append(lasttype, lastval, element)
 
     class Converter(ConverterBase):
-
         @classmethod
         def _factory(cls, type_input: Type, type_output: Type, **kwargs: Any) -> Self | None:
             pygments_name: str | None = None
@@ -129,7 +127,10 @@ if pygments:
             text = decode_data(data, contenttype)
             content = normalize_split_text(text)
             content = "\n".join(content)
-            blockcode = moin_page.blockcode(attrib={moin_page.class_: "highlight"})
+            text_without_trailing_newlines = text.rstrip("\r\n")
+            is_single_line = "\n" not in text_without_trailing_newlines and "\r" not in text_without_trailing_newlines
+            class_ = "highlight wrap" if is_single_line else "highlight"
+            blockcode = moin_page.blockcode(attrib={moin_page.class_: class_})
             pygments.highlight(content, self.lexer, TreeFormatter(), blockcode)
             body = moin_page.body(children=(blockcode,))
             return moin_page.page(children=(body,))
@@ -143,7 +144,6 @@ if pygments:
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
     class Converter(ConverterBase):
-
         def __init__(self, lexer: Any | None = None, contenttype: str | None = None, **kwargs: Any) -> None:
             super().__init__(**kwargs)
 
