@@ -51,10 +51,17 @@ function localStorageAvailable() {
 // executed on page ready, if this is a modify view add action to Cancel button
 function cancelEdit() {
     "use strict";
-    $('.moin-cancel').click(function () {
-        // do not ask to leave page; any edits will be lost, but browser back button may restore edits
+    $('#moin-cancel-text-button').click(function (event) {
+        if ($('#moin-modify').hasClass('moin-changed-input') &&
+            !window.confirm(_("All changes will be discarded!"))) {
+            event.preventDefault();
+            return;
+        }
         $('#moin-modify').removeClass('moin-changed-input');
-        window.location = $('#moin-wiki-root').val() + '/' + $('#moin-item-name').val();
+        if ($(this).hasClass('moin-cancel')) {
+            event.preventDefault();
+            window.location = $('#moin-wiki-root').val() + '/' + $('#moin-item-name').val();
+        }
     });
 }
 

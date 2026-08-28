@@ -14,6 +14,7 @@ import json
 import pytest
 
 from flask import url_for
+from lxml import etree
 from werkzeug.datastructures import FileStorage
 
 from moin import current_app, flaskg, user
@@ -244,6 +245,21 @@ class TestFrontend:
 
     def test_modify_item(self):
         self._test_view("frontend.modify_item", status="200 OK", viewargs=dict(item_name="DoesntExist"))
+
+    @pytest.mark.parametrize("theme_name", ["topside", "focus", "basic"])
+    def test_modify_item_cancel_preserves_changed_state(self, monkeypatch, theme_name):
+        monkeypatch.setattr(current_app.cfg, "theme_default", theme_name)
+        with current_app.test_client() as client:
+            response = client.get(
+                url_for("frontend.modify_item", item_name="DoesntExist"),
+                query_string={"itemtype": "default", "contenttype": "text/x.moin.wiki;charset=utf-8"},
+                follow_redirects=True,
+            )
+        assert response.status == "200 OK"
+        document = etree.HTML(response.data)
+        cancel_buttons = document.xpath('//*[@id="moin-cancel-text-button"]')
+        assert len(cancel_buttons) == 1
+        assert "onclick" not in cancel_buttons[0].attrib
 
     def test_modify_item_show_preview(self):
 
