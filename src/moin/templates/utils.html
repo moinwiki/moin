@@ -272,7 +272,7 @@ nonce="{{ csp_nonce() }}"
     and an optional title_name (means current view is a Navigation Link: History, Index, Tags...).
         - if an item has alias names, all alias names must be provided (themes can show, suppress or provide a rollover action)
         - if an item is not in the default namespace, the namespace will be prefixed to the item name
-        - last item on page trail must show individual links to all parent items
+        - the last item on the page trail is one link to the complete item name
     #}
     <ul class="moin-breadcrumb">
         <li class="moin-panel-heading">{{ _('Page Trail') }}</li>
@@ -289,17 +289,7 @@ nonce="{{ csp_nonce() }}"
                 {%- if loop.last %}
                     <li>
                         <span class="moin-big">
-                            {%- for segment_name, segment_path in theme_supp.location_breadcrumbs(fqname) -%}
-                                {%- if not loop.last %}
-                                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}">
-                                        {{ segment_name|shorten_fqname }}
-                                    </a>
-                                {%- else %}
-                                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}">
-                                        {{ segment_name|shorten_fqname }}
-                                    </a>
-                                {%- endif %}
-                            {%- endfor %}
+                            {{ page_trail_link(wiki_name, fqname) }}
                         </span>
                         {{ alias_list(aliases) }}
                     </li>

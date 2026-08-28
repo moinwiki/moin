@@ -88,7 +88,7 @@
                 and an optional title_name (means current view is a Navigation Link: History, Index, Tags...).
                     - if an item has alias names, all alias names must be provided (themes can show, suppress or provide a rollover action)
                     - if an item is not in the default namespace, the namespace will be prefixed to the item name
-                    - last item on page trail must show individual links to all parent items
+                    - the last item on the page trail is one link to the complete item name
                 #}
                 <div class="moin-breadcrumb">
                     <div class="moin-panel-heading"><i>{{ _('Page Trail') }}</i></div>
@@ -104,17 +104,9 @@
                                 {%- endif %}
                                 {%- if loop.last %}
                                     <li>
-                                        {%- for segment_name, segment_path in theme_supp.location_breadcrumbs(fqname) -%}
-                                            {%- if not loop.last %}
-                                                <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {%- if not exists -%}class="moin-nonexistent"{%- endif -%}>
-                                                    {{ segment_name|shorten_fqname }}
-                                                </a>
-                                            {%- else %}
-                                                <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                                    {{ segment_name|shorten_fqname }}
-                                                </a>
-                                            {%- endif %}
-                                        {%- endfor %}
+                                        <a href="{{ url_for('frontend.show_item', item_name=fqname) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                            {{ fqname|shorten_fqname }}
+                                        </a>
                                         {{ utils.alias_list(aliases) }}
                                     </li>
                                     {%- if title_name %}
