@@ -1588,11 +1588,26 @@ def index(item_name: str):
     rejected_names = []
     subitem_names = []
 
+    def _safe_referrer_target() -> str:
+        # Referer is user-controlled; only honour it when it points
+        # back into this wiki. Fall back to the current index view.
+        ref = request.referrer
+        if not ref:
+            return url_for(".index", item_name=item_name)
+        target = urllib.parse.urlparse(ref)._replace(query="").geturl()
+        if isinstance(target, bytes):
+            try:
+                target = target.decode("utf-8")
+            except UnicodeDecodeError:
+                return url_for(".index", item_name=item_name)
+        if not target.startswith(request.host_url) or "/+" in target:
+            return url_for(".index", item_name=item_name)
+        return target
+
     if request.method == "POST":
 
         if action == "cancel" or action == "close":
-            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
-            return redirect(redirect_target)
+            return redirect(_safe_referrer_target())
 
         elif action == "download-file":
             item_names = request.form.getlist("itemname")
@@ -1606,14 +1621,12 @@ def index(item_name: str):
             else:
                 flash("Only a single file can be downloaded", "info")
 
-            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
-            return redirect(redirect_target)
+            return redirect(_safe_referrer_target())
 
         elif action == "upload-file":
             uploaded_item, details = _upload_file(item_name)
             flash(details.get("message", "Upload finished"), "info")
-            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
-            return redirect(redirect_target)
+            return redirect(_safe_referrer_target())
 
         elif action == "delete" or action == "destroy":
             item_names = request.form.getlist("itemname")
@@ -1631,8 +1644,7 @@ def index(item_name: str):
             result = _delete_items(item_names, comment, do_subitems, do_destroy)
             for message in result.messages:
                 flash(message, "info")
-            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
-            return redirect(redirect_target)
+            return redirect(_safe_referrer_target())
 
         elif action == "create-new-item":
             new_name = request.values.get("new_name")
