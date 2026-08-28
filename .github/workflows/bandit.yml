@@ -39,6 +39,12 @@ jobs:
         shell: bash
         run: bandit -c pyproject.toml -r src/moin -f sarif -o results.sarif || true
 
+      - name: Prioritise Bandit findings with Lumi Trace (optional)
+        continue-on-error: true
+        uses: noqt/Lumi-Trace@60ceacaa5b92718cc50bbed4e5ce34da7e85e093 # v0.10.0
+        with:
+          sarif: results.sarif
+
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v4
         with:
