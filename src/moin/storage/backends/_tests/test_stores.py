@@ -61,6 +61,18 @@ def test_open_creates_missing_fs_backend_directories(tmp_path):
     backend.close()
 
 
+def test_open_read_only_fs_backend_does_not_create_missing_directories(tmp_path):
+    meta_path = tmp_path / "meta"
+    data_path = tmp_path / "data"
+    backend = Backend(FSBytesStore(str(meta_path)), FSFileStore(str(data_path)), read_only=True)
+
+    backend.open()
+
+    assert not meta_path.exists()
+    assert not data_path.exists()
+    backend.close()
+
+
 class TestSQLABackend(MutableBackendTestBase):
     def setup_method(self, method):
         meta_path = tempfile.mktemp()

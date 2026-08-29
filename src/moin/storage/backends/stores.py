@@ -29,6 +29,7 @@ from moin import log
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM, NAME, NAMESPACE
 from moin.storage.error import ReadOnlyBackendError
 from moin.storage.stores import BytesStoreBase, FileStoreBase
+from moin.storage.stores.fs import FileStoreMixin
 from moin.storage.types import MetaData
 from moin.utils.crypto import make_uuid
 
@@ -99,6 +100,10 @@ class Backend(BackendBase):
 
     @override
     def open(self) -> None:
+        if not self.read_only:
+            for store in (self.meta_store, self.data_store):
+                if isinstance(store, FileStoreMixin):
+                    store.create()
         self.meta_store.open()
         self.data_store.open()
 

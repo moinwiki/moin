@@ -40,11 +40,6 @@ class FileStoreMixin:
             if e.errno != errno.EEXIST:
                 raise
 
-    def open(self) -> None:
-        # A configured filesystem backend may be added after the wiki instance
-        # was created. Ensure its store directory exists before the first write.
-        self.create()
-
     def destroy(self) -> None:
         shutil.rmtree(self.path)
 
