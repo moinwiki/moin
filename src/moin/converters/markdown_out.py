@@ -383,10 +383,15 @@ class Converter(ConverterBase):
         href_is_iri = isinstance(href, Iri)
         if href_is_iri:
             href = urllib.parse.unquote(str(href))
+        internal_data_href = False
         if use_data_href:
             # Expanded transclusions point xlink:href at a revisioned +get URL.
             # data-href retains the source item name needed for editable Markdown.
-            href = urllib.parse.urlsplit(urllib.parse.unquote(str(href))).path.lstrip("/")
+            href = urllib.parse.unquote(str(href))
+            parsed_href = urllib.parse.urlsplit(href)
+            internal_data_href = not parsed_href.scheme and not parsed_href.netloc
+            if internal_data_href:
+                href = parsed_href.path.lstrip("/")
         elif href_is_iri and href.startswith("/+get/+"):
             href = href.split("/")[-1]
         href = href.split("wiki.local:")[-1]
@@ -394,7 +399,7 @@ class Converter(ConverterBase):
             # alt text for objects is enclosed within <object...>...</object>
             # Expanded audio/video objects contain browser fallback text rather
             # than a useful Markdown label. Use the source filename instead.
-            alt = href.rsplit("/", 1)[-1] if use_data_href else elem[0]
+            alt = href.rsplit("/", 1)[-1] if internal_data_href else elem[0]
         else:
             alt = elem.attrib.get(html.alt, "")
         title = elem.attrib.get(html.title_, "")

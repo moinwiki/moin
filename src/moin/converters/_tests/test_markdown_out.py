@@ -223,6 +223,11 @@ class TestConverter(Base):
             "Your Browser does not support HTML5 audio/video element.</page:object>",
             "![audio.mp3](help-common/audio.mp3)",
         ),
+        (
+            '<page:object xlink:href="http://moinmo.in" html:data-href="http://moinmo.in" '
+            'html:class="moin-transclusion">http://moinmo.in</page:object>',
+            "![http://moinmo.in](http://moinmo.in)",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
