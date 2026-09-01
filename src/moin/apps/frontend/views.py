@@ -528,12 +528,14 @@ def search():
         analyzer = StandardAnalyzer()
         omitted_words = [token.text for token in analyzer(query) if token.stopped]
         idx_name = ALL_REVS if history else LATEST_REVS
+        # NAMENGRAM/SUMMARYNGRAM/CONTENTNGRAM only exist in the LATEST_REVS
+        # schema, not ALL_REVS -- including them while searching history
+        # raises KeyError deep inside whoosh's query matcher.
+        ngram_fields = [NAMENGRAM, SUMMARYNGRAM, CONTENTNGRAM] if idx_name == LATEST_REVS else []
         if best_match:
-            qp = flaskg.storage.query_parser([NAMES, NAMENGRAM], idx_name=idx_name)
+            qp = flaskg.storage.query_parser([NAMES, *ngram_fields], idx_name=idx_name)
         else:
-            qp = flaskg.storage.query_parser(
-                [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
-            )
+            qp = flaskg.storage.query_parser([NAMES, TAGS, SUMMARY, CONTENT, COMMENT, *ngram_fields], idx_name=idx_name)
         try:
             q = qp.parse(query)
         except Exception:
