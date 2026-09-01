@@ -741,3 +741,23 @@ def test_usersettings_ui_with_valid_data_succeeds(client):
     assert rv.status_code == 200
     assert b'name="edit_rows" value="10"' in rv.data
     assert b'name="results_per_page" value="25"' in rv.data
+
+
+def test_search_with_invalid_regex_does_not_crash(client, monkeypatch):
+    """
+    Regression test: search() used to catch re.PatternError for an invalid
+    regex term, but PatternError only exists on Python 3.13+, so on 3.11/3.12
+    the except clause itself raised AttributeError -- seen in production as
+    "module 're' has no attribute 'PatternError'".
+    """
+    import re
+    from whoosh.searching import Searcher
+
+    def fake_search(self, *args, **kwargs):
+        raise re.error("bad regex")
+
+    monkeypatch.setattr(Searcher, "search", fake_search)
+
+    rv = client.get(url_for("frontend.search"), query_string={"q": "test"})
+    assert rv.status_code == 200
+    assert b"invalid regex" in rv.data
