@@ -268,8 +268,9 @@ nonce="{{ csp_nonce() }}"
 
 {% macro breadcrumbs(breadcrumbs, title_name) %}
     {#
-    Produce a page trail given a list of recently visited items,
-    and an optional title_name (means current view is a Navigation Link: History, Index, Tags...).
+    Produce a page trail given a list of recently visited items.
+    title_name remains an accepted argument for theme compatibility, but utility-view
+    titles such as History, Index, and Tags are not page-trail entries.
         - if an item has alias names, all alias names must be provided (themes can show, suppress or provide a rollover action)
         - if an item is not in the default namespace, the namespace will be prefixed to the item name
         - last item on page trail must show individual links to all parent items
@@ -303,12 +304,6 @@ nonce="{{ csp_nonce() }}"
                         </span>
                         {{ alias_list(aliases) }}
                     </li>
-                    {%- if title_name %}
-                        <li>
-                            <i class="fa fa-angle-double-right fa-fw"></i>
-                            {{ title_name }}
-                        </li>
-                    {%- endif %}
                 {%- endif %}
             {%- endfor %}
         {%- endif %}
