@@ -14,10 +14,22 @@ from typing import TYPE_CHECKING
 
 from moin.config import AclConfig
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.constants.keys import ACL, CONTENTTYPE, NAME, ITEMTYPE, PARENTID, REVID
+from moin.constants.keys import (
+    ACL,
+    ALL_REVS,
+    CONTENTTYPE,
+    LATEST_REVS,
+    MTIME,
+    NAME,
+    NAME_EXACT,
+    ITEMTYPE,
+    PARENTID,
+    REVID,
+)
 from moin.storage.middleware.exceptions import AccessDenied
 from moin.storage.middleware.protecting import ProtectedRevision, ProtectingMiddleware
 from moin.user import User
+from whoosh.query import Or, Term
 
 from .test_indexing import TestIndexingMiddlewareBase
 
@@ -80,6 +92,40 @@ class TestProtectingMiddleware(TestIndexingMiddlewareBase):
         revid_unprotected, revid_protected = self.make_items("joe:read", "boss:read")
         revids = [rev.revid for rev in self.pmw.documents()]
         assert revids == [revid_unprotected]  # without revid_protected!
+
+    def test_search_acl_contract_unreadable_never_surfaced(self):
+        # Contract: no search method may surface an unreadable item, on either
+        # index. Any future search path added without a read filter fails here.
+        revid_unprotected, revid_protected = self.make_items("joe:read", "boss:read")
+        query = Or([Term(NAME_EXACT, UNPROTECTED), Term(NAME_EXACT, PROTECTED)])
+        for idx_name in (LATEST_REVS, ALL_REVS):
+            assert [rev.revid for rev in self.pmw.search(query, idx_name=idx_name)] == [revid_unprotected]
+            assert [rev.revid for rev in self.pmw.search_page(query, idx_name=idx_name)] == [revid_unprotected]
+            assert [meta[REVID] for meta in self.pmw.search_meta(query, idx_name=idx_name)] == [revid_unprotected]
+            assert [
+                meta[REVID]
+                for meta in self.pmw.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME], pagenum=1, pagelen=10)
+            ] == [revid_unprotected]
+            assert [rev.revid for rev in self.pmw.documents(idx_name=idx_name)] == [revid_unprotected]
+            assert self.pmw.search_results_size(query, idx_name=idx_name) == 1
+
+    def test_search_results_size_counts_past_whoosh_default_limit(self):
+        # whoosh caps a search at limit=10 by default; the count must not
+        # be capped: all 12 items are readable, so lifting it keeps all 12.
+        names = [f"bulk{i:02d}" for i in range(12)]
+        for name in names:
+            item = self.pmw[name]
+            r = item.store_revision(
+                {NAME: [name], ITEMTYPE: ITEMTYPE_DEFAULT, ACL: "joe:read", CONTENTTYPE: "text/plain;charset=utf-8"},
+                BytesIO(b"bulk"),
+                return_rev=True,
+            )
+            assert r is not None
+            assert isinstance(r, ProtectedRevision)
+        query = Or([Term(NAME_EXACT, name) for name in names])
+        assert self.pmw.search_results_size(query, idx_name=ALL_REVS) == len(names)
+        # all 12 are readable: with the whoosh limit lifted the filter keeps all
+        assert len(list(self.pmw.search_meta(query, idx_name=ALL_REVS, limit=None))) == len(names)
 
     def test_getitem(self):
         revid_unprotected, revid_protected = self.make_items("joe:read", "boss:read")
