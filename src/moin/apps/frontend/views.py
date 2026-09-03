@@ -487,6 +487,8 @@ def search():
 
     if ajax:
         query = request.args.get("q")
+        if not query:
+            query = ""
         history = request.args.get("history") == "true"
         time_sorting = request.args.get("time_sorting")
         if time_sorting == "default":
@@ -500,6 +502,8 @@ def search():
             namespaces = ["" if ns == NAMESPACE_UI_DEFAULT else ns for ns in namespaces]
     else:
         query = search_form["q"].value
+        if not query:
+            query = ""
         history = bool(request.values.get("history"))
 
     best_match = False
