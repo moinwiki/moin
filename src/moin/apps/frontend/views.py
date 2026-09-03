@@ -579,7 +579,10 @@ def search():
             except QueryError:
                 flash(_("""QueryError: invalid search term: {search_term}""").format(search_term=q), "error")
                 return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
-            except re.PatternError:
+            # re.error, not re.PatternError: the latter is only available on Python 3.13+
+            # (a more clearly-named alias for re.error), and moin supports 3.11 and 3.12
+            # too, where referencing it here would itself raise an unhandled AttributeError.
+            except re.error:
                 flash(_("""QueryError: invalid regex in search term: {search_term}""").format(search_term=q), "error")
                 return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
             except TermNotFound:
