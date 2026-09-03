@@ -544,10 +544,14 @@ class Binary(Content):
             mt = MimeType.from_filename(filename)
             try:
                 file_to_send = self.get_member(member)
-            except KeyError:
+            except (KeyError, AttributeError):
                 # member is a user-controlled query param naming a file
                 # inside the archive; a name not present is an invalid
-                # request rather than a missing resource
+                # request rather than a missing resource. On non-archive
+                # items get_member does not exist (AttributeError).
+                abort(400, f"Archive member {member!r} not found.")
+            if file_to_send is None:
+                # tarfile.extractfile() returns None for dirs/links
                 abort(400, f"Archive member {member!r} not found.")
             # force attachment download, so it uses attachment_filename
             # otherwise it will use the itemname from the URL for saving
