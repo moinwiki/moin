@@ -283,6 +283,16 @@ class TestFrontend:
         # TODO: Add another test with valid rev1 and rev2 URL args and an existing item.
         self._test_view("frontend.diff", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
+    def test_dispatch_missing_or_unknown_endpoint_returns_400(self):
+        # A missing or unknown endpoint query param must return 400, not
+        # raise KeyError/BuildError as an unhandled 500.
+        with current_app.test_client() as client:
+            assert client.get("/+dispatch").status_code == 400
+            assert client.get("/+dispatch?endpoint=not-a-real-endpoint").status_code == 400
+            # a valid endpoint still forwards
+            rv = client.get("/+dispatch?endpoint=frontend.show_root")
+            assert rv.status_code == 302
+
     def test_similar_names(self):
         self._test_view("frontend.similar_names", viewargs=dict(item_name="DoesntExist"))
 
