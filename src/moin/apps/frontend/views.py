@@ -722,7 +722,6 @@ def show_item(item_name: str, rev: str) -> ResponseBase | str:
             headline=_("Items with {field} {value}").format(field=fqname.field, value=fqname.value),
             fqname=fqname,
             fq_names=fq_names,
-            item_is_deleted=item_is_deleted,
         )
     close_file(item.rev.data)
     return result
