@@ -890,10 +890,14 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _do_get_modified(self, hash, force_attachment=False, mimetype=None):
         try:
             width = int(request.values.get("w"))
+            if width <= 0:
+                width = None
         except (TypeError, ValueError):
             width = None
         try:
             height = int(request.values.get("h"))
+            if height <= 0:
+                height = None
         except (TypeError, ValueError):
             height = None
         try:
