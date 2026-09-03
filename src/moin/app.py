@@ -374,7 +374,7 @@ def setup_user() -> user.User:
 
     # then handle login/logout forms
     form = request.values.to_dict()
-    if "login_submit" in form:
+    if "login_submit" in form and request.method == "POST":
         # this is a real form, submitted by POST
         userobj = auth.handle_login(userobj, **form)
     elif "logout_submit" in form:
