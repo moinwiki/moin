@@ -304,6 +304,26 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         assert len(revs) == 1  # there is only 1 latest revision
         assert expected_rev.revid == revs[0].revid  # it is really the latest one
 
+    def test_search_meta_invalid_regex_returns_empty(self):
+        # A regex that does not compile ("[[[" leaves the character
+        # set unterminated) must yield no hits instead of raising
+        # re.error out of the search.
+        item_name = "foo"
+        item = self.get_item(item_name)
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"1st"))
+        query = Term(NAME_EXACT, item_name)
+        assert list(flaskg.storage.search_meta(query, regex="[[[")) == []
+
+    def test_search_meta_valid_regex_matches(self):
+        # Control: a compiling regex still filters hits normally.
+        item_name = "foo"
+        item = self.get_item(item_name)
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"1st"))
+        query = Term(NAME_EXACT, item_name)
+        metas = list(flaskg.storage.search_meta(query, regex="f.o"))
+        assert len(metas) == 1
+        assert metas[0][NAME] == [item_name]
+
     def test_auto_meta(self):
         item_name = "foo"
         data = b"bar"
