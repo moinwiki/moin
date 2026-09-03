@@ -1688,6 +1688,8 @@ def index(item_name: str):
         item = Item.create(item_name)  # when item_name='', it gives toplevel index
     except AccessDenied:
         abort(403)
+    except FieldNotUniqueError:
+        abort(404, item_name)
 
     item_may = get_item_permissions(item_name, item)
 
