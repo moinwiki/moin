@@ -423,7 +423,10 @@ def handle_login(userobj: User | None, **kw: Any) -> User | None:
     """
 
     stage = kw.pop("stage", None)
-    persistent = parse_bool(kw.pop("login_persistent", "false"))
+    try:
+        persistent = parse_bool(kw.pop("login_persistent", "false"))
+    except ValueError:
+        abort(400, "Invalid value for login_persistent")
 
     params = {
         "username": kw.pop("login_username", None),
