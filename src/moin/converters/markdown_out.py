@@ -1,6 +1,7 @@
 # Copyright: 2008 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:DmitryAndreev
 # Copyright: 2018 MoinMoin:RogerHaase - modified moinwiki_out.py for markdown
+# Copyright: 2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -392,8 +393,11 @@ class Converter(ConverterBase):
             internal_data_href = not parsed_href.scheme and not parsed_href.netloc
             if internal_data_href:
                 href = parsed_href.path.lstrip("/")
-        elif href_is_iri and href.startswith("/+get/+"):
-            href = href.split("/")[-1]
+        elif href.startswith("/+get/+"):
+            revision, _, item_name = href[len("/+get/+") :].partition("/")
+            if revision:
+                # Strip the +get revision prefix while preserving the full item name
+                href = item_name
         href = href.split("wiki.local:")[-1]
         if len(elem) and isinstance(elem[0], str):
             # alt text for objects is enclosed within <object...>...</object>
