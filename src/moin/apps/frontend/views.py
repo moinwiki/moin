@@ -136,7 +136,10 @@ frontend = Blueprint("frontend", __name__)
 @frontend.route("/+dispatch", methods=["GET"])
 def dispatch():
     args = request.values.to_dict()
-    endpoint = str(args.pop("endpoint"))
+    endpoint = str(args.pop("endpoint", ""))
+    # endpoint is user-supplied; a missing or unknown one returns 400
+    if not endpoint or endpoint not in current_app.url_map._rules_by_endpoint:
+        abort(400)
     # filter args given to url_for, so that no unneeded args end up in query string:
     args = {k: args[k] for k in args if current_app.url_map.is_endpoint_expecting(endpoint, k)}
     return redirect(url_for(endpoint, **args))
