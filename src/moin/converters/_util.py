@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any, Final, Iterator, Self
 
+import re
+
 from emeraldtree import ElementTree as ET
 
 from moin.constants.misc import URI_SCHEMES
@@ -185,22 +187,38 @@ class StyleConverter:
     Helps converting use of inline CSS styling into (document specific) CSS classes.
     """
 
+    reAllowedName = re.compile(r"[\-a-zA-Z0-9]+")
+
     def __init__(self, prefix: str = "_sr_") -> None:
         self.prefix = prefix
         self.styles: list[str] = []
 
     def __call__(self, style: str) -> list[str]:
         res: list[str] = []
-        for s in style.split(";"):
-            s = s.strip()
-            if not s:
+        for decl in style.split(";"):
+            decl = decl.strip()
+            if not decl:
                 continue
-            s = ": ".join([w.strip() for w in s.split(":", 1)])
+
+            # split propert declaration
             try:
-                ix = self.styles.index(s)
+                name, value = decl.split(":", 1)
+            except ValueError:
+                continue
+
+            name = name.strip()
+            value = value.strip()
+
+            # allowed property name?
+            if not self.reAllowedName.fullmatch(name):
+                continue
+
+            decl = f"{name}: {value}"
+            try:
+                ix = self.styles.index(decl)
             except ValueError:
                 ix = len(self.styles)
-                self.styles.append(s)
+                self.styles.append(decl)
             res.append(f"{self.prefix}{ix}")
         return res
 
