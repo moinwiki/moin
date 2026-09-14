@@ -227,22 +227,28 @@ class StyleConverter:
         return {f"{self.prefix}{c}": s for c, s in enumerate(self.styles)}
 
 
-# strings not allowed in style attributes
-SUSPECT: Final = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
-
-
 class StyleAttrFilter:
+
+    # strings not allowed in style attributes
+    SUSPECT_PARTS: Final = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
+
+    # classification result
+    OK = 0
+    NOT_ALLOWED = 1
+    SUPPRESSED = 2
 
     def __init__(self, allow_style_attributes: bool) -> None:
         self.allow_style_attributes = allow_style_attributes
 
-    def __call__(self, style: str) -> str:
+    def __call__(self, style: str) -> int:
         """
         If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
         """
-        if self.allow_style_attributes:
-            s = "".join(style.strip().lower().split())
-            if any(x in s for x in SUSPECT):
-                return " /*style suppressed, failed test for suspect strings*/ "
-            return style
-        return ""
+        if not self.allow_style_attributes:
+            return self.NOT_ALLOWED
+
+        s = "".join(style.strip().lower().split())
+        if any(x in s for x in self.SUSPECT_PARTS):
+            return self.SUPPRESSED
+
+        return self.OK
