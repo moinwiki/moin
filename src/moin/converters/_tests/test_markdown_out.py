@@ -213,6 +213,10 @@ class TestConverter(Base):
             "![Audio](help-common/audio.mp3)",
         ),
         (
+            '<page:object xlink:href="/+get/+abcdef/help-common/audio.mp3" html:alt="Audio"></page:object>',
+            "![Audio](help-common/audio.mp3)",
+        ),
+        (
             '<page:object xlink:href="/+get/+abcdef/video.mp4" html:data-href="/help-common/video.mp4?do=show" '
             'html:alt="Video" html:class="moin-transclusion"></page:object>',
             "![Video](help-common/video.mp4)",
