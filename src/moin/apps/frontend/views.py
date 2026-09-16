@@ -6,7 +6,7 @@
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
 # Copyright: 2001 Juergen Hermann <jh@web.de>
-# Copyright: 2023-2025 MoinMoin:UlrichB
+# Copyright: 2023-2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -133,15 +133,6 @@ jfu_server_lock = threading.Lock()
 frontend = Blueprint("frontend", __name__)
 
 
-@frontend.route("/+dispatch", methods=["GET"])
-def dispatch():
-    args = request.values.to_dict()
-    endpoint = str(args.pop("endpoint"))
-    # filter args given to url_for, so that no unneeded args end up in query string:
-    args = {k: args[k] for k in args if current_app.url_map.is_endpoint_expecting(endpoint, k)}
-    return redirect(url_for(endpoint, **args))
-
-
 @frontend.route("/")
 def show_root():
     item_name = current_app.cfg.root_mapping.get(NAMESPACE_DEFAULT, current_app.cfg.default_root)
@@ -168,7 +159,6 @@ Disallow: /+delete/
 Disallow: /+destroy/
 Disallow: /+diff/
 Disallow: /+diffraw/
-Disallow: /+dispatch/
 Disallow: /+dom/
 Disallow: /+download/
 Disallow: /+forwardrefs/
