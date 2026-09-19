@@ -14,7 +14,7 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.converters._util import StyleConverter
+from moin.converters._util import StyleAttrFilter, StyleConverter
 from moin.converters.html_out import Converter, ConverterPage, ElementException
 from moin.log import getLogger
 from moin.utils.render import RenderContext
@@ -29,12 +29,39 @@ render_context = RenderContext(allow_style_attributes=True, use_nonces=False, co
 
 def test_style_converter():
     converter = StyleConverter()
+
     assert converter("color: green") == ["_sr_0"]
     assert converter.css_classes == {"_sr_0": "color: green"}
+
     assert converter("color:  green") == ["_sr_0"]
     assert converter.css_classes == {"_sr_0": "color: green"}
+
     assert converter("color:red;  font-weight : bold ;") == ["_sr_1", "_sr_2"]
     assert converter.css_classes == {"_sr_0": "color: green", "_sr_1": "color: red", "_sr_2": "font-weight: bold"}
+
+    converter.reset()
+    assert converter.css_classes == {}
+
+    # invalid property names will be discarded
+    assert converter("no/way: normal") == []
+    assert converter.css_classes == {}
+
+    assert converter("--foo-level: debug") == ["_sr_0"]
+    assert converter.css_classes == {"_sr_0": "--foo-level: debug"}
+
+    converter.reset()
+    assert converter('content: "Hey,\nare you ok?"') == ["_sr_0"]
+    assert converter.css_classes == {"_sr_0": 'content: "Hey,\nare you ok?"'}
+
+
+def test_style_attr_filter():
+    filter = StyleAttrFilter(allow_style_attributes=False)
+    assert filter("class=PageContent") == StyleAttrFilter.NOT_ALLOWED
+
+    filter = StyleAttrFilter(allow_style_attributes=True)
+    assert filter("") == StyleAttrFilter.OK
+    assert filter("class=PageContent") == StyleAttrFilter.OK
+    assert filter("class=PageLink --link=http") == StyleAttrFilter.SUPPRESSED
 
 
 class Base:

@@ -69,11 +69,11 @@
                     <link media="all" rel="stylesheet" href="{{ theme_static('css/theme.css') }}">
                     {{ stylesheets }}
                 {%- endblock %}
-                {% if css_classes %}
+                {%- if css_classes %}
                     <style {{ utils.nonce() }}>
-                      {% for name, definition in css_classes.items() %}
-                        .{{ name }} { {{ definition }} }
-                      {% endfor %}
+                      {%- for name, definition in css_classes.items() %}
+                        .{{ name | safe }} { {{ definition | css_escape | safe }} }
+                      {%- endfor %}
                     </style>
                 {% endif %}
                 {%- if cfg.custom_css_path -%}
