@@ -222,6 +222,9 @@ class StyleConverter:
             res.append(f"{self.prefix}{ix}")
         return res
 
+    def reset(self) -> None:
+        self.styles.clear()
+
     @property
     def css_classes(self):
         return {f"{self.prefix}{c}": s for c, s in enumerate(self.styles)}
