@@ -231,6 +231,6 @@
 
 {% block body_scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/basic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" {{ utils.nonce() }}></script>
+    <script src="{{ url_for('static', filename='js/basic.js') }}" {{ utils.nonce() }}></script>
 {% endblock %}
