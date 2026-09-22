@@ -814,3 +814,33 @@ def test_search_with_invalid_regex_does_not_crash(client, monkeypatch):
     rv = client.get(url_for("frontend.search"), query_string={"q": "test"})
     assert rv.status_code == 200
     assert b"invalid regex" in rv.data
+
+
+def test_search_history_with_wildcard_does_not_crash(client):
+    """
+    Regression test: search() unconditionally included NAMENGRAM (and
+    SUMMARYNGRAM, CONTENTNGRAM) in its query_parser field list, but those
+    fields only exist in the LATEST_REVS index schema, not ALL_REVS's --
+    searching with history=True (idx_name=ALL_REVS) reached whoosh's
+    wildcard/regex matcher with a field that doesn't exist in that
+    index's actual schema, raising an unhandled
+    KeyError: "No field named 'namengram'". A plain (non-wildcard) query
+    term doesn't hit this, since Term queries don't need to resolve the
+    field against the index reader's schema the way pattern queries do.
+    """
+    rv = client.get(url_for("frontend.search"), query_string={"q": "*test*", "history": "1"})
+    assert rv.status_code == 200
+
+
+def test_search_wildcard_still_finds_ngram_matches(client):
+    """
+    A normal (non-history) wildcard search must still match via
+    NAMENGRAM -- only the ALL_REVS/history case should drop it.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    modify_item(client, "WildcardTargetItem", make_modify_form_data("WildcardTargetItem", content="some content"))
+
+    rv = client.get(url_for("frontend.search"), query_string={"q": "*Wildcard*"})
+    assert rv.status_code == 200
+    assert b"WildcardTargetItem" in rv.data
