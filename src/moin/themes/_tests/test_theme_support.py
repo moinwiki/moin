@@ -4,10 +4,14 @@
 import pytest
 
 from moin import current_app, flaskg
-from moin.themes import ThemeSupport, get_current_theme
+from moin.themes import ThemeSupport, get_current_theme, css_escape
 from moin.user import User
 
 from moin._tests import wikiconfig
+
+
+def test_css_escape():
+    assert css_escape("Hi,\r\nare you ok?") == "Hi,\\00000d\\00000aare you ok?"
 
 
 @pytest.fixture

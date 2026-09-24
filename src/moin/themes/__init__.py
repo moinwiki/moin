@@ -752,6 +752,18 @@ def time_datetime(dt):
     return show_time.format_date_time(dt)
 
 
+def css_escape(s: str) -> str:
+    """
+    Escape non-printable CSS characters.
+    Ref: <https://www.w3.org/TR/CSS2/syndata.html#escaped-characters>
+    """
+
+    def _esc_char(c):
+        return c if c.isprintable() else "\\{:06x}".format(ord(c))
+
+    return "".join(_esc_char(c) for c in s)
+
+
 def setup_jinja_env(jinja_env):
     jinja_env.filters["shorten_fqname"] = shorten_fqname
     jinja_env.filters["shorten_item_name"] = shorten_item_name
@@ -761,6 +773,7 @@ def setup_jinja_env(jinja_env):
     jinja_env.filters["shorten_ctype"] = shorten_ctype
     jinja_env.filters["time_hh_mm"] = time_hh_mm
     jinja_env.filters["time_datetime"] = time_datetime
+    jinja_env.filters["css_escape"] = css_escape
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 

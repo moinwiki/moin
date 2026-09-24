@@ -133,18 +133,22 @@ class Attributes:
         new_default: dict[ET.QName, Iri | str] = {}
 
         for key, value in self.element.attrib.items():
+
             if whitelist and key.name not in whitelist:
                 continue
 
             if key == html.style or key == moin_page.style:
                 # filter out bad style attributes
-                if not (value := self.style_attr_filter(value)):
+                filter_result = self.style_attr_filter(value)
+                if filter_result == StyleAttrFilter.NOT_ALLOWED:
                     continue
-                # convert inline style into CSS classes
-                class_names = self.style_converter(value) if self.style_converter else None
-                if class_names:
+                # replace suppressed value
+                elif filter_result == StyleAttrFilter.SUPPRESSED:
+                    value = " /*style suppressed, failed test for suspect strings*/ "
+                # ok, convert inline style into CSS classes
+                elif self.style_converter and (class_names := self.style_converter(value)):
                     new[ET.QName("class", html.namespace)] = " ".join(class_names)
-                continue
+                    continue
 
             if key.uri == moin_page:
                 # We never have _ in attribute names, so ignore them instead of creating ambiguous matches.

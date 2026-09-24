@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any, Final, Iterator, Self
 
+import re
+
 from emeraldtree import ElementTree as ET
 
 from moin.constants.misc import URI_SCHEMES
@@ -185,46 +187,71 @@ class StyleConverter:
     Helps converting use of inline CSS styling into (document specific) CSS classes.
     """
 
+    reAllowedName = re.compile(r"[\-a-zA-Z0-9]+")
+
     def __init__(self, prefix: str = "_sr_") -> None:
         self.prefix = prefix
         self.styles: list[str] = []
 
     def __call__(self, style: str) -> list[str]:
         res: list[str] = []
-        for s in style.split(";"):
-            s = s.strip()
-            if not s:
+        for decl in style.split(";"):
+            decl = decl.strip()
+            if not decl:
                 continue
-            s = ": ".join([w.strip() for w in s.split(":", 1)])
+
+            # split propert declaration
             try:
-                ix = self.styles.index(s)
+                name, value = decl.split(":", 1)
+            except ValueError:
+                continue
+
+            name = name.strip()
+            value = value.strip()
+
+            # allowed property name?
+            if not self.reAllowedName.fullmatch(name):
+                continue
+
+            decl = f"{name}: {value}"
+            try:
+                ix = self.styles.index(decl)
             except ValueError:
                 ix = len(self.styles)
-                self.styles.append(s)
+                self.styles.append(decl)
             res.append(f"{self.prefix}{ix}")
         return res
+
+    def reset(self) -> None:
+        self.styles.clear()
 
     @property
     def css_classes(self):
         return {f"{self.prefix}{c}": s for c, s in enumerate(self.styles)}
 
 
-# strings not allowed in style attributes
-SUSPECT: Final = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
-
-
 class StyleAttrFilter:
+
+    # strings not allowed in style attributes
+    SUSPECT_PARTS: Final = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
+
+    # classification result
+    OK = 0
+    NOT_ALLOWED = 1
+    SUPPRESSED = 2
 
     def __init__(self, allow_style_attributes: bool) -> None:
         self.allow_style_attributes = allow_style_attributes
 
-    def __call__(self, style: str) -> str:
+    def __call__(self, style: str) -> int:
         """
         If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
         """
-        if self.allow_style_attributes:
-            s = "".join(style.strip().lower().split())
-            if any(x in s for x in SUSPECT):
-                return " /*style suppressed, failed test for suspect strings*/ "
-            return style
-        return ""
+        if not self.allow_style_attributes:
+            return self.NOT_ALLOWED
+
+        s = "".join(style.strip().lower().split())
+        if any(x in s for x in self.SUSPECT_PARTS):
+            return self.SUPPRESSED
+
+        return self.OK
