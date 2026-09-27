@@ -695,6 +695,22 @@ def test_history_shows_revisions_from_before_a_rename(client):
     assert b"after rename" in rv.data
 
 
+def test_diffraw_nonexistent_revid_returns_404(client):
+    """
+    Regression test: _diff_raw() indexed item[revid1]/item[revid2] without
+    guarding the KeyError that a user-supplied revid naming a nonexistent
+    revision raises, turning a /+diffraw request into an unhandled 500.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    item_name = "DiffRawItem"
+    modify_item(client, item_name, make_modify_form_data(item_name, content="hello\n", comment="revision"))
+
+    rv = client.get(url_for("frontend.diffraw", item_name=item_name, rev1="does-not-exist", rev2="also-does-not-exist"))
+    assert rv.status_code == 404
+
+
 def test_register_without_email_field_does_not_crash(client):
     """
     Regression test: RegistrationForm's email field had no Present()

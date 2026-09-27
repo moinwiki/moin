@@ -3125,8 +3125,12 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
 
 
 def _diff_raw(item, revid1, revid2):
-    oldrev = item[revid1]
-    newrev = item[revid2]
+    try:
+        oldrev = item[revid1]
+        newrev = item[revid2]
+    except KeyError:
+        # revid is user-supplied; a missing revision returns 404
+        abort(404)
     if oldrev.meta[MTIME] > newrev.meta[MTIME]:
         oldrev, newrev = newrev, oldrev
         revid1, revid2 = revid2, revid1
