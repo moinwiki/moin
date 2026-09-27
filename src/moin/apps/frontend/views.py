@@ -320,8 +320,8 @@ def cspreport():
         try:
             csp_report = json.loads(request.data.decode("UTF-8"))["csp-report"]
             cspreport_logger.info(f"{request.remote_addr} {request.content_type}: {csp_report}")
-        except json.JSONDecodeError as e:
-            logger.warning(f"Got CSP report with invalid JSON syntax: {e}")
+        except (json.JSONDecodeError, KeyError, UnicodeDecodeError) as e:
+            logger.warning(f"Got CSP report with invalid JSON: {e}")
 
     return Response("", 204)
 
