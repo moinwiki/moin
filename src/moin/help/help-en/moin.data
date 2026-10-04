@@ -132,7 +132,7 @@ icon or message.
  1. Images are aligned to bottom {{help-common/logo.png}} of text by default.
  1. This image is the big logo floated to the right: {{help-common/logo.svg|my svg|class=right}}
  1. Image aligned to top of text. {{help-common/cat.jpg||&w=75 class=top}}
- 1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
+ 1. Image aligned to middle of text. {{https://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
  1. Transclude a subitem: {{/subitem}}
@@ -142,7 +142,7 @@ icon or message.
  1. Images are aligned to bottom {{help-common/logo.png}} of text by default.
  1. This image is the big logo floated to the right: {{help-common/logo.svg|my svg|class=right}}
  1. Image aligned to top of text. {{help-common/cat.jpg||&w=75 class=top}}
- 1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
+ 1. Image aligned to middle of text. {{https://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
  1. Transclude a subitem: {{/subitem}}

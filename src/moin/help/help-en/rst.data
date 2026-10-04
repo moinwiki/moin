@@ -842,7 +842,7 @@ for verse and addresses
 * Line blocks may contain inline markup and nested line blocks.
   Block-level markup is not recognized.
 
-__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
+__ https://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
    #line-blocks
 
 .. list-table::

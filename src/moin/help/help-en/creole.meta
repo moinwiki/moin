@@ -3,15 +3,14 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.creole;charset=utf-8",
-  "dataid": "0831ac79317844a38b7e4aefaa15db33",
+  "dataid": "3615a4333be646eabb9615c8335ade0c",
   "externallinks": [
     "file://///servername/share/full/path/to/file/filename%20with%20spaces.txt",
-    "http://static.moinmo.in/logos/moinmoin.png",
-    "http://www.xkcd.com/",
     "https://en.wikipedia.org/wiki/Creole_%28markup%29",
     "https://moinmo.in",
     "https://moinmo.in/",
     "https://static.moinmo.in/logos/moinmoin.png",
+    "https://www.xkcd.com/",
     "mailto:joe@doe.com"
   ],
   "itemid": "078502790e624fb7b43f826c240a8c30",
@@ -32,16 +31,16 @@
   ],
   "itemtype": "default",
   "language": "en",
-  "mtime": 1769159714,
+  "mtime": 1791071061,
   "name": [
     "creole"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "a5529a097249487292e2cb984455438d",
-  "sha1": "20c57da6cb16e1195666b2d824ffdb330baf2eaa",
-  "size": 5996,
+  "revid": "f8e5edd8cc8b45e982670896d236ddc8",
+  "sha1": "41f41b2a69eaa2dd686609ebd9ce8db73247834b",
+  "size": 6000,
   "summary": "",
   "tags": [
     "demo",

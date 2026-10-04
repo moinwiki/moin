@@ -154,7 +154,7 @@ Mediawiki has markup for ordered lists and unordered lists.  Ordered lists use o
 
 <pre>Internal links are created by enclosing the name in double square bracket characters: [[Home]] or [[Home#Test Comment]].</pre>
 <pre>To create an internal link with alternate text, use the vertical bar character as a separator: [[Home | go home]].</pre>
-<pre>For external links, use a bare link like http://moinmo.in or wrap the link in single [] characters to show alternate text as the link: [http://moinmo.in Python Wiki].</pre>
+<pre>For external links, use a bare link like https://moinmo.in or wrap the link in single [] characters to show alternate text as the link: [https://moinmo.in Python Wiki].</pre>
 
 '''Result:'''
 
@@ -162,7 +162,7 @@ Internal links are created by enclosing the name in double square bracket charac
 
 To create an internal link with alternate text, use the vertical bar character as a separator: [[Home | go home]].
 
-For external links, use a bare link like http://moinmo.in or wrap the link in single [] characters to show alternate text as the link: [http://moinmo.in Python Wiki].
+For external links, use a bare link like https://moinmo.in or wrap the link in single [] characters to show alternate text as the link: [https://moinmo.in Python Wiki].
 
 '''MWTODO:''' Links to internal page anchors do not work if there is an embedded space character. The bare link version of external links do not work. Wrapping an external link in single [] characters without alternate text uses the text following the ending ] as the alternate text.
 
@@ -172,7 +172,7 @@ The MediaWiki syntax for tables currently offers no support for specifying commo
 
 Note that given the absence of a specified tbody within a table, some browsers will automatically generate a tbody enclosing all rows.
 
-Without a way to show a large block of preformatted text, and many parts of tables broken as well, it is difficult to show table markup.  The following examples are largely copied from [http://www.mediawiki.org/wiki/Help:Tables http://www.mediawiki.org/wiki/Help:Tables].
+Without a way to show a large block of preformatted text, and many parts of tables broken as well, it is difficult to show table markup.  The following examples are largely copied from [https://www.mediawiki.org/wiki/Help:Tables https://www.mediawiki.org/wiki/Help:Tables].
 
 === Table Examples ===
 
@@ -566,7 +566,7 @@ Text after
 
 == Symbols ==
 
-Mediawiki supports all the symbols defined in [http://en.wikipedia.org/wiki/List_of_HTML_entities http://en.wikipedia.org/wiki/List_of_HTML_entities].
+Mediawiki supports all the symbols defined in [https://en.wikipedia.org/wiki/List_of_HTML_entities https://en.wikipedia.org/wiki/List_of_HTML_entities].
 
 '''Markup:'''
 
@@ -578,7 +578,7 @@ Mediawiki supports all the symbols defined in [http://en.wikipedia.org/wiki/List
 
 == Media ==
 
-'''MWTODO:''' While media is displayed, all types are displayed with object tags that generate HTML validation errors due to namespace issues. A second issue is that the options for captions, sizing and positioning is not supported.  See [http://www.mediawiki.org/wiki/Help:Images http://www.mediawiki.org/wiki/Help:Images].
+'''MWTODO:''' While media is displayed, all types are displayed with object tags that generate HTML validation errors due to namespace issues. A second issue is that the options for captions, sizing and positioning is not supported.  See [https://www.mediawiki.org/wiki/Help:Images https://www.mediawiki.org/wiki/Help:Images].
 
 === Images ===
 
