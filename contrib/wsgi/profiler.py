@@ -83,7 +83,7 @@ class CProfileMiddleware(ProfilerMiddleware):
 
 class PycallgraphMiddleware(ProfilerMiddleware):
     """A call-graphing middleware utilizing the pycallgraph third-party
-    module (available at http://pycallgraph.slowchop.com/)."""
+    module (https://pypi.org/project/pycallgraph/)."""
 
     def __init__(self, app, filename):
         super().__init__(app)

@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from io import BytesIO
 from moin.error import ConfigurationError
 
-# Set pickle protocol; see http://docs.python.org/lib/node64.html
+# Set pickle protocol; see https://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
 
 

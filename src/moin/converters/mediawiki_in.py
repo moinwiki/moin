@@ -641,7 +641,7 @@ class Converter(ConverterMacro):
         being that mediawiki breaks on pipes whereas the default parser breaks on spaces. Apart from that
         this parser also supports a few extra characters such as "<, >, ., /", mostly for URL linking.
 
-        :param input: can be like a|b|c=f|something else caption|g='long caption'|link=http://google.com
+        :param input: can be like a|b|c=f|something else caption|g='long caption'|link=https://google.com
         :returns: Arguments instance
         """
         parse_rules = r"""

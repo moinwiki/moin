@@ -28,7 +28,7 @@ class TestInterWiki:
         class Config(wikiconfig.Config):
             interwiki_map = {
                 "Self": "http://localhost:8080/",
-                "MoinMoin": "http://moinmo.in/",
+                "MoinMoin": "https://moinmo.in/",
                 "OtherWiki": "http://otherwiki.com/",
                 "OtherWiki/ns1": "http://otherwiki.com/ns1/",
                 "OtherWiki/ns1/ns2": "http://otherwiki.com/ns1/ns2/",
@@ -47,7 +47,7 @@ class TestInterWiki:
             # (item_name, wiki_name='', namespace='', rev=CURRENT, endpoint='frontend.show_item', _external=False):
             (("SomePage", "", "", "", CURRENT, "frontend.show_item", True), "http://localhost:8080/SomePage"),
             (("SomePage", "", "", "", CURRENT, "frontend.modify_item", False), "/+modify/SomePage"),
-            # FIXME If you set interwiki_map = dict(Self='http://localhost:8080', MoinMoin='http://moinmo.in/', ),
+            # FIXME If you set interwiki_map = dict(Self='http://localhost:8080', MoinMoin='https://moinmo.in/', ),
             # the above line makes it fail; it returns http://localhost/+modify/SomePage
             # (('SomePage', '', '', CURRENT, 'frontend.modify_item', True), 'http://localhost:8080/+modify/SomePage'),
             (("SomeRevID", "", "revid", "", revid, "frontend.show_item", False), f"/+show/+{revid}/@revid/SomeRevID"),
@@ -75,14 +75,14 @@ class TestInterWiki:
             ),
             (
                 ("SomePage", "MoinMoin", "", "ns1", CURRENT, "frontend.show_item", False),
-                "http://moinmo.in/ns1/SomePage",
+                "https://moinmo.in/ns1/SomePage",
             ),
-            (("SomePage", "MoinMoin", "", "", CURRENT, "frontend.show_item", False), "http://moinmo.in/SomePage"),
+            (("SomePage", "MoinMoin", "", "", CURRENT, "frontend.show_item", False), "https://moinmo.in/SomePage"),
             # FIXME will exist a map for this case? maybe there should be a placeholder for it.
             # we need that for wiki farms with common search index and search in non-current revisions.
             (
                 ("SomePage", "MoinMoin", "", "", revid, "frontend.show_item", False),
-                f"http://moinmo.in/+show/+{revid}/SomePage",
+                f"https://moinmo.in/+show/+{revid}/SomePage",
             ),
             (
                 ("SomeItemID", "non-existent", "itemid", "", CURRENT, "frontend.show_item", False),
@@ -169,30 +169,30 @@ class TestInterWiki:
             (("http://example.org/", "SomePage", "", ""), "http://example.org/SomePage"),
             (("", "SomePage", "", ""), "SomePage"),
             (
-                ("http://example.org/?page=$PAGE&action=show", "SomePage", "", ""),
-                "http://example.org/?page=SomePage&action=show",
+                ("https://example.org/?page=$PAGE&action=show", "SomePage", "", ""),
+                "https://example.org/?page=SomePage&action=show",
             ),
-            (("http://example.org/", "Aktuelle\xc4nderungen", "", ""), "http://example.org/Aktuelle%C3%84nderungen"),
+            (("https://example.org/", "Aktuelle\xc4nderungen", "", ""), "https://example.org/Aktuelle%C3%84nderungen"),
             (
-                ("http://example.org/$PAGE/show", "Aktuelle\xc4nderungen", "", ""),
-                "http://example.org/Aktuelle%C3%84nderungen/show",
+                ("https://example.org/$PAGE/show", "Aktuelle\xc4nderungen", "", ""),
+                "https://example.org/Aktuelle%C3%84nderungen/show",
             ),
-            (("http://example.org/", "SomeItemID", "itemid", "ns1"), "http://example.org/ns1/@itemid/SomeItemID"),
+            (("https://example.org/", "SomeItemID", "itemid", "ns1"), "https://example.org/ns1/@itemid/SomeItemID"),
             (
-                ("http://example.org/?page=$PAGE&action=show&namespace=$NAMESPACE", "SomePage", "", "ns1"),
-                "http://example.org/?page=SomePage&action=show&namespace=ns1",
-            ),
-            (
-                ("http://example.org/", "Aktuelle\xc4nderungen", "", "ns1\xc4"),
-                "http://example.org/ns1%C3%84/Aktuelle%C3%84nderungen",
+                ("https://example.org/?page=$PAGE&action=show&namespace=$NAMESPACE", "SomePage", "", "ns1"),
+                "https://example.org/?page=SomePage&action=show&namespace=ns1",
             ),
             (
-                ("http://example.org/$NAMESPACE/$PAGE/show", "Aktuelle\xc4nderungen", "", "ns\xc41"),
-                "http://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show",
+                ("https://example.org/", "Aktuelle\xc4nderungen", "", "ns1\xc4"),
+                "https://example.org/ns1%C3%84/Aktuelle%C3%84nderungen",
             ),
             (
-                ("http://example.org/@$FIELD/$PAGE/show", "Aktuelle\xc4nderungen", "itemid", ""),
-                "http://example.org/@itemid/Aktuelle%C3%84nderungen/show",
+                ("https://example.org/$NAMESPACE/$PAGE/show", "Aktuelle\xc4nderungen", "", "ns\xc41"),
+                "https://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show",
+            ),
+            (
+                ("https://example.org/@$FIELD/$PAGE/show", "Aktuelle\xc4nderungen", "itemid", ""),
+                "https://example.org/@itemid/Aktuelle%C3%84nderungen/show",
             ),
         ]
         for (baseurl, pagename, field, namespace), url in tests:
@@ -291,7 +291,7 @@ class TestInterWikiMapBackend:
         assert "this" not in testiwm.iwmap
         assert testiwm.iwmap["MoinMoin"] == "https://moinmo.in/"
         assert testiwm.iwmap["hg"] == "https://www.mercurial-scm.org/wiki/"
-        assert testiwm.iwmap["h2g2"] == "http://h2g2.com/dna/h2g2/"
+        assert testiwm.iwmap["h2g2"] == "https://h2g2.com/dna/h2g2/"
 
 
 coverage_modules = ["moin.utils.interwiki"]

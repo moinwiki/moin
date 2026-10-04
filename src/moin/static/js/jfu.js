@@ -1,18 +1,18 @@
 /*
-    * Copyright 2010, Sebastian Tschan, https://blueimp.net
--   * Licensed under the MIT license:
--   * http://creativecommons.org/licenses/MIT/
-
-    * Copyright 2021 MoinMoin:RogerHaase, modified for moinmoin2
-    * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
-
-    Upload multiple jpg files using jquery-file-upload. Tested with version 10.31.0.
-
-    Reference: https://github.com/blueimp/jQuery-File-Upload/wiki/Basic-plugin#how-to-display-individual-upload-progress-with-the-basic-plugin
-
-    Uploads are started when files are selected, there are no limits on file size
-    nor number of files.
-*/
+ * Copyright 2010, Sebastian Tschan, https://blueimp.net
+ * Licensed under the MIT license:
+ * https://creativecommons.org/licenses/MIT/
+ *
+ * Copyright 2021 MoinMoin:RogerHaase, modified for moinmoin2
+ * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+ *
+ * Upload multiple jpg files using jquery-file-upload. Tested with version 10.31.0.
+ *
+ * Reference: https://github.com/blueimp/jQuery-File-Upload/wiki/Basic-plugin#how-to-display-individual-upload-progress-with-the-basic-plugin
+ *
+ * Uploads are started when files are selected, there are no limits on file size
+ * nor number of files.
+ */
 
 $(function () {
     "use strict";

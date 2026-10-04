@@ -90,28 +90,28 @@ class TestInclude:
 
     def test_ExternalInclude(self):
         # External include.
-        update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{http://moinmo.in}}")
+        update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{https://moinmo.in}}")
         rendered = Item.create("page1").content.render_data()
         assert (
-            '<object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object>'
+            '<object class="moin-transclusion" data="https://moinmo.in" data-href="https://moinmo.in">https://moinmo.in</object>'
             in rendered
         )
         # External include embedded within text (object is an inline tag).
-        update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "before {{http://moinmo.in}} after")
+        update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "before {{https://moinmo.in}} after")
         rendered = Item.create("page1").content.render_data()
         assert (
-            '<p>before <object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> after</p>'
+            '<p>before <object class="moin-transclusion" data="https://moinmo.in" data-href="https://moinmo.in">https://moinmo.in</object> after</p>'
             in rendered
         )
         # External include embedded within italic and bold text markup (object is an inline tag).
         update_item(
             "page1",
             {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"},
-            "before ''italic '''bold {{http://moinmo.in}} bold''' italic'' normal",
+            "before ''italic '''bold {{https://moinmo.in}} bold''' italic'' normal",
         )
         rendered = Item.create("page1").content.render_data()
         assert (
-            '<p>before <em>italic <strong>bold <object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> bold</strong> italic</em> normal</p>'
+            '<p>before <em>italic <strong>bold <object class="moin-transclusion" data="https://moinmo.in" data-href="https://moinmo.in">https://moinmo.in</object> bold</strong> italic</em> normal</p>'
             in rendered
         )
 

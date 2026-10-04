@@ -14,8 +14,8 @@ Sie müssen eine Passwort-Rücksetzung ausführen, um ein ''neues und anderes'' 
 == Was Sie tun müssen ==
 === Lesen Sie wichtige Informationen ===
 Bitte besuchen Sie diese URLs für weitere Informationen:
- * http://moinmo.in/HowToHandleSecurityBreach/de (allgemeine Hinweise, unbedingt lesen!)
- * http://moinmo.in/SecurityFixes/CVE-YYYY-NNNN (über den spezifischen Vorfall, wenn Sie mehr Informationen möchten) (XXX URL korrigieren)
+ * https://moinmo.in/HowToHandleSecurityBreach/de (allgemeine Hinweise, unbedingt lesen!)
+ * https://moinmo.in/SecurityFixes/CVE-YYYY-NNNN (über den spezifischen Vorfall, wenn Sie mehr Informationen möchten) (XXX URL korrigieren)
 
 === Ein neues Passwort setzen ===
 Sie sollten eine E-Mail (inklusive eines Links, um Ihr Passwort zurückzusetzen) erhalten haben. Lesen und befolgen Sie sie.

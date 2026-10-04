@@ -159,7 +159,7 @@ def send_file(
             attachment_filename = os.path.basename(filename)
         # Note: we only give filename* param, not filename param, hoping that a user agent that
         # does not support filename* then falls back into using the last URL fragment (and decodes
-        # that correctly). See there for details: http://greenbytes.de/tech/tc2231/
+        # that correctly). See there for details: https://greenbytes.de/tech/tc2231/
         headers.add("Content-Disposition", f"attachment; filename*={encode_rfc2231(attachment_filename)}")
 
     if current_app.config["USE_X_SENDFILE"] and filename:

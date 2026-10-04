@@ -6,7 +6,7 @@
 """
 MoinMoin - Creole input converter.
 
-See http://wikicreole.org/ for the latest specs.
+See https://wikicreole.org/ for the latest specs.
 
 Notes:
 
