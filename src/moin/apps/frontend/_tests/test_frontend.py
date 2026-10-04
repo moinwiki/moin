@@ -547,6 +547,19 @@ def test_cspreport_get_does_not_crash(client):
     assert rv.status_code == 204
 
 
+def test_cspreport_malformed_body_does_not_crash(client):
+    # A valid-JSON body missing the "csp-report" key, or a non-UTF-8 body,
+    # must not crash the handler with an unhandled KeyError /
+    # UnicodeDecodeError; both are caught and logged, returning 204.
+    rv = client.post(
+        url_for("frontend.cspreport"), data=json.dumps({"not-csp-report": "x"}), content_type="application/csp-report"
+    )
+    assert rv.status_code == 204
+
+    rv = client.post(url_for("frontend.cspreport"), data=b"\xff\xfe\x00invalid", content_type="application/csp-report")
+    assert rv.status_code == 204
+
+
 def test_template_missing_file_returns_404(client):
     """
     Regression test: /+template/<filename> passed its filename straight
