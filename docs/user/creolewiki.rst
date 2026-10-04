@@ -117,22 +117,22 @@ Internal links
 External links
 --------------
 
-.. _http\://www.example.com: http://www.example.com
-.. _http\://www.example.com: http://www.example.com
-.. _InterWiki item on MeatBall: http://meatballwiki.org/wiki/InterWiki
+.. _https\://www.example.com: https://www.example.com
+.. _https\://www.example.com: https://www.example.com
+.. _InterWiki item on MeatBall: https://meatballwiki.org/wiki/InterWiki
 .. _mailto\:user@example.org: user@example.org
 
-+-------------------------------------------------------+-------------------------------+-------------------------------------+
-| Markup                                                | Result                        | Comment                             |
-+=======================================================+===============================+=====================================+
-| ``http://www.example.com``                            | `http://www.example.com`_     | External link                       |
-+-------------------------------------------------------+-------------------------------+-------------------------------------+
-| ``[[http://www.example.com]]``                        | `http://www.example.com`_     | External link                       |
-+-------------------------------------------------------+-------------------------------+-------------------------------------+
-| ``[[MeatBall:InterWiki|InterWiki item on MeatBall]]`` | `InterWiki item on MeatBall`_ | Link to an item on an external Wiki |
-+-------------------------------------------------------+-------------------------------+-------------------------------------+
-| ``[[mailto:user@example.org]]``                       | `mailto:user@example.org`_    | Mailto link                         |
-+-------------------------------------------------------+-------------------------------+-------------------------------------+
++--------------------------------------------------------+--------------------------------+-------------------------------------+
+| Markup                                                 | Result                         | Comment                             |
++========================================================+================================+=====================================+
+| ``https://www.example.com``                            | `https://www.example.com`_     | External link                       |
++--------------------------------------------------------+--------------------------------+-------------------------------------+
+| ``[[https://www.example.com]]``                        | `https://www.example.com`_     | External link                       |
++--------------------------------------------------------+--------------------------------+-------------------------------------+
+| ``[[MeatBall:InterWiki|InterWiki item on MeatBall]]``  | `InterWiki item on MeatBall`_  | Link to an item on an external Wiki |
++--------------------------------------------------------+--------------------------------+-------------------------------------+
+| ``[[mailto:user@example.org]]``                        | `mailto:user@example.org`_     | Mailto link                         |
++--------------------------------------------------------+--------------------------------+-------------------------------------+
 
 Images and Transclusions
 ========================

@@ -127,22 +127,22 @@ Comments (lines starting with ``..``) are printed
 External links
 --------------
 
-+-------------------------------------+--------------------------+-------------------------------------+
-| Markup                              | Result                   | Comment                             |
-+=====================================+==========================+=====================================+
-| ``http://www.example.com``          | http://www.example.com   | External link **MWTODO**            |
-|                                     |                          | (not converted into a hyperlink)    |
-+-------------------------------------+--------------------------+-------------------------------------+
-| ``[http://www.example.com text]``   | text_                    | External link with alternative text |
-+-------------------------------------+--------------------------+-------------------------------------+
-| ``[http://www.example.com]``        | `[1]`_                   | External link with number **MWTODO**|
-|                                     |                          | (no numbering, normal link)         |
-+-------------------------------------+--------------------------+-------------------------------------+
-| ``[mailto:test@example.com mail]``  | mail_                    | Mailto link                         |
-+-------------------------------------+--------------------------+-------------------------------------+
++--------------------------------------+---------------------------+-------------------------------------+
+| Markup                               | Result                    | Comment                             |
++======================================+===========================+=====================================+
+| ``https://www.example.com``          | https://www.example.com   | External link **MWTODO**            |
+|                                      |                           | (not converted into a hyperlink)    |
++--------------------------------------+---------------------------+-------------------------------------+
+| ``[https://www.example.com text]``   | text_                     | External link with alternative text |
++--------------------------------------+---------------------------+-------------------------------------+
+| ``[https://www.example.com]``        | `[1]`_                    | External link with number **MWTODO**|
+|                                      |                           | (no numbering, normal link)         |
++--------------------------------------+---------------------------+-------------------------------------+
+| ``[mailto:test@example.com mail]``   | mail_                     | Mailto link                         |
++--------------------------------------+---------------------------+-------------------------------------+
 
-.. _text: http://www.example.com
-.. _[1]: http://www.example.com
+.. _text: https://www.example.com
+.. _[1]: https://www.example.com
 .. _mail: mailto:test@example.com
 
 Images
@@ -575,7 +575,7 @@ It is possible to use other elements inside tables:
  * This
  * is a bullet list
  * in a table cell.
- |[http://www.example.com Hyperlink]
+ |[https://www.example.com Hyperlink]
  |}
 
 **Result**:
@@ -591,7 +591,7 @@ It is possible to use other elements inside tables:
 | - in a table cell                 |                             |
 +-----------------------------------+-----------------------------+
 
-.. _Hyperlink: http://www.example.com
+.. _Hyperlink: https://www.example.com
 
 **MWTODO**
 Lists cannot be used inside cells.

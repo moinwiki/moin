@@ -19,4 +19,4 @@ unlikely that anything from the PikiPiki codebase is left, but we include its
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
     USA
 
-The PikiPiki homepage is at http://sourcefrog.net/projects/piki/.
+The PikiPiki homepage is at https://sourcefrog.net/projects/piki/.
