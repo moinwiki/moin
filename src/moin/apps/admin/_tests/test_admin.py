@@ -14,14 +14,14 @@ from flask import url_for
 @pytest.mark.parametrize(
     "url_for_args,status,data",
     (
-        ({"endpoint": "admin.register_new_user"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.index"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.userprofile", "user_name": "DoesntExist"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.wikiconfig"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.wikiconfighelp"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.interwikihelp"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.highlighterhelp"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.itemsize"}, "403 FORBIDDEN", ("<html>", "</html>")),
+        ({"endpoint": "admin.register_new_user"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.index"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.userprofile", "user_name": "DoesntExist"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.wikiconfig"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.wikiconfighelp"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.interwikihelp"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.highlighterhelp"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
+        ({"endpoint": "admin.itemsize"}, "403 FORBIDDEN", ("<html lang=", "</html>")),
     ),
 )
 def test_admin(client, url_for_args, status, data):
