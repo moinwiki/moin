@@ -152,7 +152,12 @@ class Config(DefaultConfig):
             "rules": {},
             # report-only rules
             "rules-report-only": {
-                "default-src": ["http://localhost:*", "moinmo.in", "*.moinmo.in", "http://www.xkcd.com"],
+                "default-src": [
+                    "http://localhost:*",
+                    "https://moinmo.in",
+                    "https://*.moinmo.in",
+                    "http://www.xkcd.com",
+                ],
                 "script-src": "'strict-dynamic' @nonce @self",
                 "style-src-attr": "@nonce",
                 "style-src-elem": "@self @nonce",
@@ -164,7 +169,7 @@ class Config(DefaultConfig):
                 "object-src": [
                     "@self",
                     "http://www.xkcd.com",
-                    "http://static.moinmo.in",
+                    "https://static.moinmo.in",
                     "https://moinmo.in",
                     "https://docs.python.org",
                 ],

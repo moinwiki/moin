@@ -30,7 +30,7 @@ class Config(DefaultConfig):
     default_acl = None
     default_root = "FrontPage"
     interwikiname = "MoinTest"
-    interwiki_map = dict(Self="http://localhost:8080/", MoinMoin="http://moinmo.in/")
+    interwiki_map = dict(Self="http://localhost:8080/", MoinMoin="https://moinmo.in/")
     interwiki_map[interwikiname] = "http://localhost:8080/"
     email_tracebacks = False
 
