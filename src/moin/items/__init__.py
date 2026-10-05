@@ -39,7 +39,7 @@ from markupsafe import Markup
 
 from urllib.parse import unquote
 
-from whoosh.query import Term, Prefix, And, Or, Not
+from whoosh.query import Term, Prefix, And, Or, Not, NullQuery
 
 from moin import current_app, flaskg, log
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
@@ -1425,8 +1425,15 @@ class Item:
            isglobalindex: ???
 
         Output:
-          Returns a whoosh.query.Prefix object for the input parameters
+          Returns a whoosh.query.Prefix object for the input parameters,
+          or a NullQuery matching nothing when the item has no subitem
+          prefixes (e.g. an index rooted at an itemid that matches nothing).
         """
+        if not isglobalindex and not self.subitem_prefixes:
+            # an item addressed by something other than a name, such as a
+            # nonexistent itemid, has no names and thus no subitem prefixes;
+            # no stored item can be one of its subitems
+            return NullQuery()
         prefix = "" if isglobalindex else self.subitem_prefixes[0]
         if startswith:
             query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
