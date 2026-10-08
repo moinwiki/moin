@@ -194,7 +194,7 @@ into the rendered page.
 |**Markup**|**Result**|
 |----------|----------|
 |`![Alt text](help-common/logo.png "Optional title")`|![Alt text](help-common/logo.png "Optional title")|
-|`![remote image](http://static.moinmo.in/logos/moinmoin.png)`|![remote image](http://static.moinmo.in/logos/moinmoin.png)|
+|`![remote image](https://static.moinmo.in/logos/moinmoin.png)`|![remote image](https://static.moinmo.in/logos/moinmoin.png)|
 |`[1]: help-common/logo.png`|# to define a reference link place declaration on a separate line, it creates no visible output, the example below uses this|
 |`![Alt text][1]`|![Alt text][1]|
 |`![Subitem content](/Subitem)`|![Subitem content](/Subitem) # content of subitem is rendered\

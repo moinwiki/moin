@@ -17,7 +17,7 @@ DebianBug https://bugs.debian.org/
 DebianPackage https://packages.debian.org/
 DebianforumDeWiki https://wiki.debianforum.de/
 DocBook https://github.com/docbook/wiki/wiki
-DseWiki http://www.wikiservice.at/dse/wiki.cgi?
+DseWiki https://www.wikiservice.at/dse/wiki.cgi?
 ESW https://esw.w3.org/topic/
 EmacsWiki https://www.emacswiki.org/
 Foldoc https://www.foldoc.org
@@ -30,7 +30,7 @@ JuraWiki https://jurawiki.de/
 LinuxMM https://linux-mm.org/
 LinuxWiki https://linuxwiki.org/
 MBWiki https://wiki.musicbrainz.org/
-MeatBall http://meatballwiki.org/wiki/
+MeatBall https://meatballwiki.org/wiki/
 MetaWikiPedia https://meta.wikipedia.org/wiki/
 MoinMaster https://master.moinmo.in/
 MoinMoin https://moinmo.in/

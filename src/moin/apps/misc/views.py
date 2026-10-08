@@ -71,7 +71,7 @@ def urls_names():
 
     This view generates a list of item URLs and item names so that other wikis
     can implement SisterWiki functionality easily.
-    See http://meatballwiki.org/wiki/SisterSitesImplementationGuide
+    See https://meatballwiki.org/wiki/SisterSitesImplementationGuide
     """
     # TODO: We currently also get deleted items; fix this.
     fq_names = []

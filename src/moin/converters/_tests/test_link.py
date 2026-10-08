@@ -28,7 +28,7 @@ def conv():
         ("wiki:///Test?mode=raw", "/Test?mode=raw"),
         ("wiki:///Test#anchor", "/Test#anchor"),
         ("wiki:///Test?mode=raw#anchor", "/Test?mode=raw#anchor"),
-        ("wiki://MoinMoin/Test", "http://moinmo.in/Test"),
+        ("wiki://MoinMoin/Test", "https://moinmo.in/Test"),
     ),
 )
 def test_wiki(conv, input_, output):

@@ -158,7 +158,7 @@ def path_locations(home_dir: str, dry_run: bool = False) -> tuple[str, str, str,
     home_dir = os.path.abspath(home_dir)
     lib_dir, inc_dir, bin_dir = None, None, None
     # XXX: We'd use distutils.sysconfig.get_python_inc/lib but its
-    # prefix arg is broken: http://bugs.python.org/issue3386
+    # prefix arg is broken: https://bugs.python.org/issue3386
     if IS_WIN:
         # Windows has lots of problems with executables with spaces in
         # the name; this function will remove them (using the ~1

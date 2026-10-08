@@ -113,23 +113,23 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        # examples taken from http://docutils.sourceforge.net/docs/user/rst/quickref.html#explicit-markup
+        # examples taken from https://docutils.sourceforge.net/docs/user/rst/quickref.html#explicit-markup
         # output is not identical to input, but HTML out display is the same
         (
-            "External hyperlinks, like Python_.\n\n.. _Python: http://www.python.org/",
-            "External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n",
+            "External hyperlinks, like Python_.\n\n.. _Python: https://www.python.org/",
+            "External hyperlinks, like `Python`_.\n\n\n.. _Python: https://www.python.org/\n\n",
         ),
         (
-            "External hyperlinks, like `Python <http://www.python.org/>`_.",
-            "External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n",
+            "External hyperlinks, like `Python <https://www.python.org/>`_.",
+            "External hyperlinks, like `Python`_.\n\n\n.. _Python: https://www.python.org/\n\n",
         ),
         (
             "Internal crossreferences, like example_.\n\n.. _example:\n\nThis is an example crossreference target.",
             "Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n",
         ),
         (
-            "Python_ is `my favourite programming language`__.\n\n.. _Python: http://www.python.org/\n\n__ Python_",
-            "`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n",
+            "Python_ is `my favourite programming language`__.\n\n.. _Python: https://www.python.org/\n\n__ Python_",
+            "`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: https://www.python.org/\n\n.. _my favourite programming language: https://www.python.org/\n\n",
         ),
         (
             "Titles are targets, too \n======================= \nImplict references, like `Titles are targets, too`_.",
@@ -137,20 +137,20 @@ class TestConverter:
         ),
         # output is same as input
         (
-            "External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n",
-            "External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n",
+            "External hyperlinks, like `Python`_.\n\n\n.. _Python: https://www.python.org/\n\n",
+            "External hyperlinks, like `Python`_.\n\n\n.. _Python: https://www.python.org/\n\n",
         ),
         (
-            "External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n",
-            "External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n",
+            "External hyperlinks, like `Python`_.\n\n\n.. _Python: https://www.python.org/\n\n",
+            "External hyperlinks, like `Python`_.\n\n\n.. _Python: https://www.python.org/\n\n",
         ),
         (
             "Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n",
             "Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n",
         ),
         (
-            "`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n",
-            "`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n",
+            "`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: https://www.python.org/\n\n.. _my favourite programming language: https://www.python.org/\n\n",
+            "`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: https://www.python.org/\n\n.. _my favourite programming language: https://www.python.org/\n\n",
         ),
         (
             "\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n",

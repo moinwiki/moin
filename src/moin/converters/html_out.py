@@ -594,7 +594,7 @@ class Converter(ConverterBase):
                 new_elem.append(alt)
 
         if obj_type == "object" and getattr(href, "scheme", None):
-            # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
+            # items similar to {{https://moinmo.in}} are marked here, other objects are marked in include.py
             return mark_item_as_transclusion(new_elem, href)
 
         return new_elem

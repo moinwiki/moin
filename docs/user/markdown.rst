@@ -419,7 +419,7 @@ syntax to change the default sizes or positions of transclusions:
     [logo]: png  "Optional title attribute"
 
     To transclude image from remote site:
-    ![remote image](http://static.moinmo.in/logos/moinmoin.png)
+    ![remote image](https://static.moinmo.in/logos/moinmoin.png)
 
 **Result**:
 
@@ -440,13 +440,13 @@ do not appear in the rendered HTML:
 
 To transclude image from remote site:
 
-.. image:: http://static.moinmo.in/logos/moinmoin.png
+.. image:: https://static.moinmo.in/logos/moinmoin.png
    :alt: remote image
    :align: right
 
 **reST NOTE**: The Moin reST parser renders all three images above. The
 Sphinx parser renders only the external png image from
-http://static.moinmo.in/logos/moinmoin.png. reST syntax does not allow the
+https://static.moinmo.in/logos/moinmoin.png. reST syntax does not allow the
 rendering of inline images, nor the use of a title attribute. The logos
 above are floated right, in Markdown the logos would appear as inline images.
 
@@ -721,7 +721,7 @@ Footnotes [1]_ have a label [#label]_ and a definition [#DEF]_.
 Admonition
 ----------
 
-The `Admonition extension <https://python-markdown.github.io/extensions/admonition/>`_ adds `rST-style <http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions>`_ admonitions to Markdown.
+The `Admonition extension <https://python-markdown.github.io/extensions/admonition/>`_ adds `rST-style <https://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions>`_ admonitions to Markdown.
 
 **Syntax**: ::
 

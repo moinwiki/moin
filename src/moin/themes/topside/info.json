@@ -4,7 +4,7 @@
     "name":         "Topside Theme",
     "description":  "Topside theme has topbar for small displays and left sidebar for wide displays.",
     "author":       "Roger Haase",
-    "website":      "http://moinmo.in/",
+    "website":      "https://moinmo.in/",
     "license":      "see MoinMoin license",
     "doctype":      "html5"
 }

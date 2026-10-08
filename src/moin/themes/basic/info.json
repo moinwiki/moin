@@ -4,7 +4,7 @@
     "name":         "Basic Theme",
     "description":  "moin2's builtin basic theme",
     "author":       "MoinMoin developers",
-    "website":      "http://moinmo.in/",
+    "website":      "https://moinmo.in/",
     "license":      "see MoinMoin license",
     "doctype":      "html5"
 }

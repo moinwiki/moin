@@ -19,7 +19,7 @@ class TestNaviBar:
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
-            interwiki_map = dict(Self="http://localhost:8080/", MoinMoin="http://moinmo.in/")
+            interwiki_map = dict(Self="http://localhost:8080/", MoinMoin="https://moinmo.in/")
 
         return Config
 
@@ -32,9 +32,9 @@ class TestNaviBar:
             # (navilink, (href, text, interwiki)),
             ("ItemName", ("/ItemName", "ItemName", "")),
             ("[[ItemName|LinkText]]", ("/ItemName", "LinkText", "")),
-            ("MoinMoin/ItemName", ("http://moinmo.in/ItemName", "ItemName", "MoinMoin")),
-            ("[[MoinMoin/ItemName|LinkText]]", ("http://moinmo.in/ItemName", "LinkText", "MoinMoin")),
-            ("[[wiki:MoinMoin/ItemName|LinkText]]", ("http://moinmo.in/ItemName", "LinkText", "MoinMoin")),
+            ("MoinMoin/ItemName", ("https://moinmo.in/ItemName", "ItemName", "MoinMoin")),
+            ("[[MoinMoin/ItemName|LinkText]]", ("https://moinmo.in/ItemName", "LinkText", "MoinMoin")),
+            ("[[wiki:MoinMoin/ItemName|LinkText]]", ("https://moinmo.in/ItemName", "LinkText", "MoinMoin")),
             ("http://example.org/", ("http://example.org/", "http://example.org/", "")),
             ("[[http://example.org/|LinkText]]", ("http://example.org/", "LinkText", "")),
         ]

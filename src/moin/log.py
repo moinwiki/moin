@@ -65,7 +65,7 @@ from io import StringIO
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or is called with a non-working
 # logging configuration.
-# See http://docs.python.org/library/logging.html#configuring-logging
+# See https://docs.python.org/library/logging.html#configuring-logging
 # We just use stderr output by default; if you want anything else,
 # you will have to configure logging.
 logging_config = """\

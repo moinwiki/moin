@@ -297,13 +297,13 @@ Remove blanks from "] ] >" below:
 <emphasis role="bold">Markup:</emphasis>
 
 <screen><![CDATA[
-<link xlink:href="http://moinmo.in/">MoinMoin rocks</link>
+<link xlink:href="https://moinmo.in/">MoinMoin rocks</link>
 ]]></screen>
 
 <emphasis role="bold">Results:</emphasis>
 
 <para>
-<link xlink:href="http://moinmo.in/">MoinMoin rocks</link>
+<link xlink:href="https://moinmo.in/">MoinMoin rocks</link>
 </para>
 
 </section>
@@ -528,7 +528,7 @@ be positioned to the left, center, or right through use of the align attribute.
 </para>
 
 <simpara>
-Here is a video courtesy of http://techslides.com/sample-webm-ogg-and-mp4-video-files-for-html5/. This video has a caption.
+Here is a video courtesy of https://techslides.com/sample-webm-ogg-and-mp4-video-files-for-html5/. This video has a caption.
 </simpara>
 
 <emphasis role="bold">Markup:</emphasis>
@@ -557,7 +557,7 @@ Here is a video courtesy of http://techslides.com/sample-webm-ogg-and-mp4-video-
 <section>
 <title>Audio with caption</title>
 <simpara>
-Here is a sound, courtesy of http://www.mediacollege.com/audio/tone/download/.
+Here is a sound, courtesy of https://www.mediacollege.com/audio/tone/download/.
 The align="center" attribute centers the object.
 </simpara>
 

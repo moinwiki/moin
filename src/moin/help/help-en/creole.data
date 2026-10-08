@@ -129,16 +129,16 @@ Creole syntax does not provide a means to position or resize images.
 {{{
 # {{help-common/logo.png}}
 # {{help-common/logo.svg|my svg}}
-# {{http://static.moinmo.in/logos/moinmoin.png}}
-# {{http://www.xkcd.com/}}
+# {{https://static.moinmo.in/logos/moinmoin.png}}
+# {{https://www.xkcd.com/}}
 }}}
 
 **Result:**
 
 # {{help-common/logo.png}}
 # {{help-common/logo.svg|my svg}}
-# {{http://static.moinmo.in/logos/moinmoin.png}}
-# {{http://www.xkcd.com/}}
+# {{https://static.moinmo.in/logos/moinmoin.png}}
+# {{https://www.xkcd.com/}}
 
 
 === Avoid or Limit Automatic Linking ===

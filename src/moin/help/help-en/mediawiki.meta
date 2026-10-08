@@ -3,12 +3,12 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x-mediawiki;charset=utf-8",
-  "dataid": "2d9d25a4be414c8f82cacd305b76f7db",
+  "dataid": "7617c53a169640ccb770f87b4ec0b581",
   "externallinks": [
-    "http://en.wikipedia.org/wiki/List_of_HTML_entities",
-    "http://moinmo.in",
-    "http://www.mediawiki.org/wiki/Help:Images",
-    "http://www.mediawiki.org/wiki/Help:Tables"
+    "https://en.wikipedia.org/wiki/List_of_HTML_entities",
+    "https://moinmo.in",
+    "https://www.mediawiki.org/wiki/Help:Images",
+    "https://www.mediawiki.org/wiki/Help:Tables"
   ],
   "itemid": "cb68b5889e344c1994d6c22fd365db04",
   "itemlinks": [
@@ -22,16 +22,17 @@
     "help-common/video.mp4"
   ],
   "itemtype": "default",
-  "mtime": 1681742400,
+  "language": "en",
+  "mtime": 1791072831,
   "name": [
     "mediawiki"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "4bce57f2f5d94c6281d6a215b3538c52",
-  "sha1": "4895df12b8a3cc4a8e59d10e7a4927517984ad91",
-  "size": 18273,
+  "revid": "ca9ee55c934243e3952f94c83dbb0469",
+  "sha1": "51ac7972104c6aa51c50ec86b3e13bc7ed683754",
+  "size": 18283,
   "summary": "",
   "tags": [
     "parser",

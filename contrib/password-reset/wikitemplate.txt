@@ -14,8 +14,8 @@ You need to do a password recovery to set a ''new and changed'' password for you
 == What you need to do ==
 === Read important information ===
 Please visit these URLs for more information:
- * http://moinmo.in/HowToHandleSecurityBreach ('''generic advice, MUST READ!''')
- * http://moinmo.in/SecurityFixes/CVE-YYYY-NNNN (about the specific incident, if you want more information) (XXX fix url)
+ * https://moinmo.in/HowToHandleSecurityBreach ('''generic advice, MUST READ!''')
+ * https://moinmo.in/SecurityFixes/CVE-YYYY-NNNN (about the specific incident, if you want more information) (XXX fix url)
 
 === Enter a new password ===
 You should have received an E-Mail (including a link to reset your password). Just read and follow it.
