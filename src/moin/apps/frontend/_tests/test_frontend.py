@@ -157,7 +157,7 @@ class TestFrontend:
             "frontend.ajaxdelete",
             status="200 OK",
             viewargs=dict(item_name="DoesntExist"),
-            data=dict(itemnames='["DoesntExist"]', comment="Test"),
+            data=dict(itemnames=["DoesntExist"], comment="Test"),
             expected={"itemnames": []},
         )
 
@@ -165,7 +165,7 @@ class TestFrontend:
         self.post_xhr_request(
             "frontend.ajaxdelete",
             status="200 OK",
-            data=dict(itemnames='["DoesntExist"]', comment="Test"),
+            data=dict(itemnames=["DoesntExist"], comment="Test"),
             expected={"itemnames": []},
         )
 
@@ -174,7 +174,7 @@ class TestFrontend:
             "frontend.ajaxdestroy",
             status="200 OK",
             viewargs=dict(item_name="DoesntExist"),
-            data=dict(itemnames='["DoesntExist"]', comment="Test"),
+            data=dict(itemnames=["DoesntExist"], comment="Test"),
             expected={"itemnames": []},
         )
 
@@ -182,9 +182,36 @@ class TestFrontend:
         self.post_xhr_request(
             "frontend.ajaxdestroy",
             status="200 OK",
-            data=dict(comment="Test", itemnames='["DoesntExist"]'),
+            data=dict(comment="Test", itemnames=["DoesntExist"]),
             expected={"itemnames": []},
         )
+
+    def test_ajaxdelete_non_json_returns_400(self):
+        with current_app.test_client() as client:
+            rv = client.post("/+ajaxdelete", data="not json", content_type="text/plain")
+            assert rv.status_code == 400
+
+    def test_ajaxdelete_missing_fields_returns_400(self):
+        with current_app.test_client() as client:
+            rv = client.post("/+ajaxdelete", json={})
+            assert rv.status_code == 400
+            rv = client.post("/+ajaxdelete", json={"itemnames": ["x"]})
+            assert rv.status_code == 400
+
+    def test_ajaxdelete_non_dict_json_returns_400(self):
+        with current_app.test_client() as client:
+            for bad in ('"foo"', "41", "true"):
+                rv = client.post("/+ajaxdelete", data=bad, content_type="application/json")
+                assert rv.status_code == 400
+            rv = client.post("/+ajaxdelete", json=[])
+            assert rv.status_code == 400
+
+    def test_ajaxdelete_non_string_itemnames_returns_400(self):
+        with current_app.test_client() as client:
+            rv = client.post("/+ajaxdelete", json={"itemnames": ["x", 42, None], "comment": "Test"})
+            assert rv.status_code == 400
+            rv = client.post("/+ajaxdestroy", json={"itemnames": [42], "comment": "Test"})
+            assert rv.status_code == 400
 
     def test_ajaxmodify(self):
         self._test_view_post("frontend.ajaxmodify", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
