@@ -125,7 +125,14 @@ class ZipConverter(ArchiveConverter):
             for zinfo in zf.filelist:
                 if not (zinfo.file_size == 0 and zinfo.filename.endswith("/")):
                     # display only normal files, not directories
-                    rows.append((zinfo.file_size, datetime(*zinfo.date_time), zinfo.filename))  # y,m,d,h,m,s
+                    # validate date_time fields before constructing datetime;
+                    # zinfo.date_time may contain invalid values (e.g. month=0)
+                    # from crafted zip archives, which would raise ValueError
+                    try:
+                        dt = datetime(*zinfo.date_time)
+                    except (ValueError, TypeError):
+                        dt = datetime.min
+                    rows.append((zinfo.file_size, dt, zinfo.filename))  # y,m,d,h,m,s
             return rows
         except (RuntimeError, zipfile.BadZipfile) as err:
             # RuntimeError is raised by zipfile stdlib module in case of
