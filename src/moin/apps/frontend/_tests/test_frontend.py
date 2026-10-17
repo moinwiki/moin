@@ -383,6 +383,24 @@ class TestFrontend:
     def test_verifyemail(self):
         self._test_view("frontend.verifyemail", status="302 FOUND", data=["<!doctype html"])
 
+    def test_verifyemail_invalid_token_no_crash(self):
+        # A valid username with a token that was never issued must render
+        # "invalid" (redirect) rather than letting the missing
+        # RECOVERPASS_KEY / EMAIL_UNVALIDATED profile entries raise
+        # KeyError (500). The keys are absent when the wiki config uses
+        # minimal user_defaults without the stock recovery entries.
+        from moin.constants.keys import EMAIL_UNVALIDATED, RECOVERPASS_KEY
+
+        create_user("verifyuser", "SomePassword123")
+        defaults = current_app.cfg.user_defaults
+        saved = {k: defaults.pop(k) for k in (RECOVERPASS_KEY, EMAIL_UNVALIDATED) if k in defaults}
+        try:
+            with current_app.test_client() as client:
+                resp = client.get("/+verifyemail?username=verifyuser&token=bogus-token")
+                assert resp.status_code == 302
+        finally:
+            defaults.update(saved)
+
     def test_lostpass(self):
         self._test_view("frontend.lostpass")
 
