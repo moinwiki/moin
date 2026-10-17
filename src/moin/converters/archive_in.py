@@ -127,8 +127,8 @@ class ZipConverter(ArchiveConverter):
         try:
             rows: list[tuple[int, datetime, str]] = []
             zf = zipfile.ZipFile(fileobj, mode="r")
-            for zinfo in zf.filelist:
-                if not (zinfo.file_size == 0 and zinfo.filename.endswith("/")):
+            for zinfo in zf.infolist():
+                if not zinfo.is_dir():
                     # display only normal files, not directories
                     # validate date_time fields before constructing datetime;
                     # zinfo.date_time may contain invalid values (e.g. month=0)
