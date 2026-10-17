@@ -2338,8 +2338,13 @@ def verifyemail():
         token = request.values["token"]
     success = False
     if user and token and user.validate_recovery_token(token):
-        unvalidated_email = user.profile[EMAIL_UNVALIDATED]
-        if current_app.cfg.user_email_unique and search_users(**{EMAIL: unvalidated_email}):
+        try:
+            unvalidated_email = user.profile[EMAIL_UNVALIDATED]
+        except KeyError:
+            unvalidated_email = None
+        if not unvalidated_email:
+            msg = _("Your username and/or token is invalid!")
+        elif current_app.cfg.user_email_unique and search_users(**{EMAIL: unvalidated_email}):
             msg = _("This email is already in use.")
         else:
             if user.disabled:
@@ -2349,7 +2354,10 @@ def verifyemail():
                 msg = _("Your new email address has been confirmed.")
             user.profile[EMAIL] = unvalidated_email
             del user.profile[EMAIL_UNVALIDATED]
-            del user.profile[RECOVERPASS_KEY]
+            try:
+                del user.profile[RECOVERPASS_KEY]
+            except KeyError:
+                pass
             success = True
     else:
         msg = _("Your username and/or token is invalid!")
