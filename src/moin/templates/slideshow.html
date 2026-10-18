@@ -25,5 +25,5 @@
       <span class="slide-nav" onclick="lastSlide()" title="Last slide"><i class="fa-solid fa-forward-fast"></i></span>
     </div>
 
-    <script src="{{ url_for('static', filename='js/slideshow.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slideshow.js') }}"{{ utils.nonce() }}></script>
 {% endblock %}
