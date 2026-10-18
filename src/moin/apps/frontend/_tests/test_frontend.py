@@ -288,10 +288,8 @@ class TestFrontend:
         assert len(cancel_buttons) == 1
         assert "onclick" not in cancel_buttons[0].attrib
         if theme_name == "topside":
-            proxy_buttons = document.xpath(
-                "//button[@onclick=\"document.getElementById('moin-cancel-text-button').click()\"]"
-            )
-            assert len(proxy_buttons) == 1
+            proxy_buttons = document.xpath("//button[contains(@class, 'moin-button')]")
+            assert len(proxy_buttons) == 3
 
     def test_modify_item_show_preview(self):
 

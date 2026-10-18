@@ -61,7 +61,8 @@
             {{ forms.render_errors(form) }}
             <br>
             <input type="checkbox" id="moin-blog-search-this"
-            onclick="$('#moin-searchform').attr('action', this.checked ? '{{ url_for('frontend.search', q='>'~blog_name) }}' : '{{ url_for('frontend.search') }}' );">
+                data-search-url="{{ url_for('frontend.search') }}"
+                data-blog-search-url="{{ url_for('frontend.search', q='>'~blog_name) }}">
             {{ _("only this blog") }}
     {{ gen.form.close() }}
 {% endmacro %}

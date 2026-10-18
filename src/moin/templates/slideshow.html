@@ -11,18 +11,18 @@
     {% endif %}
 
     <!-- Next and previous buttons -->
-    <a class="prev" onclick="prevSlide()">&#10094;</a>
-    <a class="next" onclick="nextSlide()">&#10095;</a>
+    <a class="prev">&#10094;</a>
+    <a class="next">&#10095;</a>
 
     <!-- navigation to first or last slide or exit slideshow -->
     <div class="navi-container">
-      <span class="slide-nav" onclick="showSlide(1)" title="First slide"><i class="fa-solid fa-backward-fast"></i></span>
-      <span class="slide-nav">
+      <span class="slide-nav slide-nav-first" title="First slide"><i class="fa-solid fa-backward-fast"></i></span>
+      <span class="slide-nav slide-nav-exit">
         <a class="slide-nav" title="Exit slideshow" href="{{ url_for('frontend.show_item', item_name=fqname) }}">
           <i class="fa-solid fa-right-from-bracket"></i>
         </a>
       </span>
-      <span class="slide-nav" onclick="lastSlide()" title="Last slide"><i class="fa-solid fa-forward-fast"></i></span>
+      <span class="slide-nav slide-nav-last" title="Last slide"><i class="fa-solid fa-forward-fast"></i></span>
     </div>
 
     <script src="{{ url_for('static', filename='js/slideshow.js') }}"{{ utils.nonce() }}></script>
