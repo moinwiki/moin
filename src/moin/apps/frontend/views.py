@@ -825,7 +825,7 @@ def slide_item(item_name, rev):
     if isinstance(item, NonExistent):
         abort(404, item_name)
     data_rendered = safe_markup(item.content.render_data_slide())
-    return render_template("slideshow.html", item_name=item.name, data_rendered=data_rendered)
+    return render_template("slideshow.html", item_name=item.name, fqname=item.fqname, data_rendered=data_rendered)
 
 
 @presenter("get")
