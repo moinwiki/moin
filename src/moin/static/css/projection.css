@@ -46,7 +46,7 @@ sup, sub { font-size: 10pt; }
 }
 
 /* Next and previous slide button */
-.prev, .next {
+.slide-nav-prev, .slide-nav-next {
   cursor: pointer;
   position: fixed;
   top: 50%;
@@ -61,12 +61,12 @@ sup, sub { font-size: 10pt; }
 }
 
 /* Move the "next" button to the right */
-.next {
+.slide-nav-next {
   right: 0;
   border-radius: 3px 0 0 3px;
 }
 
-a.prev:hover, a.next:hover {
+a.slide-nav-prev:hover, a.slide-nav-next:hover {
   color: darkgray;
   text-decoration: none;
   font-size: 24px;

@@ -895,8 +895,8 @@ $(document).ready(function () {
     $('.moin-button-cancel').on('click', function () { document.getElementById('moin-cancel-text-button').click(); });
 
     // slideshow.html
-    $('.prev').on('click', function () { prevSlide(); });
-    $('.next').on('click', function () { nextSlide(); });
+    $('.slide-nav-prev').on('click', function () { prevSlide(); });
+    $('.slide-nav-next').on('click', function () { nextSlide(); });
     $('.slide-nav-first').on('click', function () { showSlide(1); });
     $('.slide-nav-last').on('click', function () { lastSlide(); });
 
