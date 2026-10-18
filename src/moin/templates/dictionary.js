@@ -30,7 +30,6 @@ $(document).ready(function () {
         "All changes will be discarded!": "{{ _("All changes will be discarded!") }}",
         "Download failed, no items were selected.": "{{ _("Download failed, no items were selected.") }}",
         "Your saved draft has been loaded.": "{{ _("Your saved draft has been loaded.") }}",
-        "Your edit lock will expire in 1 minute: ": "{{ _("Your edit lock will expire in 1 minute: ") }}",
         "Add optional comment for Delete change log. ": "{{ _("Add optional comment for Delete change log. ") }}",
         "Add optional comment for Destroy change log. ": "{{ _("Add optional comment for Destroy change log. ") }}",
         "Action complete.": "{{ _("Action complete.") }}"

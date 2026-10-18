@@ -936,9 +936,18 @@ $(document).ready(function () {
 
     // give user 1 minute warning before edit lock expires
     if ($("#moin-lock_duration").length) {
-        setTimeout(function() {
-            alert(_("Your edit lock will expire in 1 minute: ") + $('#moin-item-name').val())}, (($("#moin-lock_duration").val() - 60) * 1000));
+        const timeout_s = Math.max($('#moin-lock_duration').val() - 60, 0);
+        setTimeout(
+            function() {
+                $('#moin-edit-lock-timeout-hint').removeClass('hidden');
+            },
+            timeout_s * 1000
+        );
+        $('#moin-edit-lock-timeout-hint').on('click', function () {
+            $(this).addClass('hidden');
+        });
     }
+
 
     // convert FontAwesome data-style color & font-size attributes to css attr,
     // cannot do style in macros/FontAwesome.py because CSP flags inline style attributes
