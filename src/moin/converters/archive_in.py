@@ -9,8 +9,10 @@ Make a DOM tree representation of an archive (i.e., list its contents in a table
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, IO, TYPE_CHECKING
+from typing_extensions import override
 
+from abc import abstractmethod
 from datetime import datetime
 import tarfile
 import zipfile
@@ -52,7 +54,7 @@ class ArchiveConverter(ConverterBase, TableMixin):
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls(**kwargs)
 
-    def process_name(self, member_name):
+    def process_name(self, member_name: str):
         attrib = {
             xlink.href: Iri(scheme="wiki", authority="", path="/" + self.fullname, query=f"do=get&member={member_name}")
         }
@@ -82,7 +84,8 @@ class ArchiveConverter(ConverterBase, TableMixin):
             # something more adequate, though:
             return self.build_dom_table([[str(err)]])
 
-    def list_contents(self, fileobj):
+    @abstractmethod
+    def list_contents(self, fileobj: IO[bytes]) -> list[tuple[int, datetime, str]]:
         """
         Analyze the archive we get as fileobj and return data for table rendering.
 
@@ -100,9 +103,10 @@ class TarConverter(ArchiveConverter):
     Support listing tar files.
     """
 
-    def list_contents(self, fileobj):
+    @override
+    def list_contents(self, fileobj: IO[bytes]) -> list[tuple[int, datetime, str]]:
         try:
-            rows = []
+            rows: list[tuple[int, datetime, str]] = []
             tf = tarfile.open(fileobj=fileobj, mode="r")
             for tinfo in tf.getmembers():
                 if tinfo.isfile():
@@ -118,12 +122,13 @@ class ZipConverter(ArchiveConverter):
     Support listing zip files.
     """
 
-    def list_contents(self, fileobj):
+    @override
+    def list_contents(self, fileobj: IO[bytes]) -> list[tuple[int, datetime, str]]:
         try:
-            rows = []
+            rows: list[tuple[int, datetime, str]] = []
             zf = zipfile.ZipFile(fileobj, mode="r")
-            for zinfo in zf.filelist:
-                if not (zinfo.file_size == 0 and zinfo.filename.endswith("/")):
+            for zinfo in zf.infolist():
+                if not zinfo.is_dir():
                     # display only normal files, not directories
                     # validate date_time fields before constructing datetime;
                     # zinfo.date_time may contain invalid values (e.g. month=0)
