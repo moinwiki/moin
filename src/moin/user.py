@@ -859,7 +859,11 @@ class User:
         return token
 
     def validate_recovery_token(self, token):
-        return valid_token(self.profile[RECOVERPASS_KEY], token)
+        try:
+            key = self.profile[RECOVERPASS_KEY]
+        except KeyError:
+            return False
+        return valid_token(key, token)
 
     def apply_recovery_token(self, token, newpass):
         if not self.validate_recovery_token(token):
