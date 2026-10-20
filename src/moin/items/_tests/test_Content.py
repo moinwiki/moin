@@ -136,6 +136,43 @@ class TestTarItems:
             resp = client.get(f"/+download/{item_name}?member=does-not-exist.txt")
             assert resp.status_code == 400
 
+    def test_do_get_member_on_non_archive_returns_400(self):
+        # _do_get() must surface ?member= on an item whose content type
+        # has no archive members as 400 rather than letting the
+        # AttributeError from the missing get_member() become a 500.
+        item_name = "TextItem1"
+        update_item(item_name, {CONTENTTYPE: "text/plain;charset=utf-8"}, b"hello world")
+
+        from flask import current_app
+
+        with current_app.test_client() as client:
+            resp = client.get(f"/+download/{item_name}?member=example1.txt")
+            assert resp.status_code == 400
+
+    def test_do_get_member_tar_dir_returns_400(self):
+        # _do_get() must surface a member resolving to a tar directory
+        # (extractfile() returns None) as 400 rather than passing None
+        # downstream.
+        import tarfile
+
+        item_name = "ContainerItem5"
+        buf = BytesIO()
+        with tarfile.open(fileobj=buf, mode="w") as tf:
+            ti = tarfile.TarInfo("example1.txt")
+            data = b"abcdefghij"
+            ti.size = len(data)
+            tf.addfile(ti, BytesIO(data))
+            td = tarfile.TarInfo("subdir")
+            td.type = tarfile.DIRTYPE
+            tf.addfile(td)
+        update_item(item_name, {CONTENTTYPE: "application/x-tar"}, buf.getvalue())
+
+        from flask import current_app
+
+        with current_app.test_client() as client:
+            resp = client.get(f"/+download/{item_name}?member=subdir")
+            assert resp.status_code == 400
+
 
 @pytest.mark.usefixtures("_req_ctx")
 class TestZipMixin:
