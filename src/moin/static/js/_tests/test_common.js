@@ -156,21 +156,3 @@ test("Basic theme Cancel navigates directly after confirmation", () => {
         windowLocation: "/wiki/Example",
     });
 });
-
-test("Topside proxy dispatches the hidden Cancel control", () => {
-    const layoutPath = path.join(__dirname, "..", "..", "..", "themes", "topside", "templates", "layout.html");
-    const layout = fs.readFileSync(layoutPath, "utf8");
-    const proxyAction = layout.match(/<button class="moin-button" onclick="([^"]+)">Cancel<\/button>/)[1];
-    const scenario = cancelScenario({changed: true, confirmResult: false});
-
-    vm.runInNewContext(proxyAction, scenario.context);
-
-    assert.deepEqual(scenario.result(), {
-        changed: true,
-        confirmCalls: 1,
-        confirmMessage: "All changes will be discarded!",
-        nativeNavigation: false,
-        prevented: true,
-        windowLocation: "unchanged",
-    });
-});

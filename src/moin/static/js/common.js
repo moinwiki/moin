@@ -878,11 +878,27 @@ $(document).ready(function () {
     $('#moin-modify').on('change keyup keydown', 'input, textarea, select', function (e) {
         $('#moin-modify').addClass('moin-changed-input');
     });
-
+    $('#moin-preview-text-button').on('click', function () {
+        $('#moin-modify').removeClass('moin-changed-input');
+    });
     $('#moin-save-text-button').on('click', function () {
         $('#moin-modify').removeClass('moin-changed-input');
         location.hash = '';
     });
+    $('#moin-blog-search-this').on('click', function () {
+        $('#moin-searchform').attr('action', $(this).data(this.checked ? 'blog-search-url' : 'search-url'));
+    });
+
+    // topside theme
+    $('.moin-button-save').on('click', function () { document.getElementById('moin-save-text-button').click(); });
+    $('.moin-button-preview').on('click', function () { document.getElementById('moin-preview-text-button').click(); });
+    $('.moin-button-cancel').on('click', function () { document.getElementById('moin-cancel-text-button').click(); });
+
+    // slideshow.html
+    $('.slide-nav-prev').on('click', function () { prevSlide(); });
+    $('.slide-nav-next').on('click', function () { nextSlide(); });
+    $('.slide-nav-first').on('click', function () { showSlide(1); });
+    $('.slide-nav-last').on('click', function () { lastSlide(); });
 
     // CKEditor
     const editor_elem = document.querySelector(".ckeditor");
