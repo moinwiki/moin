@@ -86,7 +86,7 @@
         {%- endblock %}
     </head>
 
-    <body{% if body_onload %} onload="{{ body_onload }}"{% endif %}">
+    <body{% if body_onload %} onload="{{ body_onload }}"{% endif %}>
         {%- block layout %}
             <h1>Extend this block only if you want to change layout. If you want to put content, extend layout.html and use placeholders item and content.</h1>
         {%- endblock %}
