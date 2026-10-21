@@ -31,12 +31,18 @@ class Converter(ConverterBase):
 
     def __init__(self, regex: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        if match := re.fullmatch('r"([^"]*)"', regex):
-            # extract the real regex from Whoosh regex search term
-            self.pattern = re.compile(match.group(1))
-        else:
-            # treat each word separately and ignore case sensitivity
-            self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
+        try:
+            if match := re.fullmatch('r"([^"]*)"', regex):
+                # extract the real regex from Whoosh regex search term
+                self.pattern = re.compile(match.group(1))
+            else:
+                # treat each word separately and ignore case sensitivity
+                self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
+        except re.error:
+            # regex is user-controlled via ?regex= query param; an invalid
+            # pattern must not break the view, it should just match nothing.
+            # (?!) never matches, unlike $^ which matches "" and "\n".
+            self.pattern = re.compile(r"(?!)")
 
     def __call__(self, tree: Any) -> Any:
         self.recurse(tree)

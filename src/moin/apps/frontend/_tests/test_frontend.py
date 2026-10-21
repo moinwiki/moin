@@ -916,3 +916,19 @@ def test_search_wildcard_still_finds_ngram_matches(client):
     rv = client.get(url_for("frontend.search"), query_string={"q": "*Wildcard*"})
     assert rv.status_code == 200
     assert b"WildcardTargetItem" in rv.data
+
+
+def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
+    """An item view with invalid ?regex= must render content, not the error box."""
+    create_user("testuser_hl", "Testpass123")
+    login(client, "testuser_hl", "Testpass123")
+    modify_item(client, "HighlightTestPage", make_modify_form_data("HighlightTestPage", content="hello world content"))
+    # "[[[" is actually invalid ([[[] is a valid char class matching "[")
+    rv = client.get("/HighlightTestPage", query_string={"regex": "[[["})
+    assert rv.status_code == 200
+    assert b"hello world content" in rv.data
+    assert b"An error happened" not in rv.data
+    # valid regex still highlights
+    rv2 = client.get("/HighlightTestPage?regex=hello")
+    assert rv2.status_code == 200
+    assert b"moin-highlight" in rv2.data
