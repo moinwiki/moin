@@ -1797,8 +1797,9 @@ def mychanges():
     else:
         flash(_("You must be logged in to see your changes."), "error")
         results_per_page = current_app.cfg.results_per_page
-    page_num = request.values.get("page_num", 1)
-    page_num = max(int(page_num), 1)
+    # page_num is user-supplied; a non-numeric value falls back to the
+    # default via the typed getter instead of raising ValueError
+    page_num = max(request.values.get("page_num", 1, type=int), 1)
 
     query = Term(USERID, flaskg.user.itemid)
     if results_per_page:
@@ -1944,9 +1945,8 @@ def history(item_name):
 
     item_is_deleted = flash_if_item_deleted(item_name, CURRENT, item)
     item_may = get_item_permissions(item_name, item)
-    page_num = request.values.get("page_num", 1)
-    page_num = max(int(page_num), 1)
-    bookmark_time = int(request.values.get("bookmark", 0))
+    page_num = max(request.values.get("page_num", 1, type=int), 1)
+    bookmark_time = request.values.get("bookmark", 0, type=int)
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
@@ -2043,8 +2043,7 @@ def global_history(namespace):
     else:
         results_per_page = current_app.cfg.results_per_page
 
-    page_num = request.values.get("page_num", 1)
-    page_num = max(int(page_num), 1)
+    page_num = max(request.values.get("page_num", 1, type=int), 1)
     fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, "")
     if namespace != NAMESPACE_ALL:
         terms = [Term(NAMESPACE, namespace)]
@@ -3004,9 +3003,7 @@ def diff(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
-    offset = request.values.get("offset", 0)
-    offset = max(int(offset), 0)
-    bookmark_time = int(request.values.get("bookmark", 0))
+    bookmark_time = request.values.get("bookmark", 0, type=int)
     # Query by itemid, not by the item's current name: a name-based query only
     # matches revisions indexed under that name, but renaming an item does not
     # retroactively update older revisions' indexed NAME. itemid is stable

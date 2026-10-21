@@ -355,6 +355,18 @@ class TestFrontend:
     def test_mychanges(self):
         self._test_view("frontend.mychanges", viewargs=dict(userid="000000"))
 
+    def test_mychanges_non_numeric_page_num_returns_200(self):
+        # page_num is user-supplied; a non-numeric value must fall back to
+        # the default rather than raising ValueError as a 500.
+        with current_app.test_client() as client:
+            rv = client.get("/+mychanges?page_num=abc")
+            assert rv.status_code == 200
+
+    def test_global_history_non_numeric_page_num_returns_200(self):
+        with current_app.test_client() as client:
+            rv = client.get("/+history?page_num=abc")
+            assert rv.status_code == 200
+
     def test_global_history(self):
         self._test_view("frontend.global_history")
 
