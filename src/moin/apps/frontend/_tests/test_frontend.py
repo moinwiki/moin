@@ -930,6 +930,18 @@ def test_search_wildcard_still_finds_ngram_matches(client):
     assert b"WildcardTargetItem" in rv.data
 
 
+def test_search_boolajax_without_q_does_not_crash(client):
+    """
+    Regression test: /+search with ?boolajax=1 but no q had the ajax branch
+    pass the missing q (None) to StandardAnalyzer, which raised
+    AssertionError (None is not unicode) as an unhandled 500 on a trivial
+    anonymous GET. Both the ajax and non-ajax branches now default a missing
+    q to "" so the analyzer and query parser see "" instead of None.
+    """
+    rv = client.get(url_for("frontend.search"), query_string={"boolajax": "1"})
+    assert rv.status_code == 200
+
+
 def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
     """An item view with invalid ?regex= must render content, not the error box."""
     create_user("testuser_hl", "Testpass123")
