@@ -294,7 +294,7 @@ nonce="{{ csp_nonce() }}"
                                 {%- if not loop.last %}
                                     <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}">
                                         {{ segment_name|shorten_fqname }}
-                                    </a>
+                                    </a>/
                                 {%- else %}
                                     <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}">
                                         {{ segment_name|shorten_fqname }}
