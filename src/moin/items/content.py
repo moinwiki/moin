@@ -567,7 +567,22 @@ class Binary(Content):
                 mt = MimeType(mimestr)
             file_to_send = rev.data
         if mimetype:
-            content_type = mimetype
+            # mimetype is user-controlled via ?mimetype= query param;
+            # restrict to printable ASCII so no header-unsafe character
+            # (CR/LF, NUL, DEL, non-ASCII) reaches send_file - real WSGI
+            # servers encode headers as latin-1 and fail the response.
+            if not (mimetype.isascii() and mimetype.isprintable()):
+                content_type = mt.content_type()
+            else:
+                try:
+                    content_type = MimeType(mimetype).content_type()
+                except (ValueError, IndexError):
+                    # parse_mimetype raises ValueError for a parameter
+                    # without (or with more than one) "=" and IndexError
+                    # for an empty value (e.g. "text/html; charset=");
+                    # anything else is a real bug and must not be
+                    # swallowed here.
+                    content_type = mt.content_type()
         else:
             content_type = mt.content_type()
         as_attachment = force_attachment or mt.as_attachment(current_app.cfg)
