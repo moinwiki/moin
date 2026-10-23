@@ -262,6 +262,23 @@ class TestFrontend:
     def test_download_item(self):
         self._test_view("frontend.download_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
+    @pytest.mark.parametrize(
+        "mimetype", ["text/html", "text/html; foo", "text/html; charset=", "\r\nX-Injected: 1", "text/☃"]
+    )
+    def test_download_item_crafted_mimetype(self, mimetype):
+        # A crafted ?mimetype= must render with the stored content type,
+        # never a 500 (CR/LF -> Werkzeug ValueError) or a response real
+        # WSGI servers cannot encode as latin-1 (non-ASCII, controls).
+        from moin._tests import update_item
+
+        update_item("DlItem", {"contenttype": "text/plain;charset=utf-8"}, b"hello")
+        with current_app.test_client() as client:
+            rv = client.get(url_for("frontend.download_item", item_name="DlItem"), query_string={"mimetype": mimetype})
+            assert rv.status_code == 200
+            ct = rv.headers["Content-Type"]
+            assert "\r" not in ct and "\n" not in ct and "X-Injected" not in rv.headers
+            ct.encode("latin-1")
+
     def test_convert_item(self):
         self._test_view(
             "frontend.convert_item",
