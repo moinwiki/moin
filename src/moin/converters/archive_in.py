@@ -111,7 +111,16 @@ class TarConverter(ArchiveConverter):
             for tinfo in tf.getmembers():
                 if tinfo.isfile():
                     # display only normal files, not directories
-                    rows.append((tinfo.size, utcfromtimestamp(tinfo.mtime), tinfo.name))
+                    try:
+                        dt = utcfromtimestamp(tinfo.mtime)
+                    except (OSError, OverflowError, ValueError):
+                        # mtime is user-controlled inside tar; huge or
+                        # negative values cause datetime.fromtimestamp to
+                        # raise OSError/OverflowError – treat as invalid
+                        # entry rather than crashing listing (parallel to
+                        # zip date_time ValueError handling)
+                        continue
+                    rows.append((tinfo.size, dt, tinfo.name))
             return rows
         except tarfile.TarError as err:
             raise ArchiveException(str(err))
