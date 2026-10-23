@@ -823,7 +823,7 @@ class NodeVisitor:
             self.current_node.append(f" ({node['source']} line {node['line']}) ")
         if backrefs := node.get("backrefs", []):
             backref_uri = Iri(fragment=backrefs[0])
-            self.open_moin_page_node(moin_page.a(attrib={xlink.href: backref_uri}), node)
+            self.open_moin_page_node(moin_page.a(attrib={xlink.href: backref_uri}))
             self.current_node.append("backlink")
             self.close_moin_page_node()  # </a>
         self.close_moin_page_node()  # </p>
