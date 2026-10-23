@@ -706,6 +706,19 @@ figure { text-align: center; }
 /* prevent editor help text being overlapped by editor controls */
 .ck.ck-editor, #f_content_form_data_text { clear: both; }
 
+/* edit lock hint used in the modify template */
+#moin-edit-lock-timeout-hint {
+  background-color: var(--alert);
+  border: 2px solid var(--inverse);
+  border-radius: 10px;
+  color: var(--inverse);
+  padding: 8px 16px 8px 8px;
+  position: fixed;
+  top: 12px;
+  right: -6px;
+  z-index: 1090;
+}
+
 /* revision navigation on show, highlight, and meta views */
 .moin-revert { text-align: center; }
 .moin-rev-navigation-current { font-size: 1.25em; font-weight: bold; }

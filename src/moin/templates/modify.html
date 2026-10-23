@@ -35,6 +35,11 @@
 {% endblock %}
 
 {% block content %}
+    {%- if lock_duration -%}
+    <div id="moin-edit-lock-timeout-hint" class="hidden">
+        {{ _("Your edit lock will expire in 1 minute") }}
+    </div>
+    {%- endif %}
     <h1>{{ title }}</h1>
     <div id="moin-modify" class="moin-form">
         {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
