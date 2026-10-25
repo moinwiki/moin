@@ -533,7 +533,7 @@ text""",
             '<p>Unbalanced <a html:class="red" xlink:href="#system-message-1" xml:id="problematic-1">*</a>inline markup.</p>'
             '<admonition type="caution" xml:id="system-message-1">'
             '<p html:class="moin-title">System Message: WARNING/2 (rST input line 1) '
-            '<a xlink:href="#problematic-1" xml:id="system-message-1">backlink</a></p>'
+            '<a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition>",
         ),
