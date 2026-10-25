@@ -181,5 +181,5 @@
 
 {% block body_scripts %}
     {{ super() }}
-    <script src="/_themes/focus/js/main.js"></script>
+    <script src="/_themes/focus/js/main.js" {{ utils.nonce() }}></script>
 {% endblock %}
