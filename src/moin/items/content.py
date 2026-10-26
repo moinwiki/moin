@@ -1390,10 +1390,24 @@ class SvgDraw(Draw):
     @override
     def handle_post(self) -> None:
         # called from modify UI/POST
-        png_data = request.values.get("png_data")
-        svg_upload = request.values.get("filepath")
-        png_content = base64.urlsafe_b64decode(png_data.split(",")[1])
-        svg_content = base64.urlsafe_b64decode(svg_upload)
+        png_data = request.values.get("png_data") or ""
+        svg_upload = request.values.get("filepath") or ""
+        # png_data is a data URL like "data:image/png;base64,..."
+        _, sep, png_b64 = png_data.partition(",")
+        # validate=True rejects characters outside the base64 alphabet
+        # instead of silently discarding them (the default), so malformed
+        # payloads cannot decode to garbage and bypass this check.
+        # Empty payloads or a missing data-URL comma are meaningless
+        # drawings, not valid input.
+        if not sep or not png_b64 or not svg_upload:
+            abort(400, "Invalid drawing data.")
+        try:
+            png_content = base64.b64decode(png_b64, altchars=b"-_", validate=True)
+            svg_content = base64.b64decode(svg_upload, altchars=b"-_", validate=True)
+        except ValueError:
+            # binascii.Error is a ValueError subclass; request.values gives
+            # str so only decode failures can raise here.
+            abort(400, "Invalid drawing data.")
         self.put_member("drawing.svg", svg_content, None, True, False)
         self.put_member("drawing.png", png_content, None, False, True)
 
