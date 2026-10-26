@@ -7,9 +7,11 @@
 MoinMoin - Tests for moin.items.content
 """
 
-import pytest
+import base64
 from io import BytesIO
 
+import pytest
+from flask import current_app, url_for
 from markupsafe import Markup, escape
 
 from moin.utils import diff_html
@@ -373,6 +375,52 @@ class TestText:
         newfile = BytesIO(b"x")
         difflines = item_.content._get_data_diff_html(oldfile, newfile)
         assert difflines == [(1, Markup(""), 1, Markup("<span>x</span>"))]
+
+
+@pytest.mark.usefixtures("_req_ctx")
+class TestSvgDraw:
+    """Tests for svgdraw items."""
+
+    def _post_png_data(self, item_name, png_data):
+        svg_data = base64.urlsafe_b64encode(b'<?xml version="1.0"?><svg/>').decode()
+        with current_app.test_client() as client:
+            return client.post(
+                url_for("frontend.modify_item", item_name=item_name),
+                data={
+                    "itemtype": ITEMTYPE_DEFAULT,
+                    "contenttype": "application/x-svgdraw",
+                    "template": "",
+                    "filename": "drawing.svg",
+                    "filepath": svg_data,
+                    "png_data": png_data,
+                },
+            )
+
+    @pytest.mark.parametrize(
+        "png_data",
+        [
+            "data:image/png;base64,aGVsbG8",  # data URL with invalid base64 padding
+            "A!B@C#D",  # garbage: validate=True rejects the non-alphabet chars
+        ],
+    )
+    def test_handle_post_malformed_png_data_returns_400(self, png_data):
+        # A crafted png_data value must be rejected as a bad request instead of
+        # raising an unhandled decode error out of do_modify.
+        response = self._post_png_data("SvgDrawMalformed", png_data)
+        assert response.status_code == 400
+
+    def test_handle_post_valid_png_data_saves_drawing(self):
+        # Control: a well-formed data URL must still be saved and redirect.
+        # (The full valid-save path with stored-bytes verification lives in
+        # test_frontend.py::test_modify_svgdraw_valid_post_saves_drawing;
+        # this keeps the unit-level control to status + contenttype.)
+        png_data = "data:image/png;base64," + base64.urlsafe_b64encode(b"pngbytes").decode()
+        response = self._post_png_data("SvgDrawValid", png_data)
+        assert response.status_code == 302
+
+        # The redirect is only reached after handle_post saved the container.
+        item = Item.create("SvgDrawValid")
+        assert item.rev.meta[CONTENTTYPE] == "application/x-svgdraw"
 
 
 coverage_modules = ["moin.items.content"]

@@ -290,6 +290,66 @@ class TestFrontend:
     def test_modify_item(self):
         self._test_view("frontend.modify_item", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
+    @pytest.mark.parametrize(
+        "png_data,filepath",
+        [
+            # garbage that used to decode silently (urlsafe_b64decode
+            # discards invalid chars) must now 400, not store garbage
+            ("data:image/png;base64,A!B@C#D", "!!!!"),
+            # missing comma is no longer accepted as raw base64
+            ("A!B@C#D", "!!!!"),
+            # invalid base64 padding
+            ("data:image/png;base64,aGVsbG8", "!!!!"),
+            # non-ASCII payload
+            ("data:image/png;base64,aGVsbG收入8=", "!!!!"),
+            # empty payloads
+            ("", ""),
+        ],
+    )
+    def test_modify_svgdraw_crafted_post(self, client, png_data, filepath):
+        # Crafted svgdraw POSTs must 400 on malformed base64, never 500
+        # on decode errors and never store silently-decoded garbage.
+        # The applet posts to /+modify/<item> with contenttype in the
+        # query string (multipart form carries only the drawing fields),
+        # and template= (empty) to skip the template picker.
+        create_user("drawuser", "Drawpass123")
+        login(client, "drawuser", "Drawpass123")
+        rv = client.post(
+            url_for(
+                "frontend.modify_item",
+                item_name="DrawItem",
+                itemtype="default",
+                contenttype="application/x-svgdraw",
+                template="",
+            ),
+            data={"png_data": png_data, "filepath": filepath},
+        )
+        assert rv.status_code == 400
+
+    def test_modify_svgdraw_valid_post_saves_drawing(self, client):
+        # Control: a well-formed data URL must still post cleanly (302)
+        # and store the real decoded bytes.
+        import base64
+
+        from moin.items import Item
+
+        create_user("drawuser", "Drawpass123")
+        login(client, "drawuser", "Drawpass123")
+        rv = client.post(
+            url_for(
+                "frontend.modify_item",
+                item_name="DrawItem",
+                itemtype="default",
+                contenttype="application/x-svgdraw",
+                template="",
+            ),
+            data={"png_data": "data:image/png;base64,aGVsbG8=", "filepath": "PHN2Zy8+"},
+        )
+        assert rv.status_code == 302
+        item = Item.create("DrawItem")
+        assert item.content.get_member("drawing.png").read() == base64.urlsafe_b64decode("aGVsbG8=")
+        assert item.content.get_member("drawing.svg").read() == base64.urlsafe_b64decode("PHN2Zy8+")
+
     @pytest.mark.parametrize("theme_name", ["topside", "focus", "basic"])
     def test_modify_item_cancel_preserves_changed_state(self, monkeypatch, theme_name):
         monkeypatch.setattr(current_app.cfg, "theme_default", theme_name)
