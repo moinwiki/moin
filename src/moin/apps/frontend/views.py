@@ -3443,6 +3443,19 @@ def bad_request(error):
     return render_template("400.html", msg=error), 400
 
 
+def internal_error(error):
+    # Unhandled exception: log it with an Error ID and render the generic
+    # error box. Never leak tracebacks to the client.
+    error_id = uuid.uuid4().hex[:12]
+    logger.exception("Unhandled exception %s path=%s", error_id, request.path)
+    content = render_template(
+        "error.html",
+        title=_("Internal error"),
+        description=_("An unexpected error occurred (Error ID {id}).").format(id=error_id),
+    )
+    return content, 500
+
+
 @frontend.errorhandler(404)
 def page_not_found(e):
     if getattr(flaskg, "no_variable_injection", False):
