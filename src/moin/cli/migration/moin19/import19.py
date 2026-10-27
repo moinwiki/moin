@@ -636,6 +636,12 @@ class PageRevision:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
 
     def _process_data(self, meta, data):
+        if data.startswith(("#REDIRECT", "#redirect")):
+            parts = data.split(maxsplit=1)
+            if len(parts) > 1:
+                target = parts[1].strip()
+                return f'[[{target}|redirecting to {target} ... |class="redirect"]]\n'
+        
         """In Moin 1.x markup, not all metadata is stored in the page's header.
         For example, categories are stored in the footer of the page content. For
         Moin 2, we extract that information from the content and put it into metadata.
