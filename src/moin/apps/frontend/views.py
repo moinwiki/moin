@@ -1653,7 +1653,12 @@ def index(item_name: str):
             subitem_names = result["subitem_names"]
 
         elif action == "submit-deletion":
-            item_names = literal_eval(request.form.get("selected-names"))
+            try:
+                item_names = literal_eval(request.form.get("selected-names") or "")
+            except (ValueError, TypeError, SyntaxError, MemoryError, RecursionError):
+                abort(400, "Invalid selected-names")
+            if not isinstance(item_names, list) or not all(isinstance(name, str) for name in item_names):
+                abort(400, "Invalid selected-names")
             comment = request.form.get("comment")
             do_subitems = request.form.get("do_subitems", type=bool)
             do_destroy = request.form.get("delete-action") == "destroy"
