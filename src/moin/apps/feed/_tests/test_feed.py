@@ -84,3 +84,44 @@ def test_global_atom_with_a_renamed_item(client):
     assert rv.status_code == 200
     assert rv.headers["Content-Type"] == "application/atom+xml"
     assert "MoinMoin feels unhappy" not in rv.text
+
+
+def test_global_atom_cache_is_per_user(client):
+    # The feed body is ACL-filtered per reader, so the cache key must bind
+    # the reader identity: without it, a cached admin feed (containing
+    # private items) is served to an anonymous reader whose latest
+    # readable rev is the same. SecretNote is created first and PublicNote
+    # last, so both readers share the same latest revid and would collide
+    # on a reader-blind key.
+    create_user("feedadmin", "Feedpass123")
+    login(client, "feedadmin", "Feedpass123")
+
+    # ACLs are metadata, set through the modify form (the test client runs
+    # inside the request context, so direct storage writes have no flaskg).
+    response = modify_item(
+        client,
+        "SecretNote",
+        make_modify_form_data("SecretNote", content="top secret content") | {"meta_form_acl": "feedadmin:read,write"},
+    )
+    assert response.status_code == 302
+    response = modify_item(
+        client,
+        "PublicNote",
+        make_modify_form_data("PublicNote", comment="public note for feed") | {"meta_form_acl": "All:read,write"},
+    )
+    assert response.status_code == 302
+
+    # admin primes the cache: feed includes the private item
+    rv = client.get(url_for("feed.atom"))
+    assert rv.status_code == 200
+    assert "SecretNote" in rv.text
+
+    # anonymous reader must not get the cached admin feed: expire nothing,
+    # just drop the session. The shared cache still holds the admin entry;
+    # the anon request must miss it (reader-bound key) and regenerate.
+    with client.session_transaction() as sess:
+        sess.clear()
+    rv = client.get(url_for("feed.atom"))
+    assert rv.status_code == 200
+    assert "SecretNote" not in rv.text
+    assert "PublicNote" in rv.text

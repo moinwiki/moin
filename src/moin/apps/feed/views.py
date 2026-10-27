@@ -63,7 +63,13 @@ def atom(item_name: str) -> Response:
     revs = list(flaskg.storage.search(query, idx_name=LATEST_REVS, sortedby=[MTIME], reverse=True, limit=1))
     if revs:
         rev = revs[0]
-        cid = cache_key(usage="atom", revid=rev.revid, item_name=item_name)
+        # Cache key must include user identity because feed content is
+        # ACL-filtered per reader. Without this, an admin's feed containing
+        # private items could be cached under a key derived solely from the
+        # latest public revid and served to an anonymous user whose latest
+        # readable rev happens to be the same.
+        user_name = flaskg.user.name if flaskg.user.valid else ""
+        cid = cache_key(usage="atom", revid=rev.revid, item_name=item_name, user_name=user_name)
         content = current_app.cache.get(cid)
     else:
         content = None
