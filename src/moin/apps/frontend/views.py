@@ -1942,6 +1942,19 @@ def _backrefs(item_name):
     return {fqname for meta in metas for fqname in meta[FQNAMES]}
 
 
+def _bookmark_start(value) -> datetime | None:
+    """Return the naive UTC datetime for a bookmark timestamp, or None.
+
+    Bookmark values come from the request or the user profile and may be
+    absurdly large; datetime cannot represent those, so treat them as no
+    bookmark rather than crashing with OverflowError.
+    """
+    try:
+        return utcfromtimestamp(value)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
+
+
 @frontend.route("/+history/<itemname:item_name>")
 def history(item_name):
     fqname = split_fqname(item_name)
@@ -1966,7 +1979,12 @@ def history(item_name):
     # across renames, so this finds the full history either way.
     terms = [Term(ITEMID, item.meta[ITEMID])]
     if bookmark_time:
-        terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
+        bookmark_start = _bookmark_start(bookmark_time)
+        if bookmark_start is None:
+            # out-of-range bookmark: drop it from the query and the display alike
+            bookmark_time = 0
+        else:
+            terms.append(DateRange(MTIME, start=bookmark_start, end=None))
     query = And(terms)
 
     if results_per_page:
@@ -2061,7 +2079,12 @@ def global_history(namespace):
         terms = [Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))]
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
-        terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
+        bookmark_start = _bookmark_start(bookmark_time)
+        if bookmark_start is None:
+            # out-of-range stored bookmark: drop it from the query and the display alike
+            bookmark_time = None
+        else:
+            terms.append(DateRange(MTIME, start=bookmark_start, end=None))
     query = And(terms)
 
     if results_per_page:
