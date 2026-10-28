@@ -161,7 +161,10 @@ Disallow: /+diff/
 Disallow: /+diffraw/
 Disallow: /+dom/
 Disallow: /+download/
+Disallow: /+feed
 Disallow: /+forwardrefs/
+Disallow: /+highlight
+Disallow: /+history
 Disallow: /+index/
 Disallow: /+jfu-server/
 Disallow: /+login
