@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import zipfile
+import zlib
 
 from moin.constants.keys import NAME
 from moin.converters.base import ConverterBase
@@ -23,6 +24,7 @@ from . import default_registry
 from .xml_in import strip_xml
 
 if TYPE_CHECKING:
+    from moin.converters._args import Arguments
     from moin.storage.middleware.indexing import Revision
     from typing_extensions import Self
 
@@ -35,18 +37,25 @@ class OpenDocumentIndexingConverter(ConverterBase):
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls(**kwargs)
 
-    def __call__(self, rev: Revision) -> str:
-        zf = zipfile.ZipFile(rev.data, "r")  # rev.data is file-like
+    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> str:
         try:
-            data = zf.read("content.xml")
+            with zipfile.ZipFile(rev.data, "r") as zf:  # rev.data is file-like
+                data = zf.read("content.xml")
             text = data.decode("utf-8")
             text = strip_xml(text)
             return text
-        except AttributeError as e:
-            logger.warning(f"Content of file {rev.meta[NAME]} is not seekable. {str(e)}")
+        except (
+            KeyError,
+            zipfile.BadZipFile,
+            UnicodeDecodeError,
+            OSError,
+            AttributeError,
+            zlib.error,
+            RuntimeError,
+            NotImplementedError,
+        ) as e:
+            logger.warning(f"Content of file {rev.meta[NAME]} could not be read: {e}")
             return ""
-        finally:
-            zf.close()
 
 
 opendocument_types = """\
