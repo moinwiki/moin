@@ -394,11 +394,13 @@ class Converter(ConverterBase):
             child = body[0] if len(body) == 1 else None
 
             if getattr(child, "tag", None):
+                # don't wrap tables and paragraphs in span or div
+                if child.tag.name == "p":
+                    return self.do_children(child)
                 if child.tag.name == "table":
-                    # table not allowed as child of span
-                    return self.new_copy(html.div, body)
+                    return self.do_children(body)
 
-            return self.new_copy(html.span, item)
+            return self.new_copy(html.span, body)
 
         if error:
             if len(error):
