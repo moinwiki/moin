@@ -22,7 +22,7 @@ from moin.items import Item
 from moin.i18n import _
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 from moin.converters._util import decode_data
-from moin.converters import default_registry as reg
+from moin.converters import default_registry as converter_registry
 from moin.macros._base import MacroInlineBase, fail_message, valid_item_name
 from moin.utils.mime import Type, type_moin_document
 
@@ -31,8 +31,18 @@ from moin.utils.names import get_fqname, split_fqname
 random.seed()
 
 
+def drop_root_nodes(elem, *args: str):
+    for name in args:
+        if not elem or elem.tag.name != name:
+            return None
+        elem = elem[0]
+    return elem
+
+
 class Macro(MacroInlineBase):
-    """Return a random quote from FortuneCookies or a given wiki item"""
+    """
+    Return a random quote from FortuneCookies or a given wiki item
+    """
 
     def macro(self, content, arguments, page_url, alternative):
         item_name = arguments[0] if arguments else "FortuneCookies"
@@ -52,6 +62,7 @@ class Macro(MacroInlineBase):
         if item.itemtype == ITEMTYPE_NONEXISTENT:
             err_msg = _("Item does not exist or read access blocked by ACLs: {0}").format(item_name)
             return fail_message(err_msg, alternative)
+
         data = decode_data(item.content.data, item.contenttype)
 
         # select lines looking like a list item
@@ -63,9 +74,18 @@ class Macro(MacroInlineBase):
             return fail_message(err_msg, alternative)
 
         result = random.choice(quotes)
+
         # quote may use some sort of markup, convert it to dom
         try:
-            input_conv = reg.get(Type(item.contenttype), type_moin_document, includes="expandall")
+            converter = converter_registry.get(Type(item.contenttype), type_moin_document, includes="expandall")
         except LookupError:
             raise TypeError(f"We cannot handle the conversion from {item.contenttype} to the DOM tree")
-        return input_conv(result)
+
+        document = converter(result)
+
+        # we get back a page element - drop toplevel page/body nodes
+        if (result := drop_root_nodes(document, "page", "body")) is None:
+            err_msg = _("Unexpected conversion result for item {0}").format(item_name)
+            return fail_message(err_msg, alternative)
+
+        return result
