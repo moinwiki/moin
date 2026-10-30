@@ -373,6 +373,29 @@ class TestConverterPage(Base):
         self.conv = ConverterPage(render_context)
 
     data = [
+        # Empty heading, no child elements
+        ("<page><body><h /></body></page>", '/div/h1/a[@class="moin-permalink"]'),
+        # Text-only heading, last child is a string, not an element
+        ("<page><body><h>Heading</h></body></page>", '/div/h1[text()="Heading"]'),
+        # Heading already containing a permalink, do not create a duplicate.
+        (
+            '<page><body><h html:id="heading">Heading'
+            '<html:a html:class="moin-permalink" html:href="#heading" />'
+            "</h></body></page>",
+            'count(/div/h1/a[@class="moin-permalink"]) = 1',
+        ),
+        # Heading with an existing ID but without a permalink
+        (
+            '<page><body><h html:id="existing-id">Heading</h></body></page>',
+            '/div/h1[@id="existing-id"]/a[@class="moin-permalink"][@href="#existing-id"]',
+        ),
+    ]
+
+    @pytest.mark.parametrize("input,xpath", data)
+    def test_heading(self, input, xpath):
+        self.do(input, xpath)
+
+    data = [
         # Footnotes are replaced by a footnote-reference and rendered at the page bottom.
         (
             '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
