@@ -200,7 +200,6 @@ commands = [
 description = "Run the ruff linter on the moin sources"
 deps = ["ruff"]
 package = "skip"
-change_dir = ""
 commands = [
     ["ruff", "check", "."]
 ]
