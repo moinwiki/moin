@@ -390,6 +390,38 @@ class TestFrontend:
     def test_delete_item(self):
         self._test_view("frontend.delete_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
+    @pytest.mark.parametrize(
+        "selected_names",
+        [
+            # malformed python is a SyntaxError in literal_eval
+            "not valid python [",
+            # valid literals of the wrong shape must also 400
+            "123",
+            "{'a': 1}",
+            "['a', 1]",
+            # deep unary-minus chain exhausts the parser (MemoryError/RecursionError)
+            "-" * 100000 + "1",
+        ],
+    )
+    def test_index_submit_deletion_malformed_names_returns_400(self, client, selected_names):
+        # Crafted selected-names must 400, never 500 on literal_eval errors.
+        rv = client.post(
+            url_for("frontend.index", item_name="", action="submit-deletion"), data={"selected-names": selected_names}
+        )
+        assert rv.status_code == 400
+
+    def test_index_submit_deletion_missing_names_returns_400(self, client):
+        # A missing selected-names field must 400, never 500 on literal_eval(None).
+        rv = client.post(url_for("frontend.index", item_name="", action="submit-deletion"), data={})
+        assert rv.status_code == 400
+
+    def test_index_submit_deletion_valid_names_redirects(self, client):
+        # Control: a well-formed list of names still processes (302 redirect).
+        rv = client.post(
+            url_for("frontend.index", item_name="", action="submit-deletion"), data={"selected-names": "['NoSuchItem']"}
+        )
+        assert rv.status_code == 302
+
     def test_index(self):
         self._test_view("frontend.index", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
