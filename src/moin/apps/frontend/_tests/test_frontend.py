@@ -447,6 +447,44 @@ class TestFrontend:
     def test_global_history(self):
         self._test_view("frontend.global_history")
 
+    @pytest.mark.parametrize(
+        "bookmark",
+        [
+            "99999999999999999999",
+            "-99999999999999999999",
+            # in time_t range but past year 9999: datetime raises ValueError
+            "253402300800",
+            # negative past year 1: datetime raises ValueError
+            "-100000000000",
+        ],
+    )
+    def test_history_huge_bookmark_returns_200(self, client, bookmark):
+        # A bookmark no datetime can represent must not 500 in utcfromtimestamp.
+        create_user("bmuser", "Bmpass123")
+        login(client, "bmuser", "Bmpass123")
+        modify_item(client, "BmItem", make_modify_form_data("BmItem", content="bm"))
+        rv = client.get(f"/+history/BmItem?bookmark={bookmark}")
+        assert rv.status_code == 200
+
+    def test_history_valid_bookmark_returns_200(self, client):
+        # Control: an ordinary bookmark still filters (200).
+        create_user("bmuser", "Bmpass123")
+        login(client, "bmuser", "Bmpass123")
+        modify_item(client, "BmItem", make_modify_form_data("BmItem", content="bm"))
+        rv = client.get("/+history/BmItem?bookmark=1")
+        assert rv.status_code == 200
+
+    @pytest.mark.parametrize("stored", ["99999999999999999999", "253402300800"])
+    def test_global_history_huge_profile_bookmark_returns_200(self, client, stored):
+        # A huge stored bookmark (settable via /+bookmark) must not 500
+        # every global history view until cleared.
+        create_user("bmuser", "Bmpass123")
+        login(client, "bmuser", "Bmpass123")
+        rv = client.get(f"/+bookmark?time={stored}")
+        assert rv.status_code == 302
+        rv = client.get("/+history")
+        assert rv.status_code == 200
+
     def test_wanted_items(self):
         self._test_view("frontend.wanted_items")
 
