@@ -425,6 +425,13 @@ class TestFrontend:
     def test_index(self):
         self._test_view("frontend.index", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
+    def test_jfu_server_missing_file_storage_returns_200(self, client):
+        # A POST without the file_storage field must report the failure
+        # as JSON, never 500 on file_storage.close() in the finally block.
+        rv = client.post(url_for("frontend.jfu_server", item_name=""), data={})
+        assert rv.status_code == 200
+        assert rv.get_json()["css_class"] == "jfu-failed"
+
     def test_forwardrefs(self):
         self._test_view("frontend.forwardrefs", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 

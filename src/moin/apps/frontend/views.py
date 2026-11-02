@@ -1550,7 +1550,8 @@ def _upload_file(item_name: str) -> tuple[Item | None, dict[str, str]]:
         item = None
         details = {"message": str(err)}
     finally:
-        file_storage.close()
+        if file_storage is not None:
+            file_storage.close()
 
     return item, details
 
