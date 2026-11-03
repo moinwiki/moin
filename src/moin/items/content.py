@@ -107,6 +107,10 @@ logging = log.getLogger(__name__)
 COLS = 80
 ROWS_DATA = 20
 
+# Largest content (in characters) the +highlight view will highlight.
+# Without a cap, one big page can use hundreds of MB of memory per request.
+MAX_HIGHLIGHT_SIZE = 100 * 1024
+
 
 class RegistryContent(RegistryBase["Content"]):
 
@@ -1164,6 +1168,11 @@ class Text(Binary):
         from moin.converters import default_registry as reg
 
         data_text = self.data_storage_to_internal(self.data)
+        # Highlight the head of large content and say so (see constant).
+        truncated = len(data_text) > MAX_HIGHLIGHT_SIZE
+        if truncated:
+            cut = data_text.rfind("\n", 0, MAX_HIGHLIGHT_SIZE)
+            data_text = data_text[: cut if cut > 0 else MAX_HIGHLIGHT_SIZE]
         # TODO: use registry as soon as it is in there
         from moin.converters.pygments_in import Converter as PygmentsConverter
 
@@ -1173,7 +1182,16 @@ class Text(Binary):
         # TODO: Real output format
         html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"), context=context)
         doc = html_conv(doc)
-        return conv_serialize(doc, {html.namespace: ""})
+        result = conv_serialize(doc, {html.namespace: ""})
+        if truncated:
+            result += (
+                '<p class="moin-highlight-truncated">'
+                + _("[... highlighted output truncated, showing first {count} characters ...]").format(
+                    count=MAX_HIGHLIGHT_SIZE
+                )
+                + "</p>"
+            )
+        return result
 
 
 class MarkupItem(Text):
