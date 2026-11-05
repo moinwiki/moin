@@ -26,6 +26,7 @@ def split_body(body):
     """
     pi = {}
     comments = []
+    redirects = []
     while body.startswith("#"):
         try:
             line, body = body.split("\n", 1)  # extract first line
@@ -43,6 +44,11 @@ def split_body(body):
             comments.append(line + "\n")
         else:
             verb, args = (line[1:] + " ").split(" ", 1)  # split at the first blank
+            if verb.lower() == "redirect" and args.strip():
+                # keep it in the body, moinwiki19_in converts it to a link
+                if not redirects:  # keep only the first redirect in the body
+                    redirects.append(line + "\n")
+                continue
             pi.setdefault(verb.lower(), []).append(args.strip())
 
     for key, value in pi.items():
@@ -53,6 +59,8 @@ def split_body(body):
             # for keys that can't occur multiple times, don't use a list:
             pi[key] = value[-1]  # use the last value to match 1.9 parsing behavior
 
+    if redirects:
+        body = "".join(redirects) + body
     if comments:
         body = "".join(comments) + body
 

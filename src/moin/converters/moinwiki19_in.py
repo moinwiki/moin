@@ -21,7 +21,7 @@ from moin.log import getLogger
 from moin.utils.interwiki import is_known_wiki
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
-from moin.utils.tree import moin_page, xlink
+from moin.utils.tree import html, moin_page, xlink
 
 from . import default_registry
 from .moinwiki_in import Converter
@@ -164,7 +164,22 @@ class ConverterFormat19(Converter):
         element = moin_page.a(attrib=attrib, children=[url_target])
         stack.top_append(element)
 
-    inline = Converter.inline + (inline_freelink, inline_url)
+    inline_redirect = r"""
+        (?P<redirect>
+            ^\#[Rr][Ee][Dd][Ii][Rr][Ee][Cc][Tt][ \t]+
+            (?P<redirect_target>.+)
+        )
+    """
+
+    def inline_redirect_repl(self, stack, redirect, redirect_target):
+        target = redirect_target.strip()
+        link = Iri(scheme="wiki.local", path=target)
+        attrib = {xlink.href: link, html.class_: "redirect"}
+        text = f"redirecting to {target} ..."
+        element = moin_page.a(attrib=attrib, children=[text])
+        stack.top_append(element)
+
+    inline = Converter.inline + (inline_freelink, inline_url, inline_redirect)
     inline_re = re.compile("|".join(inline), re.X | re.U)
 
 
