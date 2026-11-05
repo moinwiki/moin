@@ -38,7 +38,7 @@ from moin.config import WikiConfigProtocol
 from moin.config.default import DefaultConfig
 from moin.constants.misc import ANON
 from moin.error import ConfigurationError
-from moin.apps.frontend.views import bad_request
+from moin.apps.frontend.views import bad_request, internal_error
 from moin.i18n import i18n_init
 from moin.search import SearchForm
 from moin.security.csp import configure_csp, set_csp_nonce
@@ -97,6 +97,7 @@ class MoinApp(Flask):
         self.link_analyzer = WikiLinkAnalyzer(self)
 
         self.register_error_handler(400, bad_request)
+        self.register_error_handler(500, internal_error)
 
         with clock.timeit("create_app flask-cache"):
             self.create_flask_cache()

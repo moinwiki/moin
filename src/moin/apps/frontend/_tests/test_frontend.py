@@ -463,6 +463,31 @@ class TestFrontend:
     def test_search(self):
         self._test_view("frontend.search")
 
+    def test_internal_error_renders_error_box(self):
+        # The 500 handler must render the error box with an Error ID,
+        # never leak a traceback.
+        from flask import request as flask_request
+        from werkzeug.exceptions import InternalServerError
+
+        flask_request.view_args = flask_request.view_args or {}
+        content, status = views.internal_error(InternalServerError())
+        assert status == 500
+        assert "Error ID" in content
+        assert "Traceback" not in content
+
+    def test_unhandled_exception_renders_logged_500(self, client, monkeypatch):
+        # An unhandled view exception must render the generic error box
+        # with an Error ID (500), not propagate and not leak a traceback.
+        def boom(*args, **kwargs):
+            raise RuntimeError("boom")
+
+        monkeypatch.setattr(views, "url_for_item", boom)
+        monkeypatch.setitem(current_app.config, "TESTING", False)
+        rv = client.get("/")
+        assert rv.status_code == 500
+        assert "Error ID" in rv.text
+        assert "Traceback" not in rv.text
+
     def test_revert_item(self):
         self._test_view(
             "frontend.revert_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist", rev="000000")
