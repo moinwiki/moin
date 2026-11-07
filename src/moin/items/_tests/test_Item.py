@@ -215,6 +215,15 @@ class TestItem:
         fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
+    def testIndexMissingItemid(self):
+        # an index rooted at an itemid that matches nothing has no names,
+        # so there are no subitem prefixes; it must yield an empty index
+        # rather than crash on subitem_prefixes[0]
+        item = Item.create("@itemid/" + "0" * 32)
+        assert isinstance(item, NonExistent)
+        assert item.names == []
+        assert item.get_index() == ([], [])
+
     def test_meta_filter(self):
         name = "Test_item"
         contenttype = "text/plain;charset=utf-8"
