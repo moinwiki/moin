@@ -198,9 +198,9 @@ def content_registry_disable(contenttype_disabled: list[str]) -> None:
 
 
 def conv_serialize(doc: Element, namespaces: dict[str, str], method: str = "html") -> str:
-    out = StringIO()
-    doc.write(out.write, namespaces=namespaces, method=method)
-    return out.getvalue()
+    with StringIO() as out:
+        doc.write(out.write, namespaces=namespaces, method=method)
+        return out.getvalue()
 
 
 class Content:

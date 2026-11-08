@@ -40,10 +40,10 @@ class Monitor:
         dumpfile = dumpfile or sys.stderr
         cur_frames = sys._current_frames()
         for i in cur_frames:
-            f = StringIO()
-            print(f"\nDumping thread (id {i}):", file=f)
-            traceback.print_stack(cur_frames[i], file=f)
-            dumpfile.write(f.getvalue())
+            with StringIO() as f:
+                print(f"\nDumping thread (id {i}):", file=f)
+                traceback.print_stack(cur_frames[i], file=f)
+                dumpfile.write(f.getvalue())
 
     def hook_enabled(self):
         """Return True if the thread monitor hook is enabled."""
