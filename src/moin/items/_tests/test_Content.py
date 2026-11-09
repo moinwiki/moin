@@ -344,6 +344,31 @@ class TestText:
         assert '<pre class="highlight">test_data\n' in result
         assert item2.content.data == b""
 
+    def test_render_data_highlight_truncated(self):
+        # A large item must not be highlighted whole: pygments lexes the
+        # full input and the serializer walks one DOM node per token, which
+        # parks hundreds of MB in the worker per request. The view shows the
+        # head of the content and says so; small items are unaffected.
+        from moin.items.content import MAX_HIGHLIGHT_SIZE
+
+        item_name = "Big_Text_Item"
+        item = Item.create(item_name)
+        contenttype = "text/plain;charset=utf-8"
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
+        item._save(meta)
+        item1 = Item.create(item_name)
+        data = "x = 1  # padding line\n" * (MAX_HIGHLIGHT_SIZE // 20 + 100)
+        comment = "big revision"
+        item1._save(meta, data, comment=comment)
+        item2 = Item.create(item_name)
+        result = Text.render_data_highlight(item2.content)
+        assert "moin-highlight-truncated" in result
+        assert "showing first" in result
+        # output stays near the cap instead of scaling with the input
+        # (the 8x bound holds for plain text; dense code expands more)
+        assert len(result) < MAX_HIGHLIGHT_SIZE * 8
+        assert item2.content.data == b""
+
     def test__get_data_diff_text(self):
         item_name = "Text_Item"
         item = Item.create(item_name)
