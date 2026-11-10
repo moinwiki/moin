@@ -989,10 +989,16 @@ class IndexingMiddleware:
         with self._searcher(idx_name) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
+            regex_re = None
             if regex:
-                regex_re = re.compile(regex, re.IGNORECASE)
+                try:
+                    regex_re = re.compile(regex, re.IGNORECASE)
+                except re.error:
+                    # callers may pass an unvalidated pattern; an invalid
+                    # one yields no hits instead of crashing the search
+                    return
             for hit in searcher.search(q, **kw):
-                if regex and not regex_re.search(hit[NAME][0]):
+                if regex_re and not regex_re.search(hit[NAME][0]):
                     continue
                 meta = hit.fields()
                 yield meta
