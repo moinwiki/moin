@@ -401,14 +401,14 @@ Bread
 Pie
 |}
 
-'''MWTODO:''' An attempt to create a one cell table with a border 20 pixels wide. This fails, the contents of the table cell precede the table and the table is empty causing HTML validation errors.
+A one cell table with a border 20 pixels wide.
 
 {|style="border-style: solid; border-width: 20px"
 |
 Hello
 |}
 
-'''MWTODO:''' Same as above, but with different widths for each border.
+Same as above, but with different widths for each border.
 
 {|style="border-style: solid; border-width: 10px 20px 100px 0"
 |
@@ -612,15 +612,13 @@ text [[File:help-common/cat.jpg|50px]] text [[File:help-common/logo.png|center]]
 
 == HTML Validation ==
 
-'''MWTODO:''' This page generated numerous HTML validation errors. The detail below has lost line formatting because of other bugs.
+'''MWTODO:''' This page generated numerous HTML validation errors, see example:
 
-<pre><code>
+<pre>
 Result: 17 errors / 14 warnings
 
 Info: W3c Online Validation
 
-line 509 column 103 - Error: Attribute xmlns:ns1 not allowed here.
-line 509 column 103 - Warning: Attribute with the local name xmlns:ns1 is not serializable as XML 1.0.
 line 509 column 1354 - Error: No p element in scope but a p end tag seen.
 line 509 column 2406 - Error: No p element in scope but a p end tag seen.
 line 509 column 3133 - Error: No p element in scope but a p end tag seen.
@@ -636,17 +634,6 @@ line 525 column 1058 - Error: Row 1 of a row group established by a tbody elemen
 line 525 column 1150 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
 line 525 column 1239 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
 line 525 column 1336 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 525 column 1551 - Error: Row 1 of a row group established by a tbody element has no cells beginning on it.
-line 525 column 1643 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 525 column 1732 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 525 column 1829 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 525 column 4968 - Error: Row 1 of a row group established by a tbody element has no cells beginning on it.
-line 527 column 15 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 529 column 13 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 529 column 196 - Error: Row 1 of a row group established by a tbody element has no cells beginning on it.
-line 531 column 15 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 533 column 13 - Warning: A table row was 2 columns wide and exceeded the column count established by the first row (0).
-line 534 column 10 - Error: Misplaced non-space characters insided a table.
-line 534 column 10 - Error: Cannot recover after last error. Any further errors will be ignored.
+[...]
 
-</code></pre>
+</pre>

@@ -3,7 +3,7 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x-mediawiki;charset=utf-8",
-  "dataid": "7617c53a169640ccb770f87b4ec0b581",
+  "dataid": "665e2680b59d44838adb95d23845170e",
   "externallinks": [
     "https://en.wikipedia.org/wiki/List_of_HTML_entities",
     "https://moinmo.in",
@@ -23,16 +23,16 @@
   ],
   "itemtype": "default",
   "language": "en",
-  "mtime": 1791072831,
+  "mtime": 1794427232,
   "name": [
     "mediawiki"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "ca9ee55c934243e3952f94c83dbb0469",
-  "sha1": "51ac7972104c6aa51c50ec86b3e13bc7ed683754",
-  "size": 18283,
+  "revid": "b41d0768672345998a010228d41baf5e",
+  "sha1": "3f83285f61fdbeeba5ce4f6e333d3fb736108a06",
+  "size": 16487,
   "summary": "",
   "tags": [
     "parser",
