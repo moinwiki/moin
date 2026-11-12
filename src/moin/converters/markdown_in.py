@@ -175,8 +175,6 @@ class Converter(ConverterBase, html_in.HtmlTags):
         "wbr",
     }
 
-    _open_tag_re = re.compile(r"^(.*?)(<(\w+)(?:\s[^>]*)?>)(.*)$", re.DOTALL)
-
     def new_copy_symmetric(self, element, attrib):
         """
         Create a new QName, with the same tag of the element,
