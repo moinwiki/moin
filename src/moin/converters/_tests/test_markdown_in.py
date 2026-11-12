@@ -375,6 +375,10 @@ class TestConverter:
             # there may be multiple HTML elements in a block
             ("<u>underline</u> and <sub>sub</sub>", "<p><u>underline</u> and <sub>sub</sub></p>"),
             ("<u>underline with <sub>sub</sub></u>", "<p><u>underline with <sub>sub</sub></u></p>"),
+            (
+                '<img src="/static/img/search.png" /> Search',
+                '<p><object type="image/" xlink:href="/static/img/search.png" /> Search</p>',
+            ),
         ],
     )
     def test_inline_html(self, input, output):

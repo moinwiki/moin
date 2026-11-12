@@ -465,7 +465,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
-    tag_re = re.compile(r"(</?\w.*?>)", flags=re.DOTALL)
+    tag_re = re.compile(r"(</?[a-zA-Z][^>]*>)", flags=re.DOTALL)
 
     def separate_html_tags(self, nodes: Iterable[ET.Element | str]) -> Generator[ET.Element | str]:
         """Split string-nodes at HTML tags."""
@@ -488,7 +488,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
             element = None
         return element
 
-    start_tag_re = re.compile(r"<(\w+).*?(/?) *>")
+    start_tag_re = re.compile(r"<([a-zA-Z][a-zA-Z0-9-]*)([^>]*)>")
 
     def convert_html_markup(self, node_or_children: ET.Element | list[ET.Element | str]) -> None:
         """
@@ -527,7 +527,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
             # we have a HTML start-tag
             # Collect children:
             children: list[ET.Element | str] = []
-            tag_name, self_closing = match.group(1, 2)
+            tag_name = match.group(1)
+            self_closing = match.group(2).endswith("/")
             if tag_name in self.void_tags or self_closing:
                 end_tag = ""
             else:
