@@ -129,7 +129,6 @@ class ProtectingMiddleware:
         else:
             raise ValueError("need itemid or fqname")
 
-        meta_available = False
         if self.meta:
             """use meta data if available to avoid index query"""
             meta_keys = [*self.meta.keys()]
@@ -141,19 +140,20 @@ class ProtectingMiddleware:
                 and itemid == self.meta[ITEMID]
                 and fqname == self.meta[FQNAMES][0]
             ):
-                meta_available = True
                 if ACL in meta_keys:
                     acl = self.meta[ACL]
                     return [acl]
+                # FQNAMES-bearing meta without an ACL (e.g. ALL_REVS hits, whose
+                # schema has no ACL field) is not authoritative: fall through to
+                # the storage lookup below instead of defaulting.
 
-        item: ProtectedItem | None = None
-        if not meta_available or self._get_configured_acls(fqname)["hierarchic"]:
-            """self.meta is not valid or namespace uses hierarchic acls and we need item parentids"""
-            item = self.get_item(short=True, **q)
-            acl = item.acl
-            fqname = item.fqname
-            if acl is not None:
-                return [acl]
+        # No authoritative ACL in self.meta (see above): always consult
+        # storage. Hierarchic namespaces additionally need parentids below.
+        item: ProtectedItem | None = self.get_item(short=True, **q)
+        acl = item.acl
+        fqname = item.fqname
+        if acl is not None:
+            return [acl]
 
         if self._get_configured_acls(fqname)["hierarchic"]:
             # check parent(s), recursively
@@ -209,7 +209,11 @@ class ProtectingMiddleware:
         """
         self.meta = meta
         self.fqnames = gen_fqnames(meta)
-        may_read = self.allows(
+        # Call _allows directly: the cached allows() key has no item identity
+        # and ALL_REVS hits carry no indexed ACL, so one item's verdict would
+        # be reused for every other item. The parse/eval/lookup caches inside
+        # still apply.
+        may_read = self._allows(
             tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ
         )
         return may_read
@@ -255,8 +259,6 @@ class ProtectingMiddleware:
         the items in the namespace subject to query restrictions. This is useful for reports
         such as My Changes, Item History, etc.
 
-        Save processing time by avoiding a full ACL check when the answer will be the same as the last.
-
         Note that ALCs are checked after whoosh returns a pagefull of items. It is possible that
         the results shown to the user will have fewer revisions than expected.
         """
@@ -264,14 +266,26 @@ class ProtectingMiddleware:
         for meta in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
             self.meta = meta
             self.fqnames = gen_fqnames(meta)
-            result = self.allows(
+            # Uncached _allows, see may_read_rev: the cached allows() key has
+            # no item identity and ALL_REVS hits carry no indexed ACL.
+            result = self._allows(
                 tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ
             )
             if result:
                 yield meta
 
     def search_results_size(self, q, idx_name=ALL_REVS, **kw):
-        return self.indexer.search_results_size(q, idx_name, **kw)
+        # search_results_size must be ACL-filtered like search_meta, otherwise
+        # global_history leaks the count of revisions the current user cannot
+        # read and pagination is broken. Iterate filtered metas to get size;
+        # callers already iterate search_meta_page for the actual page.
+        # whoosh caps searches at limit=10 by default: lift it so the count
+        # covers every hit, letting callers override explicitly if wanted.
+        kw.setdefault("limit", None)
+        count = 0
+        for _ in self.search_meta(q, idx_name=idx_name, **kw):
+            count += 1
+        return count
 
     def documents(self, idx_name=LATEST_REVS, **kw):
         for rev in self.indexer.documents(idx_name, **kw):
