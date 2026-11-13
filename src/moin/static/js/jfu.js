@@ -57,7 +57,7 @@ $(function () {
                 const rawHtmlFragment = `
                     <tr class="jfu-recent">
                         <td class="moin-index-icons">
-                        <span class="moin-select-item" onclick="classtoggle(this)">
+                        <span class="moin-select-item">
                             <input class="moin-item" type="checkbox" value="${response.url}" />
                         </span>
                         <span><i class="fa fa-upload"></i></span>
@@ -81,8 +81,3 @@ $(function () {
         },
     });
 });
-
-function classtoggle(e) {
-    "use strict";
-    e.parent().toggleClass("selected-item");
-}
