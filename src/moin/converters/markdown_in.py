@@ -175,8 +175,6 @@ class Converter(ConverterBase, html_in.HtmlTags):
         "wbr",
     }
 
-    _open_tag_re = re.compile(r"^(.*?)(<(\w+)(?:\s[^>]*)?>)(.*)$", re.DOTALL)
-
     def new_copy_symmetric(self, element, attrib):
         """
         Create a new QName, with the same tag of the element,
@@ -467,7 +465,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
-    tag_re = re.compile(r"(</?\w.*?>)", flags=re.DOTALL)
+    tag_re = re.compile(r"(</?\w[^>]*>)", flags=re.DOTALL)
 
     def separate_html_tags(self, nodes: Iterable[ET.Element | str]) -> Generator[ET.Element | str]:
         """Split string-nodes at HTML tags."""
@@ -490,7 +488,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
             element = None
         return element
 
-    start_tag_re = re.compile(r"<(\w+).*?(/?) *>")
+    start_tag_re = re.compile(r"<(\w+)[^>]*(/?) *>")
 
     def convert_html_markup(self, node_or_children: ET.Element | list[ET.Element | str]) -> None:
         """
