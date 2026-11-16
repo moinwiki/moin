@@ -1578,8 +1578,9 @@ class Default(Contentful):
         query = And([Term(NAMESPACE, "help-" + flaskg.user.language), Term(NAME_EXACT, content_name)])
         results = list(flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None))
         if results:
-            return "/help-" + flaskg.user.language + "/" + content_name, link_text
-        return "/help-en/" + content_name, _("Alert wiki admin that help items are not loaded")
+            return url_for_item(f"/help-{flaskg.user.language}/{content_name}"), link_text
+        else:
+            return url_for_item(f"/help-en/{content_name}"), _("Alert wiki admin that help items are not loaded")
 
     def meta_changed(self, meta: MetaData) -> bool:
         """
