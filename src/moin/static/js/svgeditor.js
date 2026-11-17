@@ -1,4 +1,4 @@
-import Editor from "/+serve/svgedit_moin/editor/Editor.js";
+const {default: Editor} = await import(`${window.appRoot}/+serve/svgedit_moin/editor/Editor.js`);
 
 // SVG Editor
 const svgedit_elem = document.querySelector(".svgedit");
@@ -19,8 +19,8 @@ if (svgedit_elem) {
             "ext-shapes",
             "ext-storage"
         ],
-        extPath: "/+serve/svgedit_moin/editor/extensions",
-        imgPath: "/+serve/svgedit_moin/editor/images",
+        extPath: `${window.appRoot}/+serve/svgedit_moin/editor/extensions`,
+        imgPath: `${window.appRoot}/+serve/svgedit_moin/editor/images`,
         noDefaultExtensions: true,
         userExtensions: [
             { pathName: './extensions/ext-moin2/ext-moin2.js' }

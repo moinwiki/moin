@@ -53,6 +53,7 @@
                 {{ favicon }}
 
                 <script {{ utils.nonce() }}>
+                    window.appRoot = "{{ request.script_root }}";
                     window.elixNonce = "{{ csp_nonce() }}";
                     window.svgeditNonce = "{{ csp_nonce() }}";
                 </script>
