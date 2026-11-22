@@ -17,7 +17,7 @@ Views that render the pages and actions a typical wiki user sees.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 import os
 import re
@@ -2857,7 +2857,7 @@ def usersettings():
             form = form_classes[part].from_flat(request.form)
 
             # save response to a dict as we can't use HTTP redirects or flash() for XHR requests
-            response = dict(form=None, flash=[], redirect=None)
+            response: dict[str, Any] = {"part": part, "values": [], "flash": [], "redirect": None}
 
             if form.validate():
                 # successfully modified everything
@@ -2932,9 +2932,9 @@ def usersettings():
                 response["flash"].append((msg, "info"))
 
             if is_xhr:
-                # if it is a XHR request, render the part from the usersettings_ajax.html template
+                # if it is a XHR request, set the form values in the response object
                 # and send the response encoded as an JSON object
-                response["form"] = render_template("usersettings_ajax.html", part=part, form=form)
+                response["values"] = form.flatten()
                 return jsonify(**response)
 
             # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
