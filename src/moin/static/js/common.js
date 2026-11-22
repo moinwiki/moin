@@ -365,7 +365,7 @@ MoinMoin.prototype.toggleSubtree = function (item) {
 MoinMoin.prototype.displayFlashMessages = function (messages) {
     for (i = 0; i < messages.length; i += 1) {
         f = $(document.createElement('p'));
-        f.html(messages[i][0]);
+        f.text(messages[i][0]);
         f.addClass('moin-flash');
         f.addClass('moin-flash-javascript');
         f.addClass('moin-flash-' + messages[i][1]);
