@@ -113,6 +113,7 @@ from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.user import create_user, normalize_username, search_users, User
 from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
+from moin.utils.htmlformat import format_html
 from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
@@ -3434,6 +3435,20 @@ def new():
 @frontend.after_request
 def add_security_headers(resp):
     return add_csp_headers(resp)
+
+
+@frontend.after_request
+def format_html_source(resp):
+    """Pretty-print HTML responses so view-source shows readable markup.
+
+    Only applies to non-streamed text/html responses; other content types
+    (JSON, images, downloads, ...) are passed through untouched.
+    """
+    if resp.is_streamed or resp.mimetype != "text/html":
+        return resp
+    html = resp.get_data(as_text=True)
+    resp.set_data(format_html(html))
+    return resp
 
 
 @frontend.errorhandler(BadRequest)

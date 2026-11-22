@@ -24,6 +24,7 @@ After installing this release as an upgrade on an existing Moin 2 wiki, be sure 
 Fixes
 ~~~~~
 
+* 2026-11-22 HTML responses are pretty-printed (newlines around block-level elements) so the page source is readable in "view source"
 * 2026-03-19 Dump-Html: replace '+index' at the end of a href into 'index.html' (Roland Rüdenauer)
 * 2026-03-19 Dump-Html: turn option --convenience-duplicates into a flag (Roland Rüdenauer)
 * 2026-03-18 Update dump-html usage docs (RogerHaase)
