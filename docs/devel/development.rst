@@ -625,68 +625,44 @@ Package Release on pypi.org and GitHub Releases
 
     git tag -s 2.0.0a1 -m "alpha release"
 
-* Install or upgrade release tools::
+* Push the tag to github::
 
-    pip install --upgrade setuptools wheel
-    pip install --upgrade twine
-    pip install --upgrade build
+    git push moinwiki 2.0.0a1
 
-* Delete all old releases from the moin/dist directory, else twine will upload them in the next step.
+The rest is automated by the GitHub Actions workflows (see
+``.github/workflows/ci.yml`` and ``.github/workflows/release.yml``):
 
-* Build the distribution and upload to pypi.org::
+* the "Python package" workflow runs the tests for the tagged commit,
+* the "release" job then builds the sdist and the wheel, checks that their version
+  is the tag version and that they are installable, attests their build provenance
+  and creates a **draft** GitHub release with them,
+* the "pypi" job then uploads the sdist and the wheel to pypi.org, using PyPI
+  trusted publishing (no API token needed, PyPI also gets attestations for them). It runs in the "pypi" environment,
+  which may be configured to require an approval in the repository settings.
 
-    py -m build > build.log 2>&1  # check build.log for errors
-    py -m twine upload dist/*
+If the workflow run failed, fix the problem and delete and recreate the tag (if
+nothing was uploaded to pypi.org yet) or make a new release.
 
-* Enter ID and password or API Token as requested.
+Finish the GitHub release
+-------------------------
 
-Test Build
-----------
+Edit the draft release on https://github.com/moinwiki/moin/releases: review the
+release notes and publish the release.
+
+The packages are not GPG-signed: they are built on GitHub and have a build provenance
+attestation instead, which can be verified with::
+
+    gh attestation verify --owner moinwiki moin-2.0.0a1.tar.gz
+
+Test the release
+----------------
 
 Create a new venv, install moin, create instance, start server, create item, modify and save an item::
 
     <python> -m venv </path/to/new/venv>
     cd </path/to/new/venv>
     source bin/activate  # or "scripts\activate" on windows
-    pip install --pre moin
-    moin --help  # prove it works
-    # update wikiconfig.py  # default allows read-only, admins may load data
-    moin create-instance --path <path/to/new/wikiconfig/dir>  # path optional, defaults to CWD
-    cd <path/to/new/wikiconfig/dir>  # skip if using default CWD
-    moin index-create
-
-    moin welcome  # load welcome page (e.g. Home)
-    moin load-help -n help-en # load English help
-    moin load-help -n help-common # load help images
-    moin run  # wiki with English help and welcome pages
-
-Continue with Package Release
------------------------------
-
-Push the signed, annotated tag created above to github master::
-
-    git push moinwiki 2.0.0a1
-
-Create an ASCII-format detached signature named moin-2.0.0a1.tar.gz.asc.
-Windows developers should use Git-Bash to work around #1723.::
-
-    cd dist
-    gpg --detach-sign -a moin-2.0.0a1.tar.gz
-    cd ..
-
-Follow the instructions in the url below to update GitHub; drag & drop moin-2.0.0a1.tar.gz
-and moin-2.0.0a1.tar.gz.asc to upload files area. These files serve as
-a backup for the release sdist and the signature, so anybody can
-verify the sdist is authentic::
-
-    https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
-
-Test the GitHub package release::
-
-    <python> -m venv </path/to/new/venv>
-    cd </path/to/new/venv>
-    source bin/activate  # or "scripts\activate" on windows
-    pip install git+https://github.com/moinwiki/moin@2.0.0a1
+    pip install --pre moin  # or: pip install git+https://github.com/moinwiki/moin@2.0.0a1
     moin --help  # prove it works
     # update wikiconfig.py  # default allows read-only, admins may load data
     moin create-instance --path <path/to/new/wikiconfig/dir>  # path optional, defaults to CWD
