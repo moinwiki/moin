@@ -2,3 +2,8 @@
 src/moin/help/** eol=lf
 # exclude xstatic directory from github language stats
 src/moin/xstatic/** linguist-vendored
+# ... but the help-common items are mostly binary (images, audio, video,
+# archives): do not touch their line endings, else a fresh checkout is
+# "modified" (and setuptools-scm then gives a .devN version instead of the
+# tag version).
+src/moin/help/help-common/*.data -text
