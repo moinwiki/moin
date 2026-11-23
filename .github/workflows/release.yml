@@ -1,0 +1,229 @@
+# Release automation: build the sdist and the wheel, check them, attest them
+# and create a GitHub release with them.
+#
+# This is called by ci.yml when a tag is pushed, after the tests for the
+# tagged commit have passed, and it deliberately runs as part of that same
+# workflow run: workflow artifacts can only be downloaded within the run that
+# created them, and the "pypi" job in ci.yml uploads what this job built.
+#
+# The GitHub release is created as a *draft* on purpose: the release notes
+# want a human. Publishing the draft is a single click in the GitHub UI.
+#
+# The packages are not GPG-signed. Instead, everything is built here on GitHub
+# and every release asset has a build provenance attestation, which proves it
+# was built by this workflow from the tagged commit. The sigstore bundle of each
+# attestation is attached to the release as <asset>.sigstore.jsonl, for offline
+# verification. PyPI additionally gets its own (PEP 740) attestations from the
+# trusted publishing upload in ci.yml.
+#
+# The upload to PyPI is *not* done here, but by the "pypi" job in ci.yml: PyPI
+# trusted publishing can not be used from a reusable workflow, see
+# https://docs.pypi.org/trusted-publishers/troubleshooting/ - so that job has to
+# live in a workflow that is triggered by an event. This job hands the sdist and
+# the wheel over to it as a workflow artifact.
+
+name: Release
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  github_release:
+    name: Draft the GitHub release
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+
+    permissions:
+      contents: write      # to create the release
+      id-token: write      # to attest the packages
+      attestations: write
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      with:
+        # Just fetching one commit is not enough for setuptools-scm, so we fetch all.
+        fetch-depth: 0
+        fetch-tags: true
+        persist-credentials: false
+
+    - name: Set up Python
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+      with:
+        python-version: '3.14'
+
+    - name: Compile the translations
+      # The compiled message catalogs (*.mo) are not committed (see .gitignore),
+      # but MANIFEST.in includes them into the sdist (and thus into the wheel).
+      # Without this step, the release would silently be English-only.
+      run: |
+        set -euxo pipefail
+        python -m pip install --upgrade pip Babel
+        pybabel compile --statistics --directory src/moin/translations
+        ls src/moin/translations/*/LC_MESSAGES/messages.mo
+
+    - name: Build the sdist and the wheel
+      run: |
+        set -euxo pipefail
+        python -m pip install --upgrade build twine
+        python -m build
+        twine check --strict dist/*
+        ls -l dist/
+
+    - name: Check that the packages have the version of the tag
+      # If the checkout is modified, setuptools-scm does not use the tag as the
+      # version, but silently guesses the next one and appends .devN. Such a
+      # release must not be uploaded to PyPI.
+      env:
+        TAG: ${{ github.ref_name }}
+      run: |
+        set -euxo pipefail
+        python - "$TAG" dist/moin-*.tar.gz dist/moin-*.whl <<'EOF'
+        import sys
+        from packaging.utils import parse_sdist_filename, parse_wheel_filename
+        from packaging.version import Version
+        tag, sdist, wheel = sys.argv[1:]
+        _, sdist_version = parse_sdist_filename(sdist.rpartition("/")[2])
+        _, wheel_version, _, _ = parse_wheel_filename(wheel.rpartition("/")[2])
+        for kind, version in ("sdist", sdist_version), ("wheel", wheel_version):
+            if version != Version(tag):
+                raise SystemExit(f"{kind} version {version} is not the tag version {tag} - modified checkout?")
+            print(f"{kind} version {version} is the tag version.")
+        EOF
+
+    - name: Check that the wheel contains the translations
+      run: |
+        set -euxo pipefail
+        python - dist/moin-*.whl <<'EOF'
+        import sys, zipfile
+        names = zipfile.ZipFile(sys.argv[1]).namelist()
+        mo = sorted(n for n in names if n.endswith("/messages.mo"))
+        if not mo:
+            raise SystemExit("the wheel contains no compiled translations (messages.mo)")
+        print("\n".join(mo))
+        EOF
+
+    - name: Check that the packages are complete and installable
+      # A release that cannot be installed from PyPI is the worst kind of
+      # release, and nothing else in CI ever installs moin from a sdist or a
+      # wheel, or without the development requirements (and the editable
+      # install used there does not need the package data to be complete).
+      run: |
+        set -euxo pipefail
+        for pkg in dist/moin-*.whl dist/moin-*.tar.gz; do
+          venv="$RUNNER_TEMP/venv-$(basename "$pkg")"
+          python -m venv "$venv"
+          "$venv/bin/pip" install --upgrade pip
+          "$venv/bin/pip" install "$pkg"
+          "$venv/bin/python" -c "import moin; print(moin.version)"
+          "$venv/bin/moin" --help > /dev/null
+          # create a wiki instance and its index from the installed package and
+          # load the welcome page and the help into it, this needs the package
+          # data (config, templates, help, ...) too.
+          wiki="$RUNNER_TEMP/wiki-$(basename "$pkg")"
+          "$venv/bin/moin" create-instance --path "$wiki"
+          cd "$wiki"
+          "$venv/bin/moin" index-create
+          "$venv/bin/moin" welcome
+          "$venv/bin/moin" load-help -n help-en
+          "$venv/bin/moin" load-help -n help-common
+          # run the wiki server and check that it serves some pages, the help
+          # and the static files.
+          "$venv/bin/moin" run --port 8080 > server.log 2>&1 &
+          server=$!
+          trap 'kill $server 2>/dev/null || true; cat server.log' EXIT
+          curl -fsS -o /dev/null --retry 30 --retry-delay 1 --retry-all-errors http://127.0.0.1:8080/
+          for page in /Home /help-en/Home /+get/help-common/cat.jpg /static/css/common.css; do
+            curl -fsS -L -o /dev/null "http://127.0.0.1:8080$page"
+          done
+          kill $server
+          wait $server || true
+          trap - EXIT
+          cd "$GITHUB_WORKSPACE"
+        done
+
+    - name: Attest the packages provenance
+      id: attest
+      uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4.2.2
+      with:
+        subject-path: |
+          dist/*.tar.gz
+          dist/*.whl
+
+    - name: Name the sigstore bundles after the packages
+      # The attestations are also stored in the GitHub attestations API, but
+      # fetching them from there needs a recent gh and a GitHub token - so attach
+      # the sigstore bundle to the release as <package>.sigstore.jsonl, which
+      # allows offline/token-less verification with generic sigstore tooling
+      # (cosign, gh attestation verify --bundle). The action makes one bundle
+      # covering all subjects, so every package gets a copy of it.
+      env:
+        BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+      run: |
+        set -euxo pipefail
+        for pkg in dist/moin-*.tar.gz dist/moin-*.whl; do
+          cp "$BUNDLE_PATH" "$pkg.sigstore.jsonl"
+        done
+        ls -l dist/
+
+    - name: Create the draft release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TAG: ${{ github.ref_name }}
+      run: |
+        set -euxo pipefail
+        # 2.0.0b6 and friends are pre-releases, 2.0.0 is not.
+        prerelease=""
+        if python -c 'import sys; from packaging.version import Version; sys.exit(not Version(sys.argv[1]).is_prerelease)' "$TAG"; then
+          prerelease="--prerelease"
+        fi
+        cat > release-notes.md <<EOF
+        See the [changelog](https://github.com/moinwiki/moin/blob/$TAG/docs/changes/CHANGES) for what changed in this release.
+
+        ### Installation
+
+        \`pip install moin==$TAG\`, then see the [documentation](https://moin-20.readthedocs.io/)
+        for how to create and run a wiki instance.
+
+        All release assets have a [build provenance attestation](https://github.com/moinwiki/moin/attestations),
+        verifiable with \`gh attestation verify --owner moinwiki <file>\`.
+
+        Every attestation is additionally attached as a [sigstore](https://www.sigstore.dev/)
+        bundle \`<asset>.sigstore.jsonl\`, so it can be verified offline and without a
+        GitHub token, e.g. with cosign:
+
+        \`\`\`
+        cosign verify-blob moin-$TAG.tar.gz \\
+          --bundle moin-$TAG.tar.gz.sigstore.jsonl \\
+          --certificate-identity https://github.com/moinwiki/moin/.github/workflows/release.yml@refs/tags/$TAG \\
+          --certificate-oidc-issuer https://token.actions.githubusercontent.com
+        \`\`\`
+        EOF
+        if gh release view "$TAG" > /dev/null 2>&1; then
+          # a re-run of this job: if the release is still a draft, keep it (its
+          # notes may already be edited) and just replace its assets - but never
+          # silently replace the assets of a release that was already published.
+          if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft)" != "true" ]; then
+            echo "::error::release $TAG is already published, not replacing its assets."
+            exit 1
+          fi
+          gh release upload "$TAG" --clobber dist/*.tar.gz dist/*.whl dist/*.sigstore.jsonl
+        else
+          gh release create "$TAG" \
+            --draft $prerelease \
+            --title "moin $TAG" \
+            --notes-file release-notes.md \
+            dist/*.tar.gz dist/*.whl dist/*.sigstore.jsonl
+        fi
+        gh release view "$TAG" --json isDraft,isPrerelease,assets
+
+    - name: Keep the packages for the PyPI upload
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+      with:
+        name: dist
+        path: |
+          dist/*.tar.gz
+          dist/*.whl
+        if-no-files-found: error
