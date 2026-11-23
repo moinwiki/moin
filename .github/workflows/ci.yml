@@ -42,8 +42,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-            - os: macos-latest
-              python-version: '3.11'
+            # macOS: see the pytest_macos job below.
             - os: windows-latest
               python-version: '3.13'
             - os: ubuntu-24.04
@@ -56,7 +55,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
 
-    steps:
+    steps: &pytest-steps
     - uses: actions/checkout@v7
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
@@ -84,6 +83,28 @@ jobs:
         name: test-artifacts-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
           _test_artifacts
+
+  pytest_macos:
+    # Same as the pytest job, but optional: GitHub's macOS runners are sometimes
+    # not available for a long time ("The job was not acquired by Runner of type
+    # hosted even after multiple attempts"), and that must not block a release.
+    # So the release job does not wait for this job, and a failure here does
+    # not make the workflow run fail.
+
+    needs: lint
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+            - os: macos-latest
+              python-version: '3.11'
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+
+    steps: *pytest-steps
+
   docs:
 
     needs: lint
@@ -117,7 +138,7 @@ jobs:
   release:
     # Build the sdist and the wheel and draft the GitHub release, after the
     # tests for the tagged commit have passed, see .github/workflows/release.yml.
-    # The docs job is continue-on-error, so it is not waited for.
+    # The docs and pytest_macos jobs are optional, so they are not waited for.
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
     needs: [lint, pytest]
 
