@@ -76,7 +76,7 @@
                                 <p class="moin-found-text">{{ _("COMMENT: {content}").format(content=result.highlights('comment')|safe) }}</p>
                             {%- endif %}
                             {%- if result['tags'] %}
-                                <p class="moin-found-text">{{ _("TAGS: {content}").format(content=result['tags']|safe) }}</p>
+                                <p class="moin-found-text">{{ _("TAGS: {content}").format(content=result['tags']) }}</p>
                             {%- endif %}
                             {%- if 'content' in result.keys() and result.highlights('content') %}
                                 <p class="moin-found-text">{{ _("CONTENT: {content}").format(content=result.highlights('content')|safe) }}</p>

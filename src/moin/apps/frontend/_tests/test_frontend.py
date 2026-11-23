@@ -216,6 +216,23 @@ class TestFrontend:
     def test_ajaxmodify(self):
         self._test_view_post("frontend.ajaxmodify", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
+    def test_ajaxsearch_escapes_html_in_tags(self, client):
+        create_user("moin", "Xiwejr622")
+        login(client, "moin", "Xiwejr622")
+        payload = "<img src=x onerror=alert(document.domain)>"
+
+        modify_item(
+            client, "XssTagItem", make_modify_form_data("XssTagItem", content="searchmarker", meta_form_tags=payload)
+        )
+
+        response = client.get(url_for("frontend.search"), query_string={"q": "searchmarker"})
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The tag must be HTML-escaped, not interpreted as markup.
+        assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
+        assert payload not in html
+
     def test_jfu_server(self):
         self._test_view_post(
             "frontend.jfu_server",
