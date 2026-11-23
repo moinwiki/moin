@@ -139,9 +139,10 @@ jobs:
     #  - on pypi.org, add a trusted publisher to the "moin" project:
     #    owner "moinwiki", repository "moin", workflow "ci.yml",
     #    environment "pypi".
-    #  - create the "pypi" environment in the repository settings. Configuring
-    #    required reviewers for it makes this (irreversible) upload wait for an
-    #    approval, which is the last chance to stop a release.
+    #  - create the "pypi" environment in the repository settings and configure
+    #    required reviewers for it (mandatory!): this makes this (irreversible)
+    #    upload wait for a human approval, which is the last chance to stop a
+    #    release.
     if: ${{ startsWith(github.ref, 'refs/tags/') && needs.release.result == 'success' }}
     needs: [release]
 

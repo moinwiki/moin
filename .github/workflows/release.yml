@@ -176,7 +176,9 @@ jobs:
         set -euxo pipefail
         # 2.0.0b6 and friends are pre-releases, 2.0.0 is not.
         prerelease=""
-        case "$TAG" in *a*|*b*|*rc*) prerelease="--prerelease" ;; esac
+        if python -c 'import sys; from packaging.version import Version; sys.exit(not Version(sys.argv[1]).is_prerelease)' "$TAG"; then
+          prerelease="--prerelease"
+        fi
         cat > release-notes.md <<EOF
         See the [changelog](https://github.com/moinwiki/moin/blob/$TAG/docs/changes/CHANGES) for what changed in this release.
 
@@ -200,8 +202,13 @@ jobs:
         \`\`\`
         EOF
         if gh release view "$TAG" > /dev/null 2>&1; then
-          # a re-run of this job: keep the (possibly already edited) release and
-          # just replace its assets.
+          # a re-run of this job: if the release is still a draft, keep it (its
+          # notes may already be edited) and just replace its assets - but never
+          # silently replace the assets of a release that was already published.
+          if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft)" != "true" ]; then
+            echo "::error::release $TAG is already published, not replacing its assets."
+            exit 1
+          fi
           gh release upload "$TAG" --clobber dist/*.tar.gz dist/*.whl dist/*.sigstore.jsonl
         else
           gh release create "$TAG" \

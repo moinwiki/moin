@@ -638,7 +638,9 @@ The rest is automated by the GitHub Actions workflows (see
   and creates a **draft** GitHub release with them,
 * the "pypi" job then uploads the sdist and the wheel to pypi.org, using PyPI
   trusted publishing (no API token needed, PyPI also gets attestations for them). It runs in the "pypi" environment,
-  which may be configured to require an approval in the repository settings.
+  which requires an approval by a maintainer (configured as "required reviewers"
+  for that environment in the repository settings): check the draft release and
+  the packages before approving the upload, it can not be undone.
 
 If the workflow run failed, fix the problem and delete and recreate the tag (if
 nothing was uploaded to pypi.org yet) or make a new release.
