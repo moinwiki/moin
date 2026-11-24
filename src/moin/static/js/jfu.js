@@ -22,8 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     const overallBar = progressContainer.querySelector(".jfu-bar");
     const submitUrl = fileInput.dataset.url;
-    // bytes loaded / total per active upload, used for the overall progress bar
+    // bytes loaded / total per upload of the current batch, used for the overall progress bar.
+    // Finished uploads stay in there (else the bar would jump back whenever a file is done),
+    // a new batch begins when a file gets added while no upload is active.
     const uploads = new Set();
+    let activeUploads = 0;
 
     function percent(loaded, total) {
         return total ? Math.floor(loaded / total * 100) : 100;
@@ -100,14 +103,18 @@ document.addEventListener("DOMContentLoaded", function () {
         progressContainer.appendChild(progress);
         progressContainer.classList.remove("hidden");
 
+        if (activeUploads === 0) {
+            uploads.clear();
+        }
         const upload = { loaded: 0, total: file.size };
         uploads.add(upload);
+        activeUploads += 1;
         updateOverallProgress();
 
         function finish(response) {
             upload.loaded = upload.total;
+            activeUploads -= 1;
             updateOverallProgress();
-            uploads.delete(upload);
             // show success/fail message for the uploaded file
             progress.textContent = response.message;
             // class is passed when upload fails, 403s are returned as 200 with error message
