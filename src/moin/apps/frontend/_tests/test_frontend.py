@@ -11,6 +11,9 @@ from typing import Any, TYPE_CHECKING, Iterable
 from io import BytesIO
 
 import json
+import os
+import time
+
 import pytest
 
 from flask import url_for
@@ -685,12 +688,20 @@ class TestFrontendNew:
 
         create_user("björn", "Xiwejr622")
         login(client, "björn", "Xiwejr622")
+        preview_dir = os.path.join(current_app.cfg.instance_dir, "preview")
+        start_time = time.time() - 1  # some filesystems have only 1s mtime resolution
         modify_item(
             client,
             "quokka",
             make_modify_form_data("quokka", content="New item content.", preview="Preview"),
             expected_status_code=200,
         )
+        # the preview draft file name must not contain the non-ASCII user name, see #1986
+        new_drafts = {
+            name for name in os.listdir(preview_dir) if os.path.getmtime(os.path.join(preview_dir, name)) >= start_time
+        }
+        assert new_drafts
+        assert all(name.isascii() for name in new_drafts), new_drafts
 
     def test_convert_item_to_markdown(self, client):
         create_user("björn", "Xiwejr622")

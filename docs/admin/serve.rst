@@ -84,6 +84,14 @@ Otherwise, read your web server error log files to troubleshoot the issue from t
 
 .. tip:: Check the contents of /contrib/wsgi/ for sample WSGI files for your server.
 
+.. note:: Make sure the WSGI process uses a UTF-8 locale. Some web servers start the WSGI
+   process with the "C" / "POSIX" locale, no matter which locale is set for the user account,
+   e.g. Apache mod_wsgi daemon processes. Then Python may use ASCII to encode file names
+   and texts, which fails for non-ASCII characters. For Apache mod_wsgi, set the locale
+   in the daemon process configuration, e.g.::
+
+    WSGIDaemonProcess moin user=moin group=moin locale=C.UTF-8
+
 Create and Serve a Static Wiki Image
 ====================================
 
