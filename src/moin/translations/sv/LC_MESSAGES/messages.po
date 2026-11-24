@@ -331,7 +331,7 @@ msgstr "Inget ändrat, inget sparat. Artikel: {item_name} ACL: {acl_rule}"
 #: src/moin/apps/admin/views.py:612
 #, python-brace-format
 msgid "Failed! Not authorized. Item: {item_name} ACL: {acl_rule}"
-msgstr "Misslyckades! Ej behörig. Artikel: {item_name} ACL: {acl_rule}"
+msgstr "Misslyckades! Du saknar behörighet. Artikel: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:619
 #, python-brace-format
@@ -644,7 +644,7 @@ msgstr "QueryError: ogiltig sökterm: {search_term}"
 #: src/moin/apps/frontend/views.py:585
 #, python-brace-format
 msgid "QueryError: invalid regex in search term: {search_term}"
-msgstr "QueryError: ogiltigt reguljärt uttryck i söktermen: {search_term}"
+msgstr "Sökfel: ogiltigt reguljärt uttryck i söktermen: {search_term}"
 
 #: src/moin/apps/frontend/views.py:588
 #, python-brace-format
@@ -1080,7 +1080,7 @@ msgstr "Användarens CSS-fil"
 
 #: src/moin/apps/frontend/views.py:2819
 msgid "Give the PATHNAME of your individual CSS file (optional)"
-msgstr "Ange SÖKVÄGEN till din egen CSS-fil (valfritt)"
+msgstr "Ange sökvägen till din egen CSS-fil (valfritt)"
 
 #: src/moin/apps/frontend/views.py:2822
 msgid "Number rows in edit textarea"
@@ -1486,7 +1486,7 @@ msgstr "är ogiltig inom"
 #: src/moin/converters/nonexistent_in.py:42
 #, python-brace-format
 msgid "{item_name} does not exist. Create it?"
-msgstr "{item_name} finns inte. Skapa den?"
+msgstr "{item_name} finns inte. Skapa artikeln?"
 
 #: src/moin/converters/nowiki.py:49
 #, python-brace-format
@@ -1646,7 +1646,7 @@ msgstr "Ingen förhandsgranskning tillgänglig för tomma artiklar."
 
 #: src/moin/items/__init__.py:1756
 msgid "Invalid data content received. Expecting text content."
-msgstr "Ogiltigt datainnehåll mottaget. Textinnehåll förväntades."
+msgstr "Ogiltigt innehåll mottogs. Textinnehåll förväntades."
 
 #: src/moin/items/__init__.py:1794
 msgid "Nothing changed, nothing saved."
@@ -1813,7 +1813,7 @@ msgstr "Ikonmakro misslyckades på grund av att ikonens namn saknades."
 
 #: src/moin/macros/Icon.py:27
 msgid "Icon not rendered (invalid name)"
-msgstr "Ikonen återges inte (ogiltigt namn)"
+msgstr "Ikonen visas inte (ogiltigt namn)."
 
 #: src/moin/macros/ItemList.py:94
 #, python-brace-format
@@ -1994,7 +1994,7 @@ msgstr ""
 
 #: src/moin/mail/sendmail.py:59
 msgid "No sender address configured."
-msgstr "Ingen avsändaradress konfigurerad."
+msgstr "Ingen avsändaradress har konfigurerats."
 
 #: src/moin/mail/sendmail.py:65
 msgid "No recipients, nothing to do"
@@ -2037,7 +2037,7 @@ msgstr "HTTP 400 - Felaktig begäran"
 
 #: src/moin/templates/400.html:14
 msgid "Please check the hostname in your URL or ask the wiki admin to check the flask configuration."
-msgstr "Kontrollera värdnamnet i din URL eller be wiki-administratören att kontrollera Flask-konfigurationen."
+msgstr "Kontrollera värdnamnet i webbadressen eller be wikiadministratören kontrollera Flask-konfigurationen."
 
 #: src/moin/templates/404.html:12
 msgid "Not Found"
@@ -2062,7 +2062,7 @@ msgstr "Whoosh-filter:"
 
 #: src/moin/templates/ajaxsearch.html:24
 msgid "Common words omitted from content field query:"
-msgstr "Vanliga ord utelämnade från sökningen i innehållsfältet:"
+msgstr "Vanliga ord har utelämnats från sökningen i innehållsfältet:"
 
 #: src/moin/templates/ajaxsearch.html:32
 #, python-brace-format
@@ -2520,7 +2520,7 @@ msgid ""
 "                        or drag and drop multiple files here."
 msgstr ""
 "Ange artikelnamn och klicka på knappen Skapa ovan för att redigera eller ladda upp en artikel. Om du vill ladda "
-"upp flera filer klickar du på knappen nedan för att öppna en dialogruta för filval, eller dra och släpp flera "
+"upp flera filer klickar du på knappen nedan för att öppna filväljaren, eller dra och släpp flera "
 "filer här."
 
 #: src/moin/templates/index.html:262 src/moin/templates/index.html:267
