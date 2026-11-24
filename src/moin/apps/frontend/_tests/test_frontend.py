@@ -1154,3 +1154,60 @@ def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
     rv2 = client.get("/HighlightTestPage?regex=hello")
     assert rv2.status_code == 200
     assert b"moin-highlight" in rv2.data
+
+
+def _sitemap_chain(client, length=7):
+    """Create items Chain0 -> Chain1 -> ... -> Chain<length-1>, each linking to the next one."""
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    for i in range(length):
+        name = f"Chain{i}"
+        content = f"[[Chain{i + 1}]]\n" if i < length - 1 else "the end\n"
+        modify_item(client, name, make_modify_form_data(name, content=content))
+
+
+def _sitemap_tree(rv):
+    """Return the item names listed in the forward and backward reference trees of a sitemap."""
+    assert rv.status_code == 200
+    tree = etree.HTML(rv.data.decode())
+    forward, backward = (
+        [name.strip() for name in ul.xpath('.//a[contains(@class, "moin-fqname")]/text()')]
+        for ul in tree.xpath("//h2/following-sibling::ul[1]")
+    )
+    cut = [
+        bool(h2.xpath('following-sibling::*[1][self::ul]/following-sibling::*[1][@class="moin-sitemap-cut"]'))
+        for h2 in tree.xpath("//h2")
+    ]
+    return forward, backward, cut
+
+
+def test_sitemap_depth_is_limited(client):
+    """The site map must not walk the whole link graph: by default it stops 3 levels below the item."""
+    _sitemap_chain(client)
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain0")))
+    assert forward == ["Chain1", "Chain2", "Chain3"]
+    assert backward == []
+    assert cut == [True, False]
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain6")))
+    assert forward == []
+    assert backward == ["Chain5", "Chain4", "Chain3"]
+    assert cut == [False, True]
+    # close to the end of the chain, nothing is cut
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain4")))
+    assert forward == ["Chain5", "Chain6"]
+    assert cut[0] is False
+
+
+def test_sitemap_items_are_limited(client, monkeypatch):
+    """Independent of the depth, the links of at most sitemap_max_items items are looked up."""
+    _sitemap_chain(client)
+    monkeypatch.setattr(current_app.cfg, "sitemap_max_depth", None)
+    monkeypatch.setattr(current_app.cfg, "sitemap_max_items", 3)
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain0")))
+    # Chain0, Chain1 and Chain2 were looked up, so Chain3 is listed, but not followed
+    assert forward == ["Chain1", "Chain2", "Chain3"]
+    assert cut[0] is True
+    monkeypatch.setattr(current_app.cfg, "sitemap_max_items", None)
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain0")))
+    assert forward == [f"Chain{i}" for i in range(1, 7)]
+    assert cut == [False, False]

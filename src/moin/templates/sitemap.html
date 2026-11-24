@@ -10,6 +10,9 @@
     The input `missing` is a set of fqnames that are non-existent.
 
     The input `no-read-auth` is a set of fqnames that may not be read by current user.
+
+    The inputs `sitemap_cut` and `backrefs_cut` tell whether the walk stopped at the
+    sitemap_max_depth or sitemap_max_items limit (see the wiki configuration).
 #}
 
 {% extends theme("show.html") %}
@@ -51,10 +54,20 @@
     </ul>
 {% endmacro %}
 
+{% macro cut_notice(cut) %}
+    {% if cut %}
+        <p class="moin-sitemap-cut">
+            {{ _("To limit the server load, items further away are not shown. Use the site map icon of an item to see its own site map.") }}
+        </p>
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
     <h1>{{ title }}</h1>
     <h2>{{ _('Forward References') }}</h2>
     {{ showtree(sitemap) }}
+    {{ cut_notice(sitemap_cut) }}
     <h2>{{ _('Backward References') }}</h2>
     {{ showtree(backrefs) }}
+    {{ cut_notice(backrefs_cut) }}
 {% endblock %}

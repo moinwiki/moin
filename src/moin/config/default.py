@@ -589,6 +589,16 @@ options_no_group_name: dict[str, OptionsGroup] = {
             Option("show_section_numbers", False, "show section numbers in headings by default"),
             Option("show_rename_redirect", False, "if True, offer creation of redirect pages when renaming wiki pages"),
             Option(
+                "sitemap_max_depth",
+                3,
+                "Site map view: list linked items at most this many levels below the item (None for no limit).",
+            ),
+            Option(
+                "sitemap_max_items",
+                200,
+                "Site map view: look up the links of at most this many items, per direction (None for no limit).",
+            ),
+            Option(
                 "template_dirs", [], "list of directories with templates that will override theme and base templates."
             ),
         ),
