@@ -5,7 +5,9 @@
 MoinMoin - moin.utils.mime tests.
 """
 
-from moin.utils.mime import Type
+import pytest
+
+from moin.utils.mime import Type, get_charset
 
 
 def test_Type_init_1():
@@ -91,3 +93,22 @@ def test_Type_compare():
     assert t1 != t2
     assert not t1.issupertype(t2)
     assert not t2.issupertype(t1)
+
+
+@pytest.mark.parametrize(
+    "contenttype,expected",
+    [
+        ("text/x.moin.wiki;charset=utf-8", "utf-8"),
+        ('text/plain;charset="utf-8"', "utf-8"),  # quoted, as created by MimeType.content_type()
+        ('text/plain; charset="UTF-8"', "UTF-8"),  # whitespace
+        ("text/x.moin.wiki;charset=utf-8;format=1.9", "utf-8"),  # additional parameter
+        ("text/x.moin.wiki;format=1.9;charset=ascii", "ascii"),  # charset not the last parameter
+        ("text/plain", "utf-8"),  # no charset -> default
+    ],
+)
+def test_get_charset(contenttype, expected):
+    assert get_charset(contenttype) == expected
+
+
+def test_get_charset_default():
+    assert get_charset("text/plain", default="ascii") == "ascii"

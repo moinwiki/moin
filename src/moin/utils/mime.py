@@ -8,6 +8,8 @@ MoinMoin — MIME helpers.
 from __future__ import annotations
 
 from typing import Any, NamedTuple
+
+from moin.constants.contenttypes import CHARSET
 from moin.utils.pysupport import AutoNe
 
 
@@ -125,6 +127,19 @@ class Type(_Type, AutoNe):
             return self_params <= other_params
 
         raise ValueError
+
+
+def get_charset(contenttype: str, default: str = CHARSET) -> str:
+    """
+    Return the charset parameter of a content type string, e.g. "utf-8".
+
+    Handles quoted values, whitespace and additional parameters, e.g.
+    'text/x.moin.wiki;charset="utf-8";format=1.9'.
+
+    :param contenttype: content type string, e.g. from an item's metadata
+    :param default: returned if the content type has no charset parameter
+    """
+    return Type(contenttype).parameters.get("charset", default)
 
 
 # Own types, application type
