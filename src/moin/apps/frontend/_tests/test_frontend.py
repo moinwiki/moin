@@ -933,6 +933,44 @@ def test_diff_includes_revisions_from_before_a_rename(client):
     assert b"AAA" in rv.data
 
 
+def test_diff_offers_no_links_to_other_diffs(client):
+    """
+    The diff view lets the user move both panes independently. Offered as links,
+    that navigation lets a crawler reach every (rev1, rev2) pair of an item, which
+    is n*(n-1)/2 urls for n revisions. It must be offered as forms instead.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    item_name = "DiffNavItem"
+    revids = []
+    for content in ("AAA\n", "BBB\n", "CCC\n", "DDD\n", "EEE\n"):
+        modify_item(client, item_name, make_modify_form_data(item_name, content=content, comment=content))
+        revids.append(flaskg.storage[item_name][CURRENT].meta[REVID])
+
+    # a pair in the middle of the history, so every navigation direction applies
+    rv = client.get(url_for("frontend.diff", item_name=item_name, rev1=revids[1], rev2=revids[3]))
+    assert rv.status_code == 200
+    html = rv.data.decode()
+    diff_url = url_for("frontend.diff", item_name=item_name)
+    assert f'href="{diff_url}' not in html
+    tree = etree.HTML(html)
+    forms = tree.xpath('//form[@class="moin-diff-nav"]')
+    pairs = {
+        (form.xpath('.//input[@name="rev1"]/@value')[0], form.xpath('.//input[@name="rev2"]/@value')[0])
+        for form in forms
+    }
+    expected = {
+        (revids[0], revids[3]),  # left pane: oldest
+        (revids[0], revids[3]),  # left pane: older
+        (revids[2], revids[3]),  # left pane: newer
+        (revids[1], revids[2]),  # right pane: older
+        (revids[1], revids[4]),  # right pane: newer and newest
+    }
+    assert pairs == expected
+    assert all(form.get("method") == "get" and form.get("action") == diff_url for form in forms)
+
+
 def test_history_shows_revisions_from_before_a_rename(client):
     """
     Regression test: history() built its ALL_REVS query from fqname.query,
