@@ -88,9 +88,10 @@ Otherwise, read your web server error log files to troubleshoot the issue from t
    process with the "C" / "POSIX" locale, no matter which locale is set for the user account,
    e.g. Apache mod_wsgi daemon processes. Then Python may use ASCII to encode file names
    and texts, which fails for non-ASCII characters. For Apache mod_wsgi, set the locale
-   in the daemon process configuration, e.g.::
+   in the daemon process configuration (which of the two options works can depend on the
+   system, so set both), e.g.::
 
-    WSGIDaemonProcess moin user=moin group=moin locale=C.UTF-8
+    WSGIDaemonProcess moin user=moin group=moin lang=C.UTF-8 locale=C.UTF-8
 
 Create and Serve a Static Wiki Image
 ====================================
