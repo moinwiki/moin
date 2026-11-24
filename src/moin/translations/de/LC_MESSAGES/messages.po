@@ -326,24 +326,24 @@ msgid "Group ACL Report"
 msgstr "Gruppen-ACL-Report"
 
 #: src/moin/apps/admin/views.py:593
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Nothing changed, nothing saved. Item: {item_name} ACL: {acl_rule}"
-msgstr "Keine Änderung, ungültige ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Nichts geändert, nichts gespeichert. Item: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:612
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Failed! Not authorized. Item: {item_name} ACL: {acl_rule}"
-msgstr "Gescheitert! Nicht berechtigt.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Gescheitert! Nicht berechtigt. Item: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:619
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Success! ACL saved. Item: {item_name} ACL: {acl_rule}"
-msgstr "Erfolg! ACL gespeichert.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Erfolg! ACL gespeichert. Item: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:626
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Failed! Invalid ACL syntax. Item: {item_name} ACL: {acl_rule}"
-msgstr "Keine Änderung, ungültige ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Gescheitert! Ungültige ACL-Syntax. Item: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:17
 msgid "Group Name"
@@ -424,9 +424,8 @@ msgid "Trash"
 msgstr "Papierkorb"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:14
-#, fuzzy
 msgid "Showing all items"
-msgstr "Alle Schlagworte anzeigen"
+msgstr "Alle Items werden angezeigt"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:16
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:21
@@ -434,9 +433,8 @@ msgid "Number items:"
 msgstr "Anzahl Items"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:19
-#, fuzzy
 msgid "Showing items with modified ACLs"
-msgstr "Items mit Default-ACLs anzeigen/verstecken"
+msgstr "Items mit geänderten ACLs werden angezeigt"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:27 src/moin/items/__init__.py:608
 msgid "ACL"
@@ -646,9 +644,9 @@ msgid "QueryError: invalid search term: {search_term}"
 msgstr "QueryError: Ungültiger Suchbegriff: {search_term}"
 
 #: src/moin/apps/frontend/views.py:585
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "QueryError: invalid regex in search term: {search_term}"
-msgstr "QueryError: Ungültiger Suchbegriff: {search_term}"
+msgstr "QueryError: Ungültiger regulärer Ausdruck im Suchbegriff: {search_term}"
 
 #: src/moin/apps/frontend/views.py:588
 #, python-brace-format
@@ -951,9 +949,8 @@ msgid "Either your username or password was invalid."
 msgstr "Ihr Benutzername oder Passwort war ungültig."
 
 #: src/moin/apps/frontend/views.py:2559
-#, fuzzy
 msgid "Remember me"
-msgstr "Mitglieder-Benutzer"
+msgstr "Angemeldet bleiben"
 
 #: src/moin/apps/frontend/views.py:2564
 msgid "Log in"
@@ -1002,13 +999,12 @@ msgid "Open editor on double click"
 msgstr "Editor durch Doppelklick öffnen"
 
 #: src/moin/apps/frontend/views.py:2683
-#, fuzzy
 msgid "Use HTML editor"
-msgstr "Benutzer-ACL-Report"
+msgstr "HTML-Editor verwenden"
 
 #: src/moin/apps/frontend/views.py:2684
 msgid "Use Markdown editor"
-msgstr ""
+msgstr "Markdown-Editor verwenden"
 
 #: src/moin/apps/frontend/views.py:2685
 msgid "Scroll page after edit"
@@ -1075,23 +1071,20 @@ msgid "Locale"
 msgstr "Lokalisierung"
 
 #: src/moin/apps/frontend/views.py:2815
-#, fuzzy
 msgid "(System Default)"
-msgstr "Standardeinstellung"
+msgstr "(Systemstandard)"
 
 #: src/moin/apps/frontend/views.py:2816
 msgid "Theme name"
 msgstr "Theme-Name"
 
 #: src/moin/apps/frontend/views.py:2818
-#, fuzzy
 msgid "User CSS file"
-msgstr "URL für benutzerdefiniertes CSS"
+msgstr "Benutzerdefinierte CSS-Datei"
 
 #: src/moin/apps/frontend/views.py:2819
-#, fuzzy
 msgid "Give the PATHNAME of your individual CSS file (optional)"
-msgstr "Geben Sie die URL Ihres benutzerspezifischen CSS an (optional)"
+msgstr "Geben Sie den PFADNAMEN Ihrer benutzerspezifischen CSS-Datei an (optional)"
 
 #: src/moin/apps/frontend/views.py:2822
 msgid "Number rows in edit textarea"
@@ -1145,17 +1138,17 @@ msgstr "Es gibt nur eine Revision, die für die Differenz-Anzeige wählbar ist."
 
 #: src/moin/apps/frontend/views.py:3172
 msgid "Cannot generate a comparison view because revisions have different content types."
-msgstr ""
+msgstr "Es kann keine Vergleichsansicht erzeugt werden, da die Revisionen unterschiedliche Content-Types haben."
 
 #: src/moin/apps/frontend/views.py:3174
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Old content type: {old_ct}"
-msgstr "Content-Type"
+msgstr "Alter Content-Type: {old_ct}"
 
 #: src/moin/apps/frontend/views.py:3176
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "New content type: {new_ct}"
-msgstr "Neuer Content-Type"
+msgstr "Neuer Content-Type: {new_ct}"
 
 #: src/moin/apps/frontend/views.py:3230
 #, python-brace-format
@@ -1181,13 +1174,12 @@ msgid "Items tagged with {tag}"
 msgstr "Items, die mit dem Schlagwort {tag} markiert wurden"
 
 #: src/moin/apps/frontend/views.py:3455
-#, fuzzy
 msgid "Internal error"
-msgstr "Item-ACL-Report"
+msgstr "Interner Fehler"
 
 #: src/moin/apps/frontend/views.py:3456
 msgid "An unexpected error occurred."
-msgstr ""
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
 
 #: src/moin/apps/frontend/views.py:3459 src/moin/templates/crash.html:6
 msgid ""
@@ -1391,9 +1383,8 @@ msgid "If the first row is recognized as a header, the table will be sortable."
 msgstr "Wenn die erste Zeile als Kopfzeile erkannt wird, ist die Tabelle sortierbar."
 
 #: src/moin/constants/contenttypes.py:174
-#, fuzzy
 msgid "Click for help on MoinWiki markup."
-msgstr "Hilfe zur Moin Wiki Syntax."
+msgstr "Klicken Sie hier für Hilfe zur MoinWiki-Syntax."
 
 #: src/moin/constants/contenttypes.py:175
 msgid "Moinmoin 1.9 format is deprecated, convert to moin 2."
@@ -1428,9 +1419,8 @@ msgid "Include Macro above has invalid format, missing item name"
 msgstr "Ungültiges Format im obigen Include-Makro, fehlender Item Name"
 
 #: src/moin/converters/_wiki_macro.py:83
-#, fuzzy
 msgid "Include Macro above has invalid format, expected sort=ascending or sort=descending"
-msgstr "Das Include Makro oben hat ein ungültiges Format, erwartet wird sort=ascending oder descending"
+msgstr "Das Include Makro oben hat ein ungültiges Format, erwartet wird sort=ascending oder sort=descending"
 
 #: src/moin/converters/everything.py:54
 #, python-brace-format
@@ -1441,12 +1431,12 @@ msgstr ""
 
 #: src/moin/converters/everything.py:59
 msgid "No DOM representation possible for this content."
-msgstr ""
+msgstr "Für diesen Inhalt ist keine DOM-Darstellung möglich."
 
 #: src/moin/converters/everything.py:65
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Download {item_name}."
-msgstr "'{item_name}' umbenennen"
+msgstr "{item_name} herunterladen."
 
 #: src/moin/converters/html_in.py:201
 #, python-brace-format
@@ -1502,9 +1492,9 @@ msgid "is invalid within"
 msgstr "ist ungültig innerhalb von"
 
 #: src/moin/converters/nonexistent_in.py:42
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{item_name} does not exist. Create it?"
-msgstr "{item_name} existiert nicht, möchten Sie es jetzt erstellen?"
+msgstr "{item_name} existiert nicht. Erzeugen?"
 
 #: src/moin/converters/nowiki.py:49
 #, python-brace-format
@@ -1548,9 +1538,9 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: src/moin/items/__init__.py:536
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The ACL string is invalid: {acl}"
-msgstr "Der ACL String ist ungültig."
+msgstr "Der ACL String ist ungültig: {acl}"
 
 #: src/moin/items/__init__.py:551
 msgid "The Wiki Dict is invalid. The format is 'key=value', one per line, no commas."
@@ -1664,7 +1654,7 @@ msgstr "Vorschau nicht möglich für leere Items."
 
 #: src/moin/items/__init__.py:1756
 msgid "Invalid data content received. Expecting text content."
-msgstr ""
+msgstr "Ungültige Daten empfangen. Erwartet wird Textinhalt."
 
 #: src/moin/items/__init__.py:1794
 msgid "Nothing changed, nothing saved."
@@ -1758,7 +1748,7 @@ msgstr "Tippen Sie hier"
 #: src/moin/items/content.py:1189
 #, python-brace-format
 msgid "[... highlighted output truncated, showing first {count} characters ...]"
-msgstr ""
+msgstr "[... hervorgehobene Ausgabe gekürzt, die ersten {count} Zeichen werden angezeigt ...]"
 
 #: src/moin/items/content.py:1386
 #, python-brace-format
@@ -1771,19 +1761,16 @@ msgid "Clickable drawing: {filename}"
 msgstr "Anklickbare Zeichnung: {filename}"
 
 #: src/moin/macros/Anchor.py:18
-#, fuzzy
 msgid "Anchor macro failed: missing anchor name."
-msgstr "Anchor Makro fehlgeschlagen - fehlendes Argument."
+msgstr "Anchor Makro fehlgeschlagen: Name des Ankers fehlt."
 
 #: src/moin/macros/Anchor.py:22
-#, fuzzy
 msgid "Anchor macro failed: only one argument is allowed."
-msgstr "Anchor Makro fehlgeschlagen - nur ein Argument erlaubt."
+msgstr "Anchor Makro fehlgeschlagen: nur ein Argument erlaubt."
 
 #: src/moin/macros/Anchor.py:27
-#, fuzzy
 msgid "Anchor macro failed: spaces are not allowed in anchors."
-msgstr "Anchor Makro fehlgeschlagen - Leerzeichen im Namen nicht erlaubt."
+msgstr "Anchor Makro fehlgeschlagen: Leerzeichen sind in Ankern nicht erlaubt."
 
 #: src/moin/macros/Date.py:72 src/moin/macros/DateTime.py:30
 msgid "Invalid input parameter: None, float, int, or ISO 8601 formats are accepted."
@@ -1829,9 +1816,8 @@ msgid "Icon macro failed due to missing icon name."
 msgstr "Icon Makro fehlgeschlagen wegen fehlendem Icon Namen."
 
 #: src/moin/macros/Icon.py:27
-#, fuzzy
 msgid "Icon not rendered (invalid name)"
-msgstr "Icon wird nicht dargestellt, ungültiger Name"
+msgstr "Icon nicht dargestellt (ungültiger Name)"
 
 #: src/moin/macros/ItemList.py:94
 #, python-brace-format
@@ -1959,36 +1945,31 @@ msgstr "Keine Zitate gefunden in {0}"
 #: src/moin/macros/RandomQuote.py:88
 #, python-brace-format
 msgid "Unexpected conversion result for item {0}"
-msgstr ""
+msgstr "Unerwartetes Konvertierungsergebnis für Item {0}"
 
 #: src/moin/macros/ShowIcons.py:26 src/moin/macros/ShowSmileys.py:20
 msgid "Result"
 msgstr "Ergebnis"
 
 #: src/moin/macros/ShowUserGroup.py:21
-#, fuzzy
 msgid "ShowUserGroup macro failed: metadata lacks \"usergroup\" attribute."
-msgstr "ShowUserGroup Marko fehlgeschlagen - das Attribut \"usergroup\" fehlt."
+msgstr "ShowUserGroup Makro fehlgeschlagen: den Metadaten fehlt das Attribut \"usergroup\"."
 
 #: src/moin/macros/ShowWikiDict.py:21
-#, fuzzy
 msgid "ShowWikiDict macro failed: metadata lacks \"wikidict\" attribute."
-msgstr "ShowWikiDict Marko fehlgeschlagen - das Attribut \"wikidict\" fehlt."
+msgstr "ShowWikiDict Makro fehlgeschlagen: den Metadaten fehlt das Attribut \"wikidict\"."
 
 #: src/moin/macros/SlideShow.py:19
-#, fuzzy
 msgid " Start Slide Show"
-msgstr " Starte Präsentation"
+msgstr " Präsentation starten"
 
 #: src/moin/macros/TitleIndex.py:26
-#, fuzzy
 msgid "TitleIndex macro does not support any arguments."
-msgstr "Das TitleList Makro unterstützt keine Argumente."
+msgstr "Das TitleIndex Makro unterstützt keine Argumente."
 
 #: src/moin/macros/TitleIndex.py:32
-#, fuzzy
 msgid "<TitleIndex macro: No matching items were found.>"
-msgstr "<TitleList Makro: keine passenden Items gefunden.>"
+msgstr "<TitleIndex Makro: keine passenden Items gefunden.>"
 
 #: src/moin/macros/_base.py:96
 #, python-brace-format
@@ -2017,7 +1998,7 @@ msgstr ""
 
 #: src/moin/mail/sendmail.py:59
 msgid "No sender address configured."
-msgstr ""
+msgstr "Keine Absenderadresse konfiguriert."
 
 #: src/moin/mail/sendmail.py:65
 msgid "No recipients, nothing to do"
@@ -2026,12 +2007,12 @@ msgstr "Keine Empfänger, nichts zu tun"
 #: src/moin/mail/sendmail.py:91
 #, python-brace-format
 msgid "SSL context creation failed: {reason}"
-msgstr ""
+msgstr "Erzeugen des SSL-Kontexts fehlgeschlagen: {reason}"
 
 #: src/moin/mail/sendmail.py:123
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Connection to mailserver failed: {reason}"
-msgstr "Verbindung zum Mailserver '{server}' fehlgeschlagen: {reason}"
+msgstr "Verbindung zum Mailserver fehlgeschlagen: {reason}"
 
 #: src/moin/mail/sendmail.py:134
 msgid "Mail sent successfully"
@@ -2056,11 +2037,11 @@ msgstr "Fehler: nichts gespeichert. Unicode Validierung der Daten fehlgeschlagen
 
 #: src/moin/templates/400.html:9
 msgid "HTTP 400 - Bad Request"
-msgstr ""
+msgstr "HTTP 400 - Ungültige Anfrage"
 
 #: src/moin/templates/400.html:14
 msgid "Please check the hostname in your URL or ask the wiki admin to check the flask configuration."
-msgstr ""
+msgstr "Bitte prüfen Sie den Hostnamen in Ihrer URL oder bitten Sie den Wiki-Admin, die Flask-Konfiguration zu prüfen."
 
 #: src/moin/templates/404.html:12
 msgid "Not Found"
@@ -2084,9 +2065,8 @@ msgid "Whoosh filter:"
 msgstr "Whoosh Filter:"
 
 #: src/moin/templates/ajaxsearch.html:24
-#, fuzzy
 msgid "Common words omitted from content field query:"
-msgstr "Häufige Worte in der Abfrage ausgelassen:"
+msgstr "Häufige Wörter in der Abfrage des Inhaltsfelds ausgelassen:"
 
 #: src/moin/templates/ajaxsearch.html:32
 #, python-brace-format
@@ -2128,9 +2108,9 @@ msgid "{count:d} items are not shown because read permission was denied."
 msgstr "{count:d} Items werden wegen fehlender Leseberechtigungen nicht angezeigt."
 
 #: src/moin/templates/ajaxsearch.html:98
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Create new page \"{name}\""
-msgstr "Neues Item mit Namen '{name}' anlegen"
+msgstr "Neue Seite \"{name}\" erzeugen"
 
 #: src/moin/templates/all.html:3
 msgid "Global Views of All Namespaces"
@@ -2364,9 +2344,8 @@ msgid "Revert to Revision"
 msgstr "Version wiederherstellen"
 
 #: src/moin/templates/forms.html:191
-#, fuzzy
 msgid "Upload"
-msgstr "Bearbeiten oder Hochladen"
+msgstr "Hochladen"
 
 #: src/moin/templates/global_history.html:46
 msgid "Set bookmark"
@@ -2543,15 +2522,14 @@ msgid "Create"
 msgstr "Erzeugen"
 
 #: src/moin/templates/index.html:222
-#, fuzzy
 msgid ""
 "Enter Item name and click Create button above to edit or upload one item.\n"
 "                        To upload multiple files click the button below to open a file selection dialog,\n"
 "                        or drag and drop multiple files here."
 msgstr ""
-"Geben Sie einen Item-Namen ein und drücken Sie den 'Erzeugen' Button oben um ein Item anzulegen oder hochzuladen."
-" Um mehrere Dateien hochzuladen drücken Sie den 'Durchsuchen..' Button für einen Datei Auswahl-Dialog oder Ziehen"
-" Sie mehrere Dateien und legen Sie sie hier ab."
+"Geben Sie einen Item-Namen ein und drücken Sie den 'Erzeugen' Button oben, um ein Item zu bearbeiten oder "
+"hochzuladen. Um mehrere Dateien hochzuladen, drücken Sie den Button unten für einen Datei-Auswahl-Dialog, oder "
+"ziehen Sie mehrere Dateien hierher und legen Sie sie hier ab."
 
 #: src/moin/templates/index.html:262 src/moin/templates/index.html:267
 msgid "Show All"
@@ -2662,9 +2640,8 @@ msgstr "'{item_name}' bearbeiten"
 
 #: src/moin/templates/modify.html:40 src/moin/themes/basic/templates/modify.html:29
 #: src/moin/themes/focus/templates/modify.html:40
-#, fuzzy
 msgid "Your edit lock will expire in 1 minute"
-msgstr "Ihre Schreibsperre wird in 1 Minute ablaufen: "
+msgstr "Ihre Schreibsperre wird in 1 Minute ablaufen"
 
 #: src/moin/templates/modify.html:54 src/moin/themes/basic/templates/modify.html:56
 #: src/moin/themes/focus/templates/modify.html:78
@@ -2748,6 +2725,8 @@ msgid ""
 "If a parent name of the subitems below is removed, that parent's subitems will become subitems of the first name "
 "in the target field:"
 msgstr ""
+"Wenn ein Eltern-Name der folgenden Unter-Items entfernt wird, werden dessen Unter-Items zu Unter-Items des ersten"
+" Namens im Zielfeld:"
 
 #: src/moin/templates/rename.html:18
 msgid "The following subitems will be renamed:"
@@ -2791,9 +2770,8 @@ msgid "For help on searching see:"
 msgstr "Weitere Hilfe zur Suche siehe:"
 
 #: src/moin/templates/search.html:35
-#, fuzzy
 msgid "More Search Options"
-msgstr "Such-Optionen"
+msgstr "Weitere Such-Optionen"
 
 #: src/moin/templates/search.html:78
 msgid "An Ajax transaction is submitted each time a radio or checkbox is clicked."
@@ -2952,11 +2930,11 @@ msgstr "Auf diese Revision zurücksetzen"
 
 #: src/moin/templates/utils.html:138
 msgid "Key"
-msgstr ""
+msgstr "Schlüssel"
 
 #: src/moin/templates/utils.html:138
 msgid "Value"
-msgstr ""
+msgstr "Wert"
 
 #: src/moin/templates/utils.html:245
 msgid "Alias Names"
