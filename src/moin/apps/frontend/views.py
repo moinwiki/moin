@@ -166,7 +166,7 @@ Disallow: /+forwardrefs/
 Disallow: /+get/
 Disallow: /+highlight
 Disallow: /+history
-Disallow: /+index/
+Disallow: /+index
 Disallow: /+indexable/
 Disallow: /+jfu-server/
 Disallow: /+login
@@ -177,7 +177,7 @@ Disallow: /+meta/
 Disallow: /+modify/
 Disallow: /+mychanges
 Disallow: /+new
-Disallow: /+orphans/
+Disallow: /+orphans
 Disallow: /+quicklink/
 Disallow: /+recoverpass
 Disallow: /+register
@@ -189,9 +189,10 @@ Disallow: /+similar_names/
 Disallow: /+sitemap/
 Disallow: /+slideshow/
 Disallow: /+subscribe/
+Disallow: /+tags
 Disallow: /+usersettings
 Disallow: /+verifyemail
-Disallow: /+wanteds/
+Disallow: /+wanteds
 Allow: /
 """,
         mimetype="text/plain",
