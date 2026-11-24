@@ -233,6 +233,37 @@ class TestFrontend:
         assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
         assert payload not in html
 
+    def test_meta_escapes_html_in_item_name(self, client):
+        create_user("moin", "Xiwejr622")
+        login(client, "moin", "Xiwejr622")
+        item_name = "<img src=x onerror=alert(document.domain)>"
+
+        modify_item(client, item_name, make_modify_form_data(item_name, content="Test item"))
+
+        response = client.get(url_for("frontend.show_item_meta", item_name=item_name))
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The HTML in itemname must be escaped.
+        assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
+        assert item_name not in html
+
+        # Rename the item to test name_old
+        new_name = "RenamedXssItem"
+
+        response = client.post(
+            url_for("frontend.rename_item", item_name=item_name), data={"target": new_name}, follow_redirects=True
+        )
+        assert response.status_code == 200
+
+        response = client.get(url_for("frontend.show_item_meta", item_name=new_name))
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The old item name must also be escaped
+        assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
+        assert item_name not in html
+
     def test_jfu_server(self):
         self._test_view_post(
             "frontend.jfu_server",

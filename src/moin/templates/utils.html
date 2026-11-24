@@ -193,8 +193,10 @@ nonce="{{ csp_nonce() }}"
             <td>Name</td>
             <td>
                 {%- if meta['name'] -%}
-                    {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) -%}
-                    {{ names|safe }}
+                    {%- for name in meta['name'] -%}
+                        {%- if not loop.first %} <i class="fa fa-circle moin-tiny"></i> {% endif -%}
+                        {{ name }}
+                    {%- endfor %}
                 {%- else -%}
                     (None)
                 {%- endif -%}
@@ -204,8 +206,10 @@ nonce="{{ csp_nonce() }}"
             <td>Old Name</td>
             <td>
                 {%- if meta['name_old'] -%}
-                    {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) -%}
-                    {{ names|safe }}
+                    {%- for name in meta['name_old'] -%}
+                        {%- if not loop.first %} <i class="fa fa-circle moin-tiny"></i> {% endif -%}
+                        {{ name }}
+                    {%- endfor %}
                 {%- else -%}
                     (None)
                 {%- endif -%}
