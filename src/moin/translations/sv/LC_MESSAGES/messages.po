@@ -324,24 +324,24 @@ msgid "Group ACL Report"
 msgstr "Grupp ACL-rapport"
 
 #: src/moin/apps/admin/views.py:593
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Nothing changed, nothing saved. Item: {item_name} ACL: {acl_rule}"
-msgstr "Inget ändrat, ogiltig ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Inget ändrat, inget sparat. Artikel: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:612
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Failed! Not authorized. Item: {item_name} ACL: {acl_rule}"
-msgstr "Misslyckades! Ej auktoriserad.<br>Objekt: {item_name}<br>ACL: {acl_rule}"
+msgstr "Misslyckades! Ej behörig. Artikel: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:619
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Success! ACL saved. Item: {item_name} ACL: {acl_rule}"
-msgstr "Lyckades! ACL sparat.<br>Artikel: {item_name}<br>ACL: {acl_rule}"
+msgstr "Lyckades! ACL sparad. Artikel: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:626
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Failed! Invalid ACL syntax. Item: {item_name} ACL: {acl_rule}"
-msgstr "Inget ändrat, ogiltig ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Misslyckades! Ogiltig ACL-syntax. Artikel: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:17
 msgid "Group Name"
@@ -422,9 +422,8 @@ msgid "Trash"
 msgstr "Papperskorg"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:14
-#, fuzzy
 msgid "Showing all items"
-msgstr "Visa alla taggar"
+msgstr "Visar alla artiklar"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:16
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:21
@@ -432,9 +431,8 @@ msgid "Number items:"
 msgstr "Antal artiklar:"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:19
-#, fuzzy
 msgid "Showing items with modified ACLs"
-msgstr "Visa/dölj artikel med standard-ACL:er"
+msgstr "Visar artiklar med ändrade ACL:er"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:27 src/moin/items/__init__.py:608
 msgid "ACL"
@@ -644,9 +642,9 @@ msgid "QueryError: invalid search term: {search_term}"
 msgstr "QueryError: ogiltig sökterm: {search_term}"
 
 #: src/moin/apps/frontend/views.py:585
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "QueryError: invalid regex in search term: {search_term}"
-msgstr "QueryError: ogiltig sökterm: {search_term}"
+msgstr "QueryError: ogiltigt reguljärt uttryck i söktermen: {search_term}"
 
 #: src/moin/apps/frontend/views.py:588
 #, python-brace-format
@@ -947,9 +945,8 @@ msgid "Either your username or password was invalid."
 msgstr "Antingen ditt användarnamn eller lösenord var ogiltigt."
 
 #: src/moin/apps/frontend/views.py:2559
-#, fuzzy
 msgid "Remember me"
-msgstr "Medlem Användare"
+msgstr "Kom ihåg mig"
 
 #: src/moin/apps/frontend/views.py:2564
 msgid "Log in"
@@ -998,13 +995,12 @@ msgid "Open editor on double click"
 msgstr "Öppna redigeringsverktyget vid dubbelklick"
 
 #: src/moin/apps/frontend/views.py:2683
-#, fuzzy
 msgid "Use HTML editor"
-msgstr "ACL-rapport för användare"
+msgstr "Använd HTML-redigerare"
 
 #: src/moin/apps/frontend/views.py:2684
 msgid "Use Markdown editor"
-msgstr ""
+msgstr "Använd Markdown-redigerare"
 
 #: src/moin/apps/frontend/views.py:2685
 msgid "Scroll page after edit"
@@ -1071,23 +1067,20 @@ msgid "Locale"
 msgstr "Plats"
 
 #: src/moin/apps/frontend/views.py:2815
-#, fuzzy
 msgid "(System Default)"
-msgstr "Standard"
+msgstr "(Systemstandard)"
 
 #: src/moin/apps/frontend/views.py:2816
 msgid "Theme name"
 msgstr "Temanamn"
 
 #: src/moin/apps/frontend/views.py:2818
-#, fuzzy
 msgid "User CSS file"
-msgstr "Användarens CSS-URL"
+msgstr "Användarens CSS-fil"
 
 #: src/moin/apps/frontend/views.py:2819
-#, fuzzy
 msgid "Give the PATHNAME of your individual CSS file (optional)"
-msgstr "Ange URL-adressen till din anpassade CSS (valfritt)"
+msgstr "Ange SÖKVÄGEN till din egen CSS-fil (valfritt)"
 
 #: src/moin/apps/frontend/views.py:2822
 msgid "Number rows in edit textarea"
@@ -1139,17 +1132,17 @@ msgstr "Det finns bara en revision som är kvalificerad för diff."
 
 #: src/moin/apps/frontend/views.py:3172
 msgid "Cannot generate a comparison view because revisions have different content types."
-msgstr ""
+msgstr "Kan inte skapa en jämförelsevy eftersom revisionerna har olika innehållstyper."
 
 #: src/moin/apps/frontend/views.py:3174
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Old content type: {old_ct}"
-msgstr "Innehållstyp"
+msgstr "Gammal innehållstyp: {old_ct}"
 
 #: src/moin/apps/frontend/views.py:3176
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "New content type: {new_ct}"
-msgstr "Ny innehållstyp"
+msgstr "Ny innehållstyp: {new_ct}"
 
 #: src/moin/apps/frontend/views.py:3230
 #, python-brace-format
@@ -1175,13 +1168,12 @@ msgid "Items tagged with {tag}"
 msgstr "Artiklar taggade med {tag}"
 
 #: src/moin/apps/frontend/views.py:3455
-#, fuzzy
 msgid "Internal error"
-msgstr "Punkt ACL-rapport"
+msgstr "Internt fel"
 
 #: src/moin/apps/frontend/views.py:3456
 msgid "An unexpected error occurred."
-msgstr ""
+msgstr "Ett oväntat fel inträffade."
 
 #: src/moin/apps/frontend/views.py:3459 src/moin/templates/crash.html:6
 msgid ""
@@ -1385,9 +1377,8 @@ msgid "If the first row is recognized as a header, the table will be sortable."
 msgstr "Om den första raden identifieras som en rubrik blir tabellen sorterbar."
 
 #: src/moin/constants/contenttypes.py:174
-#, fuzzy
 msgid "Click for help on MoinWiki markup."
-msgstr "Klicka för att få hjälp med Moin Wiki-markering."
+msgstr "Klicka för att få hjälp med MoinWiki-markering."
 
 #: src/moin/constants/contenttypes.py:175
 msgid "Moinmoin 1.9 format is deprecated, convert to moin 2."
@@ -1422,9 +1413,8 @@ msgid "Include Macro above has invalid format, missing item name"
 msgstr "Inkludera Makro ovan har ogiltigt format, saknar artikelnamn"
 
 #: src/moin/converters/_wiki_macro.py:83
-#, fuzzy
 msgid "Include Macro above has invalid format, expected sort=ascending or sort=descending"
-msgstr "Inkludera Makro ovan har ogiltigt format, förväntad sortering = stigande eller fallande"
+msgstr "Inkludera Makro ovan har ogiltigt format, förväntade sort=ascending eller sort=descending"
 
 #: src/moin/converters/everything.py:54
 #, python-brace-format
@@ -1433,12 +1423,12 @@ msgstr "Det här raderade artikeln måste återställas innan det kan visas elle
 
 #: src/moin/converters/everything.py:59
 msgid "No DOM representation possible for this content."
-msgstr ""
+msgstr "Ingen DOM-representation möjlig för detta innehåll."
 
 #: src/moin/converters/everything.py:65
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Download {item_name}."
-msgstr "Byt namn på '{item_name}'"
+msgstr "Ladda ner {item_name}."
 
 #: src/moin/converters/html_in.py:201
 #, python-brace-format
@@ -1494,9 +1484,9 @@ msgid "is invalid within"
 msgstr "är ogiltig inom"
 
 #: src/moin/converters/nonexistent_in.py:42
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{item_name} does not exist. Create it?"
-msgstr "{item_name} finns inte. Skapa den? "
+msgstr "{item_name} finns inte. Skapa den?"
 
 #: src/moin/converters/nowiki.py:49
 #, python-brace-format
@@ -1540,9 +1530,9 @@ msgid "Cancel"
 msgstr "Avbryt"
 
 #: src/moin/items/__init__.py:536
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The ACL string is invalid: {acl}"
-msgstr "ACL-strängen är ogiltig."
+msgstr "ACL-strängen är ogiltig: {acl}"
 
 #: src/moin/items/__init__.py:551
 msgid "The Wiki Dict is invalid. The format is 'key=value', one per line, no commas."
@@ -1656,7 +1646,7 @@ msgstr "Ingen förhandsgranskning tillgänglig för tomma artiklar."
 
 #: src/moin/items/__init__.py:1756
 msgid "Invalid data content received. Expecting text content."
-msgstr ""
+msgstr "Ogiltigt datainnehåll mottaget. Textinnehåll förväntades."
 
 #: src/moin/items/__init__.py:1794
 msgid "Nothing changed, nothing saved."
@@ -1754,7 +1744,7 @@ msgstr "Skriv in din text här"
 #: src/moin/items/content.py:1189
 #, python-brace-format
 msgid "[... highlighted output truncated, showing first {count} characters ...]"
-msgstr ""
+msgstr "[... markerad utdata avkortad, visar de första {count} tecknen ...]"
 
 #: src/moin/items/content.py:1386
 #, python-brace-format
@@ -1767,19 +1757,16 @@ msgid "Clickable drawing: {filename}"
 msgstr "Klickbar ritning: {filename}"
 
 #: src/moin/macros/Anchor.py:18
-#, fuzzy
 msgid "Anchor macro failed: missing anchor name."
-msgstr "Ankarmakro misslyckades - saknade argument."
+msgstr "Ankarmakro misslyckades: ankarnamn saknas."
 
 #: src/moin/macros/Anchor.py:22
-#, fuzzy
 msgid "Anchor macro failed: only one argument is allowed."
-msgstr "Ankarmakro misslyckades - endast 1 argument tillåtet."
+msgstr "Ankarmakro misslyckades: endast ett argument är tillåtet."
 
 #: src/moin/macros/Anchor.py:27
-#, fuzzy
 msgid "Anchor macro failed: spaces are not allowed in anchors."
-msgstr "Ankarmakro misslyckades - blanksteg är inte tillåtet i ankare."
+msgstr "Ankarmakro misslyckades: blanksteg är inte tillåtna i ankare."
 
 #: src/moin/macros/Date.py:72 src/moin/macros/DateTime.py:30
 msgid "Invalid input parameter: None, float, int, or ISO 8601 formats are accepted."
@@ -1825,9 +1812,8 @@ msgid "Icon macro failed due to missing icon name."
 msgstr "Ikonmakro misslyckades på grund av att ikonens namn saknades."
 
 #: src/moin/macros/Icon.py:27
-#, fuzzy
 msgid "Icon not rendered (invalid name)"
-msgstr "Ikonen återges inte, ogiltigt namn"
+msgstr "Ikonen återges inte (ogiltigt namn)"
 
 #: src/moin/macros/ItemList.py:94
 #, python-brace-format
@@ -1955,36 +1941,31 @@ msgstr "Inga citat hittades i {0}"
 #: src/moin/macros/RandomQuote.py:88
 #, python-brace-format
 msgid "Unexpected conversion result for item {0}"
-msgstr ""
+msgstr "Oväntat konverteringsresultat för artikel {0}"
 
 #: src/moin/macros/ShowIcons.py:26 src/moin/macros/ShowSmileys.py:20
 msgid "Result"
 msgstr "Resultat"
 
 #: src/moin/macros/ShowUserGroup.py:21
-#, fuzzy
 msgid "ShowUserGroup macro failed: metadata lacks \"usergroup\" attribute."
-msgstr "Makrot ShowUserGroup misslyckades - metadata saknar attributet \"usergroup\"."
+msgstr "Makrot ShowUserGroup misslyckades: metadata saknar attributet \"usergroup\"."
 
 #: src/moin/macros/ShowWikiDict.py:21
-#, fuzzy
 msgid "ShowWikiDict macro failed: metadata lacks \"wikidict\" attribute."
-msgstr "ShowWikiDict-makrot misslyckades - metadata saknar \"wikidict\"-attribut."
+msgstr "Makrot ShowWikiDict misslyckades: metadata saknar attributet \"wikidict\"."
 
 #: src/moin/macros/SlideShow.py:19
-#, fuzzy
 msgid " Start Slide Show"
 msgstr " Starta bildspel"
 
 #: src/moin/macros/TitleIndex.py:26
-#, fuzzy
 msgid "TitleIndex macro does not support any arguments."
-msgstr "Makrot TitleList stöder inga argument."
+msgstr "Makrot TitleIndex stöder inga argument."
 
 #: src/moin/macros/TitleIndex.py:32
-#, fuzzy
 msgid "<TitleIndex macro: No matching items were found.>"
-msgstr "<TitleList makro: Inga matchande artikel hittades.>"
+msgstr "<TitleIndex-makro: Inga matchande artiklar hittades.>"
 
 #: src/moin/macros/_base.py:96
 #, python-brace-format
@@ -2013,7 +1994,7 @@ msgstr ""
 
 #: src/moin/mail/sendmail.py:59
 msgid "No sender address configured."
-msgstr ""
+msgstr "Ingen avsändaradress konfigurerad."
 
 #: src/moin/mail/sendmail.py:65
 msgid "No recipients, nothing to do"
@@ -2022,12 +2003,12 @@ msgstr "Inga mottagare, inget att göra"
 #: src/moin/mail/sendmail.py:91
 #, python-brace-format
 msgid "SSL context creation failed: {reason}"
-msgstr ""
+msgstr "Det gick inte att skapa SSL-kontext: {reason}"
 
 #: src/moin/mail/sendmail.py:123
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Connection to mailserver failed: {reason}"
-msgstr "Anslutning till mailserver '{server}' misslyckades: {reason}"
+msgstr "Anslutning till e-postservern misslyckades: {reason}"
 
 #: src/moin/mail/sendmail.py:134
 msgid "Mail sent successfully"
@@ -2052,11 +2033,11 @@ msgstr "Fel: ingenting har ändrats. Validering av data unicode misslyckades."
 
 #: src/moin/templates/400.html:9
 msgid "HTTP 400 - Bad Request"
-msgstr ""
+msgstr "HTTP 400 - Felaktig begäran"
 
 #: src/moin/templates/400.html:14
 msgid "Please check the hostname in your URL or ask the wiki admin to check the flask configuration."
-msgstr ""
+msgstr "Kontrollera värdnamnet i din URL eller be wiki-administratören att kontrollera Flask-konfigurationen."
 
 #: src/moin/templates/404.html:12
 msgid "Not Found"
@@ -2080,9 +2061,8 @@ msgid "Whoosh filter:"
 msgstr "Whoosh-filter:"
 
 #: src/moin/templates/ajaxsearch.html:24
-#, fuzzy
 msgid "Common words omitted from content field query:"
-msgstr "Vanliga ord utelämnade från förfrågan:"
+msgstr "Vanliga ord utelämnade från sökningen i innehållsfältet:"
 
 #: src/moin/templates/ajaxsearch.html:32
 #, python-brace-format
@@ -2124,9 +2104,9 @@ msgid "{count:d} items are not shown because read permission was denied."
 msgstr "{count:d} artikel visas inte eftersom läsbehörighet nekades."
 
 #: src/moin/templates/ajaxsearch.html:98
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Create new page \"{name}\""
-msgstr "Skapa ett nytt artikel med namnet '{name}'"
+msgstr "Skapa ny sida \"{name}\""
 
 #: src/moin/templates/all.html:3
 msgid "Global Views of All Namespaces"
@@ -2358,9 +2338,8 @@ msgid "Revert to Revision"
 msgstr "Återgå till revision"
 
 #: src/moin/templates/forms.html:191
-#, fuzzy
 msgid "Upload"
-msgstr "Redigera eller ladda upp"
+msgstr "Ladda upp"
 
 #: src/moin/templates/global_history.html:46
 msgid "Set bookmark"
@@ -2535,16 +2514,14 @@ msgid "Create"
 msgstr "Skapa"
 
 #: src/moin/templates/index.html:222
-#, fuzzy
 msgid ""
 "Enter Item name and click Create button above to edit or upload one item.\n"
 "                        To upload multiple files click the button below to open a file selection dialog,\n"
 "                        or drag and drop multiple files here."
 msgstr ""
-"Ange artikelnamn och klicka på knappen Skapa ovan för att redigera eller ladda upp en artikel.\n"
-"                    Om du vill ladda upp flera filer klickar du på knappen nedan för att öppna en dialogruta för "
-"filval,\n"
-"                    eller dra och släpp flera filer här."
+"Ange artikelnamn och klicka på knappen Skapa ovan för att redigera eller ladda upp en artikel. Om du vill ladda "
+"upp flera filer klickar du på knappen nedan för att öppna en dialogruta för filval, eller dra och släpp flera "
+"filer här."
 
 #: src/moin/templates/index.html:262 src/moin/templates/index.html:267
 msgid "Show All"
@@ -2655,9 +2632,8 @@ msgstr "Ändring av '{item_name}'"
 
 #: src/moin/templates/modify.html:40 src/moin/themes/basic/templates/modify.html:29
 #: src/moin/themes/focus/templates/modify.html:40
-#, fuzzy
 msgid "Your edit lock will expire in 1 minute"
-msgstr "Ditt redigeringslås upphör att gälla om 1 minut: "
+msgstr "Ditt redigeringslås upphör att gälla om 1 minut"
 
 #: src/moin/templates/modify.html:54 src/moin/themes/basic/templates/modify.html:56
 #: src/moin/themes/focus/templates/modify.html:78
@@ -2784,9 +2760,8 @@ msgid "For help on searching see:"
 msgstr "För hjälp med att söka se:"
 
 #: src/moin/templates/search.html:35
-#, fuzzy
 msgid "More Search Options"
-msgstr "Sökalternativ"
+msgstr "Fler sökalternativ"
 
 #: src/moin/templates/search.html:78
 msgid "An Ajax transaction is submitted each time a radio or checkbox is clicked."
@@ -2941,11 +2916,11 @@ msgstr "Återgå till denna revision"
 
 #: src/moin/templates/utils.html:138
 msgid "Key"
-msgstr ""
+msgstr "Nyckel"
 
 #: src/moin/templates/utils.html:138
 msgid "Value"
-msgstr ""
+msgstr "Värde"
 
 #: src/moin/templates/utils.html:245
 msgid "Alias Names"
@@ -3120,7 +3095,7 @@ msgstr "Punkt Åtgärder"
 
 #: src/moin/themes/focus/templates/itemviews.html:43
 msgid "More"
-msgstr ""
+msgstr "Mer"
 
 #: src/moin/utils/edit_locking.py:282
 #, python-brace-format
