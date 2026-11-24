@@ -381,6 +381,17 @@ class TestConverter:
                 '<img src="/static/img/search.png" /> Search',
                 '<p><object type="image/" xlink:href="/static/img/search.png" /> Search</p>',
             ),
+            # "<" and ">" are allowed within quoted attribute values
+            ('<a title="First > second">click here</a>', '<p><a html:title="First &gt; second">click here</a></p>'),
+            ('<a title="A < B">click here</a>', '<p><a html:title="A &lt; B">click here</a></p>'),
+            ("<a title='A < B'>click here</a>", '<p><a html:title="A &lt; B">click here</a></p>'),
+            ('text <span title="a>b">x</span> more', '<p>text <span html:title="a&gt;b">x</span> more</p>'),
+            (
+                '<img src="/static/img/search.png" alt="1 > 0" /> Search',
+                '<p><object type="image/" html:alt="1 &gt; 0" xlink:href="/static/img/search.png" /> Search</p>',
+            ),
+            # markup within an attribute value is not a separate HTML tag
+            ('<a title="<b>x</b>">click here</a>', '<p><a html:title="&lt;b&gt;x&lt;/b&gt;">click here</a></p>'),
         ],
     )
     def test_inline_html(self, input, output):
@@ -453,7 +464,29 @@ class TestConverter:
     def test_add_lineno(self, input, output):
         self.do(input, output, add_lineno=True)
 
-    @pytest.mark.parametrize("payload", ["<a" * 100_000, "<a " * 100_000, "</a x" * 100_000])
+    @pytest.mark.parametrize(
+        "text,parts",
+        [
+            ("", [""]),
+            ("text", ["text"]),
+            ("a <b>bold</b> c", ["a ", "<b>", "bold", "</b>", " c"]),
+            ('<a title="x > y">', ["", '<a title="x > y">', ""]),
+            ("<a title='x < y'>", ["", "<a title='x < y'>", ""]),
+            ('<a title="<b>">', ["", '<a title="<b>">', ""]),
+            # unclosed tags are text
+            ("a < b", ["a < b"]),
+            ("<a <b>", ["<a ", "<b>", ""]),
+            ('<a title="x <b>', ['<a title="x ', "<b>", ""]),
+            ("<a", ["<a"]),
+        ],
+    )
+    def test_split_html_tags(self, text, parts):
+        assert Converter().split_html_tags(text) == parts
+
+    @pytest.mark.parametrize(
+        "payload",
+        ["<a" * 100_000, "<a " * 100_000, "</a x" * 100_000, '<a "' * 100_000, "<a x='" * 100_000, "<a\"<a'" * 100_000],
+    )
     def test_unclosed_html_tags_runtime(self, payload):
         """
         Many unclosed HTML tags must not result in quadratic runtime (ReDoS).

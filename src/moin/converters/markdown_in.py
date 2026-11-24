@@ -465,10 +465,37 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
-    # The tag body must not contain "<": with "[^>]*", every unclosed "<a" in a
-    # long input would make the regex engine scan to the end of the input,
-    # resulting in quadratic runtime (ReDoS). Stopping at the next "<" keeps it linear.
-    tag_re = re.compile(r"(</?[a-zA-Z][^<>]*>)")
+    # Body of an HTML tag: "<" and ">" are allowed only within quoted attribute values.
+    # The quantifier is possessive and the alternatives are mutually exclusive, so
+    # there is no backtracking.
+    _tag_body = r"""(?:[^<>"']+|"[^"]*"|'[^']*')*+"""
+    tag_start_re = re.compile(r"</?[a-zA-Z]")
+    # The closing ">" is optional, so this also tells where an unclosed tag ends.
+    tag_re = re.compile(rf"</?[a-zA-Z]{_tag_body}(>?)")
+    start_tag_re = re.compile(rf"<([a-zA-Z][a-zA-Z0-9-]*)({_tag_body})>")
+
+    def split_html_tags(self, text: str) -> list[str]:
+        """
+        Split text at HTML tags, like re.split with a capturing group would do:
+        [text, tag, text, tag, ..., text].
+
+        The scan only moves forward: if a tag is not closed by ">", scanning
+        continues after the part that was scanned for it (and not right after its "<").
+        This keeps the runtime linear for any input, e.g. many unclosed "<a".
+        """
+        parts = []
+        text_start = pos = 0
+        while match := self.tag_start_re.search(text, pos):
+            start = match.start()
+            tag = self.tag_re.match(text, start)
+            if tag.group(1):  # closed by ">"
+                parts.append(text[text_start:start])
+                parts.append(tag.group())
+                text_start = pos = tag.end()
+            else:
+                pos = max(tag.end(), start + 1)
+        parts.append(text[text_start:])
+        return parts
 
     def separate_html_tags(self, nodes: Iterable[ET.Element | str]) -> Generator[ET.Element | str]:
         """Split string-nodes at HTML tags."""
@@ -476,8 +503,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
             if isinstance(node, ET.Element):
                 yield node
             else:
-                for part in self.tag_re.split(node):
-                    yield part
+                yield from self.split_html_tags(node)
 
     def create_element_for_tag(self, start_tag: str, end_tag: str) -> ET.Element | None:
         """
@@ -490,9 +516,6 @@ class Converter(ConverterBase, html_in.HtmlTags):
             logger.debug(f"Exception in HTML markup: {ex}")
             element = None
         return element
-
-    # see tag_re for why the tag body must not contain "<"
-    start_tag_re = re.compile(r"<([a-zA-Z][a-zA-Z0-9-]*)([^<>]*)>")
 
     def convert_html_markup(self, node_or_children: ET.Element | list[ET.Element | str]) -> None:
         """
@@ -521,8 +544,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
             if not node:
                 continue  # drop empty strings
 
-            # Check for HTML start-tags:
-            match = self.start_tag_re.search(node)
+            # Check for HTML start-tags (separate_html_tags yields each tag as a separate node):
+            match = self.start_tag_re.fullmatch(node)
             if not match:
                 # Convert character references to corresponding Unicode characters:
                 result.append(html_unescape(node))
