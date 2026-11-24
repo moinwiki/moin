@@ -12,6 +12,8 @@ You can use this macro to put a month’s calendar on a wiki page.
 The days are links to wiki pages following this naming convention:
 BasePageName/year-month-day
 
+Days without such a page are only linked for users who may create it.
+
 Parameters:
 
     <<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
@@ -81,6 +83,7 @@ from datetime import datetime
 import re
 
 from flask import request
+from moin import flaskg
 
 from moin.i18n import _
 from moin.macros._base import MacroInlineBase
@@ -234,8 +237,18 @@ class Macro(MacroInlineBase):
         calhead = []
 
         # get list of calendar items for given month
-        item_month = f"{parmpagename[0]:s}/{year:4d}-{month:02d}-"
+        if anniversary:
+            item_month = f"{parmpagename[0]:s}/{month:02d}-"
+        else:
+            item_month = f"{parmpagename[0]:s}/{year:4d}-{month:02d}-"
         date_results = search_names(item_month, limit=100)
+
+        # May the user create the day items of this calendar? Days without an item are only
+        # linked if so: for anonymous visitors (and crawlers are anonymous) such a link usually
+        # just leads to an "item not found" page. All day items are sub items of the same item,
+        # so the answer is the same for all of them and we only ask for the first one.
+        # None means "not asked yet".
+        may_create = None
 
         r7 = range(7)
 
@@ -274,10 +287,15 @@ class Macro(MacroInlineBase):
                         link = f"{page:s}/{month:02d}-{day:02d}"
                     else:
                         link = f"{page:s}/{year:4d}-{month:02d}-{day:02d}"
-                    day_addr = link
 
-                    if day_addr in date_results:
+                    if link in date_results:
+                        day_addr = link
                         day_class = "cal-usedday"
+                    else:
+                        if may_create is None:
+                            may_create = flaskg.user.may.create(link)
+                        if may_create:
+                            day_addr = link
 
                     if day == currentday and month == currentmonth and year == currentyear:
                         day_class = "cal-today"
