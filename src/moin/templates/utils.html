@@ -148,7 +148,7 @@ nonce="{{ csp_nonce() }}"
         <tr><td>External Links</td><td>
             {%- if meta['externallinks'] -%}
                 {%- for item in meta['externallinks']|sort -%}
-                    <a href="{{ item|safe }}">{{ item }}</a>
+                    <a href="{{ item }}">{{ item }}</a>
                     {%- if not loop.last %}, {% endif -%}
                 {%- endfor -%}
             {%- else -%}

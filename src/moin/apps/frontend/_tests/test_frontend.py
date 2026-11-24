@@ -267,6 +267,19 @@ class TestFrontend:
         assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
         assert item_name not in html
 
+    def test_meta_escapes_external_links(self, client):
+        create_user("moin", "Xiwejr622")
+        login(client, "moin", "Xiwejr622")
+        item_name = "ExtLinkItem"
+        modify_item(client, item_name, make_modify_form_data(item_name, content="[[http://example.org/'x&y=1]]"))
+
+        response = client.get(url_for("frontend.show_item_meta", item_name=item_name))
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The external link must be escaped in the href attribute, too.
+        assert 'href="http://example.org/&#39;x&amp;y=1"' in html
+
     def test_jfu_server(self):
         self._test_view_post(
             "frontend.jfu_server",
