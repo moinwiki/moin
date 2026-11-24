@@ -455,29 +455,6 @@ In a template file you access the files of such a package by its module name::
 
     url_for('serve.files', name='the mod name', filename='the file to load')
 
-Adding XStatic Packages
------------------------
-
-The following example shows how you can enable the additional package
-`XStatic-MathJax <https://pypi.org/project/XStatic-MathJax>`_ which is
-used for mathml or latex formulas in an item's content.
-
-* install xstatic-mathjax (e.g. using ``pip install xstatic-mathjax``)
-* add the name 'mathjax' to to the list of mod_names in wikiconfig
-* copy /templates/snippets.html to the wiki_local directory
-* modify the snippets.html copy by adding the required fragment to the scripts macro::
-
-    {% macro scripts() -%}
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        extensions: ["tex2jax.js"],
-        jax: ["input/TeX","output/HTML-CSS"],
-        tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-    </script>
-    <script src="{{ url_for('serve.files', name='mathjax', filename='MathJax.js') }}"></script>
-    {%- endmacro %}
-
 Custom Themes
 -------------
 In case you want to do major changes to how MoinMoin displays its pages, you
