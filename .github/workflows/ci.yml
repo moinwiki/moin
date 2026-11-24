@@ -33,7 +33,7 @@ jobs:
         pip install tox
         tox -e ruff
     - name: Test JavaScript
-      run: node --test src/moin/static/js/_tests/test_common.js
+      run: node --test src/moin/static/js/_tests/test_common.js src/moin/static/js/_tests/test_search.js
 
   pytest:
 
