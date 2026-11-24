@@ -163,13 +163,20 @@ Disallow: /+dom/
 Disallow: /+download/
 Disallow: /+feed
 Disallow: /+forwardrefs/
+Disallow: /+get/
 Disallow: /+highlight
 Disallow: /+history
 Disallow: /+index/
+Disallow: /+indexable/
 Disallow: /+jfu-server/
 Disallow: /+login
 Disallow: /+logout
+Disallow: /+lookup
+Disallow: /+lostpass
+Disallow: /+meta/
 Disallow: /+modify/
+Disallow: /+mychanges
+Disallow: /+new
 Disallow: /+orphans/
 Disallow: /+quicklink/
 Disallow: /+recoverpass
@@ -177,10 +184,13 @@ Disallow: /+register
 Disallow: /+rename/
 Disallow: /+revert/
 Disallow: /+search
+Disallow: /+show/
 Disallow: /+similar_names/
 Disallow: /+sitemap/
+Disallow: /+slideshow/
 Disallow: /+subscribe/
 Disallow: /+usersettings
+Disallow: /+verifyemail
 Disallow: /+wanteds/
 Allow: /
 """,
