@@ -1414,7 +1414,7 @@ msgstr "Inkludera Makro ovan har ogiltigt format, saknar artikelnamn"
 
 #: src/moin/converters/_wiki_macro.py:83
 msgid "Include Macro above has invalid format, expected sort=ascending or sort=descending"
-msgstr "Inkludera Makro ovan har ogiltigt format, förväntade sort=ascending eller sort=descending"
+msgstr "Include-makrot ovan har ett ogiltigt format. Förväntade sort=ascending eller sort=descending"
 
 #: src/moin/converters/everything.py:54
 #, python-brace-format
@@ -1423,7 +1423,7 @@ msgstr "Det här raderade artikeln måste återställas innan det kan visas elle
 
 #: src/moin/converters/everything.py:59
 msgid "No DOM representation possible for this content."
-msgstr "Ingen DOM-representation möjlig för detta innehåll."
+msgstr "Det går inte att skapa en DOM-representation av detta innehåll."
 
 #: src/moin/converters/everything.py:65
 #, python-brace-format
@@ -1758,15 +1758,15 @@ msgstr "Klickbar ritning: {filename}"
 
 #: src/moin/macros/Anchor.py:18
 msgid "Anchor macro failed: missing anchor name."
-msgstr "Ankarmakro misslyckades: ankarnamn saknas."
+msgstr "Ankarmakrot misslyckades: ankarnamn saknas."
 
 #: src/moin/macros/Anchor.py:22
 msgid "Anchor macro failed: only one argument is allowed."
-msgstr "Ankarmakro misslyckades: endast ett argument är tillåtet."
+msgstr "Ankarmakrot misslyckades: endast ett argument är tillåtet."
 
 #: src/moin/macros/Anchor.py:27
 msgid "Anchor macro failed: spaces are not allowed in anchors."
-msgstr "Ankarmakro misslyckades: blanksteg är inte tillåtna i ankare."
+msgstr "Ankarmakrot misslyckades: blanksteg är inte tillåtna i ankare."
 
 #: src/moin/macros/Date.py:72 src/moin/macros/DateTime.py:30
 msgid "Invalid input parameter: None, float, int, or ISO 8601 formats are accepted."
@@ -2008,7 +2008,7 @@ msgstr "Det gick inte att skapa SSL-kontext: {reason}"
 #: src/moin/mail/sendmail.py:123
 #, python-brace-format
 msgid "Connection to mailserver failed: {reason}"
-msgstr "Anslutning till e-postservern misslyckades: {reason}"
+msgstr "Anslutningen till e-postservern misslyckades: {reason}"
 
 #: src/moin/mail/sendmail.py:134
 msgid "Mail sent successfully"
