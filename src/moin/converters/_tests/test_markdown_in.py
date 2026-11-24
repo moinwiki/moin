@@ -8,6 +8,8 @@ MoinMoin - moin.converters.markdown_in tests.
 
 from __future__ import annotations
 
+import time
+
 from typing import Final, TYPE_CHECKING
 
 import pytest
@@ -450,3 +452,18 @@ class TestConverter:
     )
     def test_add_lineno(self, input, output):
         self.do(input, output, add_lineno=True)
+
+    @pytest.mark.parametrize("payload", ["<a" * 100_000, "<a " * 100_000, "</a x" * 100_000])
+    def test_unclosed_html_tags_runtime(self, payload):
+        """
+        Many unclosed HTML tags must not result in quadratic runtime (ReDoS).
+
+        With the old regular expressions, this took many seconds, now it takes milliseconds.
+        """
+        conv = Converter()
+        start = time.perf_counter()
+        parts = list(conv.separate_html_tags([payload]))
+        conv.convert_html_markup([payload])
+        elapsed = time.perf_counter() - start
+        assert parts == [payload]  # no HTML tag found
+        assert elapsed < 1.0

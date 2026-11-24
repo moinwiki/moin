@@ -465,7 +465,10 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
-    tag_re = re.compile(r"(</?[a-zA-Z][^>]*>)", flags=re.DOTALL)
+    # The tag body must not contain "<": with "[^>]*", every unclosed "<a" in a
+    # long input would make the regex engine scan to the end of the input,
+    # resulting in quadratic runtime (ReDoS). Stopping at the next "<" keeps it linear.
+    tag_re = re.compile(r"(</?[a-zA-Z][^<>]*>)")
 
     def separate_html_tags(self, nodes: Iterable[ET.Element | str]) -> Generator[ET.Element | str]:
         """Split string-nodes at HTML tags."""
@@ -488,7 +491,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
             element = None
         return element
 
-    start_tag_re = re.compile(r"<([a-zA-Z][a-zA-Z0-9-]*)([^>]*)>")
+    # see tag_re for why the tag body must not contain "<"
+    start_tag_re = re.compile(r"<([a-zA-Z][a-zA-Z0-9-]*)([^<>]*)>")
 
     def convert_html_markup(self, node_or_children: ET.Element | list[ET.Element | str]) -> None:
         """
