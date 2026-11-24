@@ -1154,3 +1154,20 @@ def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
     rv2 = client.get("/HighlightTestPage?regex=hello")
     assert rv2.status_code == 200
     assert b"moin-highlight" in rv2.data
+
+
+def test_sitemap_and_similar_names_not_offered_to_anonymous(client):
+    """The site map and similar names views are expensive, crawlers shall not find links to them."""
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    modify_item(client, "ViewsItem", make_modify_form_data("ViewsItem", content="hello\n"))
+    sitemap_url = url_for("frontend.sitemap", item_name="ViewsItem")
+    similar_url = url_for("frontend.similar_names", item_name="ViewsItem")
+    rv = client.get(url_for("frontend.show_item", item_name="ViewsItem"))
+    assert sitemap_url.encode() in rv.data
+    assert similar_url.encode() in rv.data
+    client.get(url_for("frontend.logout", logout_submit=1))
+    rv = client.get(url_for("frontend.show_item", item_name="ViewsItem"))
+    assert rv.status_code == 200
+    assert sitemap_url.encode() not in rv.data
+    assert similar_url.encode() not in rv.data

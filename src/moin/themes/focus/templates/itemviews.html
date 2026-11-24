@@ -70,10 +70,16 @@
                     {%- if not_trash and endpoint in [
                         'frontend.index',
                         'frontend.refs',
-                        'frontend.sitemap',
-                        'frontend.similar_names',
                         'frontend.copy_item',
                     ] %}
+                        <div>
+                            <a href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
+                        </div>
+                    {%- endif %}
+
+                    {#- Only for logged in users: these views are expensive (the site map walks all items linked
+                        from and to this item, transitively), and crawlers ignore rel=nofollow. #}
+                    {%- if not_trash and user.valid and endpoint in ['frontend.sitemap', 'frontend.similar_names'] %}
                         <div>
                             <a href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                         </div>
