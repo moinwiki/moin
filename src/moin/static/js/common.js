@@ -43,9 +43,12 @@ function autosizeTextarea(textarea) {
     }
     textarea.dataset.moinAutosize = "1";
     textarea.style.overflowY = "hidden";
-    if (getComputedStyle(textarea).resize === "both") {
-        // resizing the height manually makes no sense, the height follows the content
+    // resizing the height manually makes no sense, the height follows the content
+    const manualResize = getComputedStyle(textarea).resize;
+    if (manualResize === "both") {
         textarea.style.resize = "horizontal";
+    } else if (manualResize === "vertical") {
+        textarea.style.resize = "none";
     }
 
     function resize() {
