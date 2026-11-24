@@ -639,6 +639,8 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-history-action { width: .5em; cursor: default; }
 .moin-history-action a:hover { text-decoration: none; }
 .moin-history-links { width: 1em; text-align: center; }
+.moin-history-row-action { background: none; border: none; padding: 0; margin: 0; font: inherit; color: var(--link); cursor: pointer; }
+.moin-history-row-action:hover { color: var(--link-hover); }
 .moin-history-end-of-day { border: 0; border-top: 2px solid var(--border); }
 .moin-nameless-item,
 .moin-history-name-old { font-style: italic; }
