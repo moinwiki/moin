@@ -3241,7 +3241,8 @@ def sitemap(item_name):
     """
     sitemap view shows item link structure relative to item_name.
 
-    * If there are multiple links to same item, only first link to same item is processed.
+    * If there are multiple links to same item, the item is only listed once: as close
+       to item_name as possible.
     * Missing items are marked as missing in template rendering.
     * Links to items where current user lacks read authority are generated, but
        suppressed in template rendering.
@@ -3257,10 +3258,10 @@ def sitemap(item_name):
 
     max_depth, max_items = current_app.cfg.sitemap_max_depth, current_app.cfg.sitemap_max_items
     backrefs_builder = NestedItemListBuilder(max_depth=max_depth, max_items=max_items)
-    backrefs, junk, junk2 = backrefs_builder.recurse_build([fq_name], backrefs=True)
+    backrefs, junk, junk2 = backrefs_builder.build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
     sitemap_builder = NestedItemListBuilder(max_depth=max_depth, max_items=max_items)
-    sitemap, no_read_auth, missing = sitemap_builder.recurse_build([fq_name])
+    sitemap, no_read_auth, missing = sitemap_builder.build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template(
         "sitemap.html",
@@ -3295,30 +3296,49 @@ class NestedItemListBuilder:
         self.items_left = max_items
         self.cut = False
 
-    def recurse_build(self, fq_names, backrefs=False, depth=0):
+    def build(self, fq_names, backrefs=False):
         """
         Return a list of fqnames and lists containing more fqnames that represent a sitemap.
 
-        :param depth: level of fq_names below the starting item (which is level 0)
+        The link graph is walked breadth-first (level by level), so each item is listed once,
+        at its shortest distance from the starting item(s), below the first item of the level
+        above that links to it. A depth-first walk would list an item where it happens to
+        come across it first, maybe at the depth limit - and its links would then be missing,
+        although they are within the limit.
         """
-        result = []
-        for fq_name in fq_names:
-            self.children.add(fq_name)
-            result.append(fq_name)
-            if self.max_depth is not None and depth >= self.max_depth:
-                # do not even look up the links of this item, we would not list them anyway
-                self.cut = True
-                continue
-            if self.items_left is not None:
-                if self.items_left <= 0:
+        childs_of = {}  # fq_name -> the fq_names we first came across when looking up its links
+        self.children.update(fq_names)
+        level = list(fq_names)  # the fq_names <depth> levels below the starting item(s)
+        depth = 0
+        while level:
+            next_level = []
+            for fq_name in level:
+                if self.max_depth is not None and depth >= self.max_depth:
+                    # do not even look up the links of this item, we would not list them anyway
                     self.cut = True
-                    continue
-                self.items_left -= 1
-            childs = self.childs(fq_name, backrefs=backrefs)
-            if childs:
-                childs, no_read_auth, missing = self.recurse_build(childs, backrefs=backrefs, depth=depth + 1)
-                result.append(childs)
-        return result, self.no_read_auth, self.missing
+                    break
+                if self.items_left is not None:
+                    if self.items_left <= 0:
+                        self.cut = True
+                        break
+                    self.items_left -= 1
+                childs = self.childs(fq_name, backrefs=backrefs)
+                if childs:
+                    self.children.update(childs)
+                    childs_of[fq_name] = childs
+                    next_level.extend(childs)
+            level = next_level
+            depth += 1
+
+        def nested(fq_names):
+            result = []
+            for fq_name in fq_names:
+                result.append(fq_name)
+                if fq_name in childs_of:
+                    result.append(nested(childs_of[fq_name]))
+            return result
+
+        return nested(fq_names), self.no_read_auth, self.missing
 
     def childs(self, fq_name, backrefs=False):
         """

@@ -1198,6 +1198,26 @@ def test_sitemap_depth_is_limited(client):
     assert cut[0] is False
 
 
+def test_sitemap_lists_items_at_shortest_distance(client):
+    """
+    An item reachable on a long and on a short path must be listed (once) where the short path
+    ends. Otherwise the depth limit would hide links that are within the limit: here, a
+    depth-first walk would find E via B and D at level 3 (and stop there), so F would be missing.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    links = {"A": "BC", "B": "D", "C": "E", "D": "E", "E": "F", "F": ""}
+    for name, targets in links.items():
+        content = " ".join(f"[[Dia{target}]]" for target in targets) or "the end"
+        modify_item(client, f"Dia{name}", make_modify_form_data(f"Dia{name}", content=content + "\n"))
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="DiaA")))
+    # B (with D below it), then C (with E and, below that, F)
+    assert forward == ["DiaB", "DiaD", "DiaC", "DiaE", "DiaF"]
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="DiaF")))
+    # E (level 1), C and D (level 2), A and B (level 3): A is found via C first
+    assert backward == ["DiaE", "DiaC", "DiaA", "DiaD", "DiaB"]
+
+
 def test_sitemap_items_are_limited(client, monkeypatch):
     """Independent of the depth, the links of at most sitemap_max_items items are looked up."""
     _sitemap_chain(client)
