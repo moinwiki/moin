@@ -34,6 +34,53 @@ function _(text) {
     return $.i18n._(text);
 }
 
+// Grow / shrink a textarea's height to fit its content while the user is typing.
+// Replaces the (archived) autosize library. A CSS min-height (e.g. .moin-autosize) still applies.
+function autosizeTextarea(textarea) {
+    "use strict";
+    if (textarea.dataset.moinAutosize) {
+        return;  // already set up
+    }
+    textarea.dataset.moinAutosize = "1";
+    textarea.style.overflowY = "hidden";
+    if (getComputedStyle(textarea).resize === "both") {
+        // resizing the height manually makes no sense, the height follows the content
+        textarea.style.resize = "horizontal";
+    }
+
+    function resize() {
+        if (textarea.scrollHeight === 0) {
+            return;  // not displayed (e.g. in a hidden tab), try again when it becomes visible
+        }
+        const style = getComputedStyle(textarea);
+        // setting the height to auto temporarily may shrink the page and change the scroll position
+        const scroller = document.scrollingElement;
+        const scrollTop = scroller ? scroller.scrollTop : 0;
+        textarea.style.height = "auto";
+        let height = textarea.scrollHeight;  // includes padding, but not border
+        if (style.boxSizing === "border-box") {
+            height += parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+        } else {
+            height -= parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        }
+        textarea.style.height = `${height}px`;
+        if (scroller) {
+            scroller.scrollTop = scrollTop;
+        }
+    }
+
+    textarea.addEventListener("input", resize);
+    // the needed height changes when the width changes (window resize, hidden tab gets shown, ...)
+    let lastWidth = textarea.clientWidth;
+    new ResizeObserver(function () {
+        if (textarea.clientWidth !== lastWidth) {
+            lastWidth = textarea.clientWidth;
+            resize();
+        }
+    }).observe(textarea);
+    resize();
+}
+
 // return true if browser localStorage is available
 function localStorageAvailable() {
     "use strict";
@@ -963,7 +1010,7 @@ $(document).ready(function () {
         }
     });
 
-    $('textarea.moin-autosize').each(function(){autosize(this)});
+    document.querySelectorAll('textarea.moin-autosize').forEach(autosizeTextarea);
 
     showAllOptions();
 
