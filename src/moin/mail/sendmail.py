@@ -13,7 +13,7 @@ import socket
 import ssl
 
 from email.message import EmailMessage
-from email.utils import formatdate, make_msgid
+from email.utils import formatdate, getaddresses, make_msgid
 
 from moin import current_app, log
 from moin.i18n import _
@@ -56,7 +56,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     :type to: list of str
     :param cc: recipients (CC)
     :type cc: list of str
-    :param bcc: recipients (BCC)
+    :param bcc: recipients (BCC), not shown to any recipient
     :type bcc: list of str
     :param mail_from: override default mail_from
     :type mail_from: str
@@ -98,6 +98,15 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
         msg["To"] = to
     if cc:
         msg["CC"] = cc
+    if not to and not cc:
+        # only BCC recipients, they must not see each other
+        msg["To"] = "undisclosed-recipients:;"
+    # the BCC recipients are only given to the SMTP server, never put into a header
+    recipients = []
+    for field in (to, cc, bcc):
+        if field:
+            # a field may also be a single string like "a@example.org, b@example.org"
+            recipients += [addr for _, addr in getaddresses([field] if isinstance(field, str) else field) if addr]
     msg["Subject"] = subject
     msg["Date"] = formatdate()
     msg["Message-ID"] = make_msgid(domain=local_hostname)
@@ -146,7 +155,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             server.login(cfg.mail_username, cfg.mail_password)
 
         # Send the message
-        server.send_message(msg)
+        server.send_message(msg, to_addrs=recipients)
 
     except (smtplib.SMTPException, OSError) as e:
         logging.exception(

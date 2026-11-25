@@ -229,7 +229,8 @@ def send_notifications(app, fqname, action, data=None, meta=None, new_data=None,
                 moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=flaskg.user.name0
             )
             subscribers_emails = [subscriber.email for subscriber in subscribers if subscriber.locale == locale]
-            mails.append(dict(subject=subject, text=txt_msg, to=subscribers_emails, html=html_msg))
+            # BCC: subscribers must not see each other's addresses
+            mails.append(dict(subject=subject, text=txt_msg, bcc=subscribers_emails, html=html_msg))
     send_after_response(mails)
 
 

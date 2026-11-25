@@ -1494,7 +1494,8 @@ Message-ID of each email. If it is not set, moin looks up the host name via DNS,
 process. Set it if that lookup is slow or does not give the name your SMTP server expects.
 
 Notifications about item changes are sent after the response to the request that changed
-the item, so users do not wait for the SMTP server when they save.
+the item, so users do not wait for the SMTP server when they save. The subscribers
+are BCC recipients, so they do not see each other's email addresses.
 
 For CLI commands with the option '--notify' you need to configure some Flask options
 that are needed to build the URL for the password recovery link in the email. These options

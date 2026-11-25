@@ -18,6 +18,7 @@ from moin.utils.diff_datastruct import diff as dict_diff
 from moin.utils import notifications
 from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL, send_after_response, send_notifications
 from moin.utils.names import split_fqname
+from moin.utils.subscriptions import Subscriber
 
 import pytest
 
@@ -108,6 +109,25 @@ class TestNotifications:
         meta = {ITEMID: "0" * 32, NAME: [self.item_name], NAMESPACE: ""}
         send_notifications(current_app, self.fqname, ACTION_SAVE, new_data=BytesIO(b"x"), new_meta=meta)
         assert len(lookups) == int(mail_enabled)
+
+    def test_send_notifications_bcc(self, monkeypatch):
+        # subscribers must not see each other's addresses
+        subscribers = {
+            Subscriber("1" * 32, "one", "one@example.org", "en"),
+            Subscriber("2" * 32, "two", "two@example.org", "en"),
+            Subscriber("3" * 32, "three", "three@example.org", "de"),
+        }
+        mails = []
+        monkeypatch.setattr(current_app.cfg, "mail_enabled", True)
+        monkeypatch.setattr(notifications, "get_subscribers", lambda **meta: subscribers)
+        monkeypatch.setattr(notifications, "send_after_response", mails.extend)
+        meta = {ITEMID: "0" * 32, NAME: [self.item_name], NAMESPACE: ""}
+        send_notifications(current_app, self.fqname, ACTION_SAVE, new_data=BytesIO(b"x"), new_meta=meta)
+        assert sorted(sorted(mail["bcc"]) for mail in mails) == [
+            ["one@example.org", "two@example.org"],
+            ["three@example.org"],
+        ]
+        assert not any(mail.get("to") or mail.get("cc") for mail in mails)
 
 
 MAILS = [
