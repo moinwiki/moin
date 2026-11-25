@@ -18,6 +18,7 @@ import hashlib
 import pytest
 
 from whoosh.query import Term
+from whoosh.searching import Searcher
 
 from moin import flaskg
 from moin.auth import GivenAuth
@@ -582,6 +583,34 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         rev_u = item.get_revision(rev_u.revid)
         assert rev_u.meta[NAMESPACE] == NAMESPACE_USERS
         assert rev_u.meta[NAME] == [item_name_u.split("/")[1]]
+
+    def test_document_lookup(self, monkeypatch):
+        # the same name in two namespaces
+        for name in ("same", f"{NAMESPACE_USERS}/same"):
+            fqname = split_fqname(name)
+            self.imw.get_item(**fqname.query).store_revision(
+                {
+                    NAME: [fqname.value],
+                    NAMESPACE: fqname.namespace,
+                    CONTENTTYPE: "text/plain;charset=utf-8",
+                    ITEMTYPE: ITEMTYPE_DEFAULT,
+                },
+                BytesIO(name.encode()),
+            )
+
+        def documents(self, **kw):
+            raise AssertionError("a lookup must not collect all documents matching each term")
+
+        # searcher.document() would use documents()
+        monkeypatch.setattr(Searcher, "documents", documents)
+        for short in (False, True):
+            for namespace in ("", NAMESPACE_USERS):
+                doc = self.imw._document(short=short, **{NAME_EXACT: "same", NAMESPACE: namespace})
+                assert (doc[NAMESPACE], doc[NAME]) == (namespace, ["same"])
+            assert self.imw._document(short=short, **{NAME_EXACT: "same", NAMESPACE: "nonexisting"}) is None
+            assert self.imw._document(short=short, **{NAME_EXACT: "other", NAMESPACE: ""}) is None
+        item = self.imw.get_item(**split_fqname(f"{NAMESPACE_USERS}/same").query)
+        assert self.imw._document(**{ITEMID: item.itemid})[NAMESPACE] == NAMESPACE_USERS
 
     def test_parentnames(self):
         item = self.get_item("child")

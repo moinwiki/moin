@@ -1058,7 +1058,10 @@ class IndexingMiddleware:
         if short:
             idx_name = LATEST_META
         with self._searcher(idx_name) as searcher:
-            return searcher.document(**kw)
+            # document_number() stops at the first match. searcher.document() would first collect
+            # all documents matching each term, e.g. all items of the namespace, and intersect them.
+            docnum = searcher.document_number(**kw)
+            return searcher.stored_fields(docnum) if docnum is not None else None
 
     def has_item(self, name: str) -> bool:
         if name.startswith("@itemid/"):
