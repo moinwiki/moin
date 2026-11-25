@@ -126,6 +126,7 @@ class Config(DefaultConfig):
     # mail_smarthost = "smtp.example.org"
     # mail_username = "smtp_username"  # if you need to use SMTP AUTH at your mail_smarthost:
     # mail_password = "smtp_password"
+    # mail_local_hostname = "wiki.example.org"  # host name of this server, default: looked up via DNS
 
     # list of admin emails
     admin_emails = []

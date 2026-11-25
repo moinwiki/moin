@@ -1484,7 +1484,17 @@ You need to configure some settings before sending email can be supported::
  mail_username = "smtp_username"
  mail_password = "smtp_password"
 
+ # optional: host name of the wiki server
+ mail_local_hostname = "wiki.example.org"
+
 If either mail_from or mail_smarthost is not set, sending emails is disabled.
+
+Moin sends mail_local_hostname to the SMTP server when it connects and uses it in the
+Message-ID of each email. If it is not set, moin looks up the host name via DNS, once per
+process. Set it if that lookup is slow or does not give the name your SMTP server expects.
+
+Notifications about item changes are sent after the response to the request that changed
+the item, so users do not wait for the SMTP server when they save.
 
 For CLI commands with the option '--notify' you need to configure some Flask options
 that are needed to build the URL for the password recovery link in the email. These options

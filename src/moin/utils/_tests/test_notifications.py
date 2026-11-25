@@ -7,15 +7,16 @@ MoinMoin - tests for moin.utils.notifications.
 
 from io import BytesIO
 
-from flask import url_for
+from flask import has_app_context, url_for
 
 from moin import current_app, flaskg
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, NAME, ITEMTYPE, PARENTID
+from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, ITEMID, NAME, NAMESPACE, ITEMTYPE, PARENTID
 from moin.items import Item
 from moin.storage.middleware import indexing as msmi
 from moin.utils.diff_datastruct import diff as dict_diff
-from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL
+from moin.utils import notifications
+from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL, send_after_response, send_notifications
 from moin.utils.names import split_fqname
 
 import pytest
@@ -97,3 +98,51 @@ class TestNotifications:
         assert notification.generate_diff_url(domain) == "{}{}".format(
             domain, url_for("frontend.diff", item_name=self.item_name, rev1=rev1.revid, rev2=rev2.revid)
         )
+
+    @pytest.mark.parametrize("mail_enabled", [False, True])
+    def test_send_notifications_mail_disabled(self, monkeypatch, mail_enabled):
+        # without mail, the subscribers are not even looked up
+        lookups = []
+        monkeypatch.setattr(current_app.cfg, "mail_enabled", mail_enabled)
+        monkeypatch.setattr(notifications, "get_subscribers", lambda **meta: lookups.append(meta) or set())
+        meta = {ITEMID: "0" * 32, NAME: [self.item_name], NAMESPACE: ""}
+        send_notifications(current_app, self.fqname, ACTION_SAVE, new_data=BytesIO(b"x"), new_meta=meta)
+        assert len(lookups) == int(mail_enabled)
+
+
+MAILS = [
+    dict(subject="first", text="text", to=["user@example.org"]),
+    dict(subject="second", text="text", to=["other@example.org"]),
+]
+
+
+@pytest.fixture
+def sent(monkeypatch):
+    """Record the sendmail calls of moin.utils.notifications, the first one fails."""
+    sent = []
+
+    def sendmail(**mail):
+        sent.append((mail["subject"], has_app_context()))
+        if len(sent) == 1:
+            raise OSError("mail server not reachable")
+
+    monkeypatch.setattr(notifications, "sendmail", sendmail)
+    return sent
+
+
+def test_send_after_response(app, sent):
+    with app.test_request_context("/"):
+        send_after_response(MAILS)
+        response = app.process_response(app.response_class("response body"))
+    assert sent == []
+    # the WSGI server closes the response after sending it
+    response.close()
+    # a failing mail does not keep the other mails from being sent
+    assert sent == [("first", True), ("second", True)]
+
+
+def test_send_without_request(_app_ctx, monkeypatch):
+    sent = []
+    monkeypatch.setattr(notifications, "sendmail", lambda **mail: sent.append(mail["subject"]))
+    send_after_response(MAILS)
+    assert sent == ["first", "second"]

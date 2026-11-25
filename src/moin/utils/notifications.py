@@ -11,10 +11,10 @@ from io import BytesIO
 from blinker import ANY
 from urllib.parse import urljoin
 
-from flask import abort, url_for
+from flask import abort, after_this_request, has_request_context, url_for
 from flask_babel import force_locale
 
-from moin import flaskg, log
+from moin import current_app, flaskg, log
 from moin.constants.keys import (
     ACTION_COPY,
     ACTION_RENAME,
@@ -202,6 +202,8 @@ def send_notifications(app, fqname, action, data=None, meta=None, new_data=None,
     :param new_meta: New metadata, or None if the action is delete or destroy.
     :param kwargs: Optional comment.
     """
+    if not app.cfg.mail_enabled:
+        return
     if new_meta is None:
         subscribers = {subscriber for subscriber in get_subscribers(**meta) if subscriber.itemid != flaskg.user.itemid}
     else:
@@ -219,6 +221,7 @@ def send_notifications(app, fqname, action, data=None, meta=None, new_data=None,
         content_diff = ["- " + _("An error has occurred, the current or prior revision of this item may be corrupt.")]
     meta_diff = notification.get_meta_diff()
     subscribers_locale = {subscriber.locale for subscriber in subscribers}
+    mails = []
     for locale in subscribers_locale:
         with force_locale(locale):
             txt_msg, html_msg = notification.render_templates(content_diff, meta_diff)
@@ -226,4 +229,35 @@ def send_notifications(app, fqname, action, data=None, meta=None, new_data=None,
                 moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=flaskg.user.name0
             )
             subscribers_emails = [subscriber.email for subscriber in subscribers if subscriber.locale == locale]
-            sendmail(subject, txt_msg, to=subscribers_emails, html=html_msg)
+            mails.append(dict(subject=subject, text=txt_msg, to=subscribers_emails, html=html_msg))
+    send_after_response(mails)
+
+
+def send_after_response(mails):
+    """Send mails after the response to the current request has been sent.
+
+    Talking to the SMTP server can take seconds, the user should not wait for that.
+    Outside of a request (e.g. in CLI commands), the mails are sent right away.
+
+    :param mails: list of dicts with keyword arguments for sendmail
+    """
+    if not has_request_context():
+        for mail in mails:
+            sendmail(**mail)
+        return
+
+    app = current_app._get_current_object()
+
+    def send():
+        # runs when the WSGI server closes the response, the request and app contexts are gone by then
+        with app.app_context():
+            for mail in mails:
+                try:
+                    sendmail(**mail)
+                except Exception:
+                    logging.exception("sending a notification mail failed")
+
+    @after_this_request
+    def send_on_close(response):
+        response.call_on_close(send)
+        return response
