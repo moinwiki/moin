@@ -1798,8 +1798,9 @@ class Default(Contentful):
                                 edit_utils.cursor_close()
                                 return redirect(url_for_item(**self.fqname.split))
 
-                            if rev_number < self.meta.get("rev_number", 0):
-                                # we have conflict - someone else has saved item, create and save 3-way diff,
+                            if rev_id != self.meta.get(REVID, "new-item"):
+                                # we have conflict - someone else has saved item since this edit started,
+                                # create and save 3-way diff,
                                 # give user error message to fix it
                                 saved_item = Item.create(
                                     self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype
@@ -1851,11 +1852,11 @@ class Default(Contentful):
             if draft:
                 u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                 if save_time:
-                    # if revno = current: you may recover a saved draft by clicking load draft button
-                    # if revno < current: a old draft is available, loading it will create a conflict
+                    # if draft revid = current: you may recover a saved draft by clicking load draft button
+                    # if draft revid != current: an old draft is available, loading it will create a conflict
                     # that  must be merged manually
                     interval, number = show_time.duration(time() - save_time)
-                    if self.rev.meta.get(REV_NUMBER, 0) == rev_number:
+                    if self.rev.meta.get(REVID, "new-item") == rev_id:
                         flash(
                             L_(
                                 "You may recover your draft saved {number} {interval} "

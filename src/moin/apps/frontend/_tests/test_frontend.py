@@ -18,7 +18,7 @@ from lxml import etree
 from werkzeug.datastructures import FileStorage
 
 from moin import current_app, flaskg, themes, user
-from moin.constants.keys import CURRENT, REVID
+from moin.constants.keys import COMMENT, CURRENT, DATAID, HASH_ALGORITHM, MTIME, PARENTID, REV_NUMBER, REVID, SIZE
 from moin.apps._tests.utils import (
     create_user,
     login,
@@ -1154,3 +1154,45 @@ def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
     rv2 = client.get("/HighlightTestPage?regex=hello")
     assert rv2.status_code == 200
     assert b"moin-highlight" in rv2.data
+
+
+def test_modify_detects_conflict_despite_equal_rev_number(client):
+    """
+    Regression test: the edit conflict check on Save compared revision numbers
+    (draft rev_number < current rev_number). Revision numbers are not unique:
+    two concurrent saves based on the same revision both get number N+1. If the
+    user started editing one of them and the other one became current, the
+    numbers were equal, no conflict was detected and the save silently dropped
+    the other change. The check now compares the revid the edit started from
+    with the current revid.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    name = "ConflictItem"
+
+    modify_item(client, name, make_modify_form_data(name, content="one\ntwo\nthree\n"))
+    rev1 = flaskg.storage[name][CURRENT]
+    rev1_meta = dict(rev1.meta)
+    modify_item(client, name, make_modify_form_data(name, content="one\ntwo\nthree\nfour\n"))
+    rev_b = flaskg.storage[name][CURRENT]
+    assert rev_b.meta[REV_NUMBER] == 2
+
+    # user starts editing revision B, this records B's revid in the edit draft
+    assert client.get(url_for("frontend.modify_item", item_name=name)).status_code == 200
+
+    # a concurrent writer that had read revision 1 stores its revision C, also numbered 2
+    meta = {k: v for k, v in rev1_meta.items() if k not in (REVID, DATAID, SIZE, MTIME, HASH_ALGORITHM)}
+    meta.update({PARENTID: rev1_meta[REVID], REV_NUMBER: 2, COMMENT: "concurrent"})
+    flaskg.unprotected_storage[name].store_revision(meta, BytesIO(b"ONE\ntwo\nthree\n"))
+    rev_c = flaskg.storage[name][CURRENT]
+    assert rev_c.revid != rev_b.revid
+    assert rev_c.meta[REV_NUMBER] == rev_b.meta[REV_NUMBER]
+
+    # user saves their edit of revision B
+    modify_item(client, name, make_modify_form_data(name, content="one\nTWO\nthree\nfour\n", comment="mine"))
+
+    current = flaskg.storage[name][CURRENT]
+    assert current.meta[COMMENT].startswith("CONFLICT")
+    text = current.data.read().decode("utf-8")
+    assert "ONE" in text  # the concurrent change was merged, not lost
+    assert "TWO" in text  # the user's change was saved
