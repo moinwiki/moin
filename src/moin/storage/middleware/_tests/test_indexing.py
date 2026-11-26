@@ -18,6 +18,7 @@ import hashlib
 import pytest
 
 from whoosh.query import Term
+from whoosh.searching import Searcher
 
 from moin import flaskg
 from moin.auth import GivenAuth
@@ -36,6 +37,7 @@ from moin.constants.keys import (
     HASH_ALGORITHM,
     CONTENT,
     COMMENT,
+    LATEST_META,
     LATEST_REVS,
     ALL_REVS,
     NAMESPACE,
@@ -303,6 +305,33 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         revs = list(self.imw.documents(name=item_name))
         assert len(revs) == 1  # there is only 1 latest revision
         assert expected_rev.revid == revs[0].revid  # it is really the latest one
+
+    def test_sort_by_mtime_uses_columns(self):
+        # MTIME and REV_NUMBER are sortable (stored as columns), so sorting by them does
+        # not need to walk the whole index. The sort order must be by MTIME, then REV_NUMBER.
+        item_name = "foo"
+        item = self.get_item(item_name)
+        revids = {}
+        for rev_number, mtime in [(1, 5), (2, 5), (3, 2)]:
+            meta = {
+                ACTION: ACTION_SAVE,
+                ADDRESS: "127.0.0.1",
+                NAME: [item_name],
+                ITEMTYPE: ITEMTYPE_DEFAULT,
+                MTIME: mtime,
+                REV_NUMBER: rev_number,
+            }
+            rev = item.store_revision(meta, BytesIO(b"x"), trusted=True, return_rev=True)
+            assert rev
+            revids[rev_number] = rev.revid
+        for idx_name in (ALL_REVS, LATEST_REVS, LATEST_META):
+            with self.imw.ix[idx_name].searcher() as searcher:
+                assert searcher.reader().has_column(MTIME), idx_name
+                assert searcher.reader().has_column(REV_NUMBER), idx_name
+        metas = self.imw.search_meta(
+            Term(ITEMID, item.itemid), idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None
+        )
+        assert [meta[REVID] for meta in metas] == [revids[2], revids[1], revids[3]]
 
     def test_search_meta_invalid_regex_returns_empty(self):
         # A regex that does not compile ("[[[" leaves the character
@@ -582,6 +611,34 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         rev_u = item.get_revision(rev_u.revid)
         assert rev_u.meta[NAMESPACE] == NAMESPACE_USERS
         assert rev_u.meta[NAME] == [item_name_u.split("/")[1]]
+
+    def test_document_lookup(self, monkeypatch):
+        # the same name in two namespaces
+        for name in ("same", f"{NAMESPACE_USERS}/same"):
+            fqname = split_fqname(name)
+            self.imw.get_item(**fqname.query).store_revision(
+                {
+                    NAME: [fqname.value],
+                    NAMESPACE: fqname.namespace,
+                    CONTENTTYPE: "text/plain;charset=utf-8",
+                    ITEMTYPE: ITEMTYPE_DEFAULT,
+                },
+                BytesIO(name.encode()),
+            )
+
+        def documents(self, **kw):
+            raise AssertionError("a lookup must not collect all documents matching each term")
+
+        # searcher.document() would use documents()
+        monkeypatch.setattr(Searcher, "documents", documents)
+        for short in (False, True):
+            for namespace in ("", NAMESPACE_USERS):
+                doc = self.imw._document(short=short, **{NAME_EXACT: "same", NAMESPACE: namespace})
+                assert (doc[NAMESPACE], doc[NAME]) == (namespace, ["same"])
+            assert self.imw._document(short=short, **{NAME_EXACT: "same", NAMESPACE: "nonexisting"}) is None
+            assert self.imw._document(short=short, **{NAME_EXACT: "other", NAMESPACE: ""}) is None
+        item = self.imw.get_item(**split_fqname(f"{NAMESPACE_USERS}/same").query)
+        assert self.imw._document(**{ITEMID: item.itemid})[NAMESPACE] == NAMESPACE_USERS
 
     def test_parentnames(self):
         item = self.get_item("child")

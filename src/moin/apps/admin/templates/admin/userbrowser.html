@@ -53,7 +53,11 @@
                             </a>
                         </button>
                     </td>
-                    <td>{{ u.groups|join('<br>')|safe }}</td>
+                    <td>
+                        {%- for group in u.groups -%}
+                            {{ group }}{%- if not loop.last %}<br>{% endif -%}
+                        {%- endfor -%}
+                    </td>
                     <td>
                         {%- for subscription in u.subscriptions -%}
                             {{ subscription }}{%- if not loop.last %}<br>{% endif -%}

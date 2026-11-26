@@ -321,13 +321,17 @@ class IndexingMiddleware:
             # revision id (aka meta id)
             REVID: ID(unique=True, stored=True),
             # sequential revision number for humans: 1, 2, 3...
-            REV_NUMBER: NUMERIC(stored=True),
+            # sortable: see MTIME below
+            REV_NUMBER: NUMERIC(stored=True, sortable=True),
             # parent revision id
             PARENTID: ID(stored=True),
             # backend name (which backend is this rev stored in?)
             BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
-            MTIME: DATETIME(stored=True),
+            # sortable: store a per-document column, so sorting by it (history, diff, ...) only reads
+            # the values of the matching documents. Without a column, whoosh has to walk all terms and
+            # postings of the field in the whole index for every sorted search.
+            MTIME: DATETIME(stored=True, sortable=True),
             # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
@@ -409,10 +413,10 @@ class IndexingMiddleware:
             NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
             NAME_EXACT: ID(field_boost=1.0),
             REVID: ID(unique=True, stored=True),
-            REV_NUMBER: NUMERIC(stored=True),
+            REV_NUMBER: NUMERIC(stored=True, sortable=True),
             PARENTID: ID(stored=True),
             BACKENDNAME: ID(stored=True),
-            MTIME: DATETIME(stored=True),
+            MTIME: DATETIME(stored=True, sortable=True),
             ITEMTYPE: ID(stored=True),
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             USERID: ID(stored=True),
@@ -1058,7 +1062,10 @@ class IndexingMiddleware:
         if short:
             idx_name = LATEST_META
         with self._searcher(idx_name) as searcher:
-            return searcher.document(**kw)
+            # document_number() stops at the first match. searcher.document() would first collect
+            # all documents matching each term, e.g. all items of the namespace, and intersect them.
+            docnum = searcher.document_number(**kw)
+            return searcher.stored_fields(docnum) if docnum is not None else None
 
     def has_item(self, name: str) -> bool:
         if name.startswith("@itemid/"):

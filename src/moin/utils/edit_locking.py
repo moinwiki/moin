@@ -34,6 +34,7 @@ from __future__ import annotations
 
 from typing import Literal, TYPE_CHECKING
 
+import hashlib
 import os
 import time
 import sqlite3
@@ -132,12 +133,14 @@ class Edit_Utils:
         self.conn.close()
 
     def make_draft_name(self, rev_id: str) -> str:
-        """Return a file name consisting of rev_id + user_name."""
-        keepchars = ("-", ".", "_")
-        return os.path.join(
-            self.preview_path,
-            rev_id + "-" + "".join(c for c in self.user_name if c.isalnum() or c in keepchars).rstrip(),
-        )
+        """
+        Return a file name consisting of rev_id + a hash of user_name.
+
+        The user name may contain non-ASCII characters, which can not be used in file names
+        if the filesystem encoding is ASCII (e.g. Apache mod_wsgi running with the POSIX locale).
+        """
+        user_hash = hashlib.sha256(self.user_name.encode("utf-8")).hexdigest()[:16]
+        return os.path.join(self.preview_path, f"{rev_id}-{user_hash}")
 
     def get_user_name(self) -> str:
         """Return user name or user IP address."""

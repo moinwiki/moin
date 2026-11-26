@@ -100,6 +100,7 @@ from moin.utils.diff_html import diff as html_diff
 from moin.utils.edit_locking import Edit_Utils
 from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
+from moin.utils.mime import get_charset
 from moin.utils.names import CompositeName, split_fqname
 from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
 from moin.utils.pysupport import load_package_modules
@@ -1231,7 +1232,7 @@ class Item:
 
         if isinstance(data, str):
             data = self.handle_variables(data, meta)
-            charset = meta[CONTENTTYPE].split("charset=")[1]
+            charset = get_charset(meta[CONTENTTYPE])
             data = data.encode(charset)
 
         if isinstance(data, bytes):
@@ -1785,7 +1786,7 @@ class Default(Contentful):
                                 original_item = Item.create(
                                     self.fqname.fullname, rev_id=rev_id, contenttype=self.contenttype
                                 )
-                                charset = original_item.contenttype.split("charset=")[1]
+                                charset = get_charset(original_item.contenttype)
                                 original_text = original_item.rev.data.read().decode(charset)
                                 close_file(original_item.rev.data)
                             else:
@@ -1805,7 +1806,7 @@ class Default(Contentful):
                                 saved_item = Item.create(
                                     self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype
                                 )
-                                charset = saved_item.contenttype.split("charset=")[1]
+                                charset = get_charset(saved_item.contenttype)
                                 saved_text = saved_item.content.data.decode(charset)
                                 data3 = diff3.text_merge(original_text, saved_text, data)
                                 data = data3

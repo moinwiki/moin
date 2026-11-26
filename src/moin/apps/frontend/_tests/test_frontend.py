@@ -11,6 +11,9 @@ from typing import Any, TYPE_CHECKING, Iterable
 from io import BytesIO
 
 import json
+import os
+import time
+
 import pytest
 
 from flask import url_for
@@ -232,6 +235,50 @@ class TestFrontend:
         # The tag must be HTML-escaped, not interpreted as markup.
         assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
         assert payload not in html
+
+    def test_meta_escapes_html_in_item_name(self, client):
+        create_user("moin", "Xiwejr622")
+        login(client, "moin", "Xiwejr622")
+        item_name = "<img src=x onerror=alert(document.domain)>"
+
+        modify_item(client, item_name, make_modify_form_data(item_name, content="Test item"))
+
+        response = client.get(url_for("frontend.show_item_meta", item_name=item_name))
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The HTML in itemname must be escaped.
+        assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
+        assert item_name not in html
+
+        # Rename the item to test name_old
+        new_name = "RenamedXssItem"
+
+        response = client.post(
+            url_for("frontend.rename_item", item_name=item_name), data={"target": new_name}, follow_redirects=True
+        )
+        assert response.status_code == 200
+
+        response = client.get(url_for("frontend.show_item_meta", item_name=new_name))
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The old item name must also be escaped
+        assert "&lt;img src=x onerror=alert(document.domain)&gt;" in html
+        assert item_name not in html
+
+    def test_meta_escapes_external_links(self, client):
+        create_user("moin", "Xiwejr622")
+        login(client, "moin", "Xiwejr622")
+        item_name = "ExtLinkItem"
+        modify_item(client, item_name, make_modify_form_data(item_name, content="[[http://example.org/'x&y=1]]"))
+
+        response = client.get(url_for("frontend.show_item_meta", item_name=item_name))
+        html = response.get_data(as_text=True)
+
+        assert response.status_code == 200
+        # The external link must be escaped in the href attribute, too.
+        assert 'href="http://example.org/&#39;x&amp;y=1"' in html
 
     def test_jfu_server(self):
         self._test_view_post(
@@ -685,12 +732,20 @@ class TestFrontendNew:
 
         create_user("björn", "Xiwejr622")
         login(client, "björn", "Xiwejr622")
+        preview_dir = os.path.join(current_app.cfg.instance_dir, "preview")
+        start_time = time.time() - 1  # some filesystems have only 1s mtime resolution
         modify_item(
             client,
             "quokka",
             make_modify_form_data("quokka", content="New item content.", preview="Preview"),
             expected_status_code=200,
         )
+        # the preview draft file name must not contain the non-ASCII user name, see #1986
+        new_drafts = {
+            name for name in os.listdir(preview_dir) if os.path.getmtime(os.path.join(preview_dir, name)) >= start_time
+        }
+        assert new_drafts
+        assert all(name.isascii() for name in new_drafts), new_drafts
 
     def test_convert_item_to_markdown(self, client):
         create_user("björn", "Xiwejr622")
@@ -933,6 +988,44 @@ def test_diff_includes_revisions_from_before_a_rename(client):
     assert b"AAA" in rv.data
 
 
+def test_diff_offers_no_links_to_other_diffs(client):
+    """
+    The diff view lets the user move both panes independently. Offered as links,
+    that navigation lets a crawler reach every (rev1, rev2) pair of an item, which
+    is n*(n-1)/2 urls for n revisions. It must be offered as forms instead.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    item_name = "DiffNavItem"
+    revids = []
+    for content in ("AAA\n", "BBB\n", "CCC\n", "DDD\n", "EEE\n"):
+        modify_item(client, item_name, make_modify_form_data(item_name, content=content, comment=content))
+        revids.append(flaskg.storage[item_name][CURRENT].meta[REVID])
+
+    # a pair in the middle of the history, so every navigation direction applies
+    rv = client.get(url_for("frontend.diff", item_name=item_name, rev1=revids[1], rev2=revids[3]))
+    assert rv.status_code == 200
+    html = rv.data.decode()
+    diff_url = url_for("frontend.diff", item_name=item_name)
+    assert f'href="{diff_url}' not in html
+    tree = etree.HTML(html)
+    forms = tree.xpath('//form[@class="moin-diff-nav"]')
+    pairs = {
+        (form.xpath('.//input[@name="rev1"]/@value')[0], form.xpath('.//input[@name="rev2"]/@value')[0])
+        for form in forms
+    }
+    expected = {
+        (revids[0], revids[3]),  # left pane: oldest
+        (revids[0], revids[3]),  # left pane: older
+        (revids[2], revids[3]),  # left pane: newer
+        (revids[1], revids[2]),  # right pane: older
+        (revids[1], revids[4]),  # right pane: newer and newest
+    }
+    assert pairs == expected
+    assert all(form.get("method") == "get" and form.get("action") == diff_url for form in forms)
+
+
 def test_history_shows_revisions_from_before_a_rename(client):
     """
     Regression test: history() built its ALL_REVS query from fqname.query,
@@ -959,6 +1052,36 @@ def test_history_shows_revisions_from_before_a_rename(client):
     assert b"first revision" in rv.data
     assert b"before rename" in rv.data
     assert b"after rename" in rv.data
+
+
+def test_history_offers_no_links_to_revisions(client):
+    """
+    Links to per-revision views (show, highlight, meta, download, ...) in the
+    history would offer crawlers several urls per revision, each loading or
+    rendering that revision. The row actions must be offered as buttons of a
+    separate GET form instead.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    item_name = "HistoryActionsItem"
+    revids = []
+    for content in ("AAA\n", "BBB\n", "CCC\n"):
+        modify_item(client, item_name, make_modify_form_data(item_name, content=content, comment=content))
+        revids.append(flaskg.storage[item_name][CURRENT].meta[REVID])
+
+    rv = client.get(url_for("frontend.history", item_name=item_name))
+    assert rv.status_code == 200
+    tree = etree.HTML(rv.data.decode())
+    hrefs = tree.xpath("//a/@href")
+    assert not [href for href in hrefs if any(revid in href for revid in revids)]
+    assert tree.xpath('//form[@id="moin-history-actions"]/@method') == ["GET"]
+    actions = tree.xpath('//button[@form="moin-history-actions"]/@formaction')
+    for view in ("show_item", "highlight_item", "show_item_meta", "download_item"):
+        assert url_for(f"frontend.{view}", item_name=item_name, rev=revids[0]) in actions
+    # a row action button does what the link did
+    rv = client.get(url_for("frontend.show_item_meta", item_name=item_name, rev=revids[0]))
+    assert rv.status_code == 200
 
 
 def test_diffraw_nonexistent_revid_returns_404(client):
@@ -1196,3 +1319,80 @@ def test_modify_detects_conflict_despite_equal_rev_number(client):
     text = current.data.read().decode("utf-8")
     assert "ONE" in text  # the concurrent change was merged, not lost
     assert "TWO" in text  # the user's change was saved
+
+
+def _sitemap_chain(client, length=7):
+    """Create items Chain0 -> Chain1 -> ... -> Chain<length-1>, each linking to the next one."""
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    for i in range(length):
+        name = f"Chain{i}"
+        content = f"[[Chain{i + 1}]]\n" if i < length - 1 else "the end\n"
+        modify_item(client, name, make_modify_form_data(name, content=content))
+
+
+def _sitemap_tree(rv):
+    """Return the item names listed in the forward and backward reference trees of a sitemap."""
+    assert rv.status_code == 200
+    tree = etree.HTML(rv.data.decode())
+    forward, backward = (
+        [name.strip() for name in ul.xpath('.//a[contains(@class, "moin-fqname")]/text()')]
+        for ul in tree.xpath("//h2/following-sibling::ul[1]")
+    )
+    cut = [
+        bool(h2.xpath('following-sibling::*[1][self::ul]/following-sibling::*[1][@class="moin-sitemap-cut"]'))
+        for h2 in tree.xpath("//h2")
+    ]
+    return forward, backward, cut
+
+
+def test_sitemap_depth_is_limited(client):
+    """The site map must not walk the whole link graph: by default it stops 3 levels below the item."""
+    _sitemap_chain(client)
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain0")))
+    assert forward == ["Chain1", "Chain2", "Chain3"]
+    assert backward == []
+    assert cut == [True, False]
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain6")))
+    assert forward == []
+    assert backward == ["Chain5", "Chain4", "Chain3"]
+    assert cut == [False, True]
+    # close to the end of the chain, nothing is cut
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain4")))
+    assert forward == ["Chain5", "Chain6"]
+    assert cut[0] is False
+
+
+def test_sitemap_lists_items_at_shortest_distance(client):
+    """
+    An item reachable on a long and on a short path must be listed (once) where the short path
+    ends. Otherwise the depth limit would hide links that are within the limit: here, a
+    depth-first walk would find E via B and D at level 3 (and stop there), so F would be missing.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    links = {"A": "BC", "B": "D", "C": "E", "D": "E", "E": "F", "F": ""}
+    for name, targets in links.items():
+        content = " ".join(f"[[Dia{target}]]" for target in targets) or "the end"
+        modify_item(client, f"Dia{name}", make_modify_form_data(f"Dia{name}", content=content + "\n"))
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="DiaA")))
+    # B (with D below it), then C (with E and, below that, F)
+    assert forward == ["DiaB", "DiaD", "DiaC", "DiaE", "DiaF"]
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="DiaF")))
+    # E (level 1), C and D (level 2), A and B (level 3): A is found via C first
+    assert backward == ["DiaE", "DiaC", "DiaA", "DiaD", "DiaB"]
+
+
+def test_sitemap_items_are_limited(client, monkeypatch):
+    """Independent of the depth, the links of at most sitemap_max_items items are looked up."""
+    _sitemap_chain(client)
+    monkeypatch.setattr(current_app.cfg, "sitemap_max_depth", None)
+    monkeypatch.setattr(current_app.cfg, "sitemap_max_items", 3)
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain0")))
+    # Chain0, Chain1 and Chain2 were looked up, so Chain3 is listed, but not followed
+    assert forward == ["Chain1", "Chain2", "Chain3"]
+    assert cut[0] is True
+    monkeypatch.setattr(current_app.cfg, "sitemap_max_items", None)
+    forward, backward, cut = _sitemap_tree(client.get(url_for("frontend.sitemap", item_name="Chain0")))
+    assert forward == [f"Chain{i}" for i in range(1, 7)]
+    assert cut == [False, False]

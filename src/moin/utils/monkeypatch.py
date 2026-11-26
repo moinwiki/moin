@@ -44,6 +44,104 @@ def buffer_file_close(self):
 # patch class BufferFile
 BufferFile.close = buffer_file_close
 
+
+# Read from the buffer instead of a copy of it
+# whoosh memory-maps the segment files of an index and gives each part of a segment (e.g. its postings or
+# its terms) to a BufferFile. BufferFile.__init__ also wraps that part in a BytesIO, which copies all of it
+# into memory. moin opens new searchers for every request, so every request copied big parts of the index:
+# the postings and terms of every segment, which is most of the index size.
+
+
+class BufferReader:
+    """
+    Read-only file object for a buffer (bytes, memoryview, ...), without copying the buffer.
+
+    Supports what whoosh uses of the BytesIO it replaces: read, readline, iteration, seek, tell and close.
+    """
+
+    __slots__ = ("_buf", "_pos")
+
+    def __init__(self, buf):
+        self._buf = buf
+        self._pos = 0
+
+    def _check_open(self):
+        if self._buf is None:
+            raise ValueError("I/O operation on closed file.")
+
+    def read(self, size=-1):
+        self._check_open()
+        pos = self._pos
+        length = len(self._buf)
+        end = length if size is None or size < 0 else min(pos + size, length)
+        if end <= pos:
+            return b""
+        self._pos = end
+        return bytes(self._buf[pos:end])
+
+    def readline(self, size=-1):
+        self._check_open()
+        pos = self._pos
+        length = len(self._buf)
+        end = length if size is None or size < 0 else min(pos + size, length)
+        start = pos
+        while start < end:
+            # search in chunks, a memoryview has no find()
+            chunk_end = min(start + 4096, end)
+            newline = bytes(self._buf[start:chunk_end]).find(b"\n")
+            if newline >= 0:
+                end = start + newline + 1
+                break
+            start = chunk_end
+        if end <= pos:
+            return b""
+        self._pos = end
+        return bytes(self._buf[pos:end])
+
+    def __iter__(self):
+        while line := self.readline():
+            yield line
+
+    def seek(self, pos, whence=0):
+        self._check_open()
+        if whence == 0:
+            new_pos = pos
+        elif whence == 1:
+            new_pos = self._pos + pos
+        elif whence == 2:
+            new_pos = len(self._buf) + pos
+        else:
+            raise ValueError(f"invalid whence ({whence}, should be 0, 1 or 2)")
+        if new_pos < 0:
+            raise ValueError(f"negative seek value {new_pos}")
+        self._pos = new_pos
+        return new_pos
+
+    def tell(self):
+        self._check_open()
+        return self._pos
+
+    def close(self):
+        self._buf = None
+
+    @property
+    def closed(self):
+        return self._buf is None
+
+
+def buffer_file_init(self, buf, name=None, onclose=None):
+    # same as whoosh's BufferFile.__init__, but self.file does not copy buf
+    self._buf = buf
+    self._name = name
+    self.file = BufferReader(buf)
+    self.onclose = onclose
+    self.is_real = False
+    self.is_closed = False
+
+
+# patch class BufferFile
+BufferFile.__init__ = buffer_file_init
+
 # flask-theme patching -------------------------------------------------------
 
 # Cache the result of searching the file system for theme template files.

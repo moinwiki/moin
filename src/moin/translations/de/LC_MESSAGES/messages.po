@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MoinMoin 2.0\n"
 "Report-Msgid-Bugs-To: German <moin-user@python.org>\n"
-"POT-Creation-Date: 2024-11-29 17:01+0100\n"
+"POT-Creation-Date: 2026-11-24 02:04+0100\n"
 "PO-Revision-Date: 2018-09-15 23:37+0100\n"
 "Last-Translator: UlrichB\n"
 "Language: de\n"
@@ -18,113 +18,118 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: src/moin/forms.py:126 src/moin/forms.py:210
+#: src/moin/forms.py:124 src/moin/forms.py:208
 msgid "No namespace field in the meta."
 msgstr "Kein Namensraum-Feld in den Metadaten."
 
-#: src/moin/forms.py:130
+#: src/moin/forms.py:128
 msgid "The names in the name list must be unique."
 msgstr "Kein Name darf mehrfach in der Namensliste enthalten sein."
 
-#: src/moin/forms.py:137
+#: src/moin/forms.py:135
+#, python-brace-format
 msgid "Item names ({invalid_names}) must not start with '@' or '+'"
 msgstr "Item-Namen ({invalid_names}) dürfen nicht mit '@' oder '+' anfangen."
 
-#: src/moin/forms.py:146
+#: src/moin/forms.py:145
+#, python-brace-format
 msgid ""
 "Item name ({invalid_names}) must not contain ',' characters. Create item with 1 name, use rename to create "
 "multiple names."
 msgstr "Item Name ({invalid_names}) darf kein Komma ',' enthalten. Benutzen Sie 'Umbenennen' um weitere Namen zuzufügen."
 
-#: src/moin/forms.py:157
+#: src/moin/forms.py:155
+#, python-brace-format
 msgid "Item names ({invalid_names}) must not match with existing namespaces."
 msgstr "Item-Namen ({invalid_names}) dürfen nicht mit Namensräumen übereinstimmen"
 
-#: src/moin/forms.py:170
+#: src/moin/forms.py:168
+#, python-brace-format
 msgid "Item(s) named {duplicate_names} already exist."
 msgstr "Items mit Namen {duplicate_names} existieren bereits."
 
-#: src/moin/forms.py:198
+#: src/moin/forms.py:196
 msgid "Invalid JSON."
 msgstr "Ungültiges JSON"
 
-#: src/moin/forms.py:199
+#: src/moin/forms.py:197
 msgid "Itemid not a proper UUID"
 msgstr "Itemid ist keine richtige UUID"
 
-#: src/moin/forms.py:204
+#: src/moin/forms.py:202
 msgid "No ITEMID field"
 msgstr "Kein ITEMID-Feld"
 
-#: src/moin/forms.py:214
+#: src/moin/forms.py:212
+#, python-brace-format
 msgid "{_namespace} is not a valid namespace."
 msgstr "{_namespace} ist kein gültiger Namensraum."
 
-#: src/moin/forms.py:238
+#: src/moin/forms.py:236
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: src/moin/forms.py:239
+#: src/moin/forms.py:236
 msgid "E-Mail address"
 msgstr "E-Mail-Adresse"
 
-#: src/moin/forms.py:243
+#: src/moin/forms.py:242
 msgid "Your E-Mail address"
 msgstr "Ihre E-Mail-Adresse"
 
-#: src/moin/forms.py:245
+#: src/moin/forms.py:244
 msgid "Password"
 msgstr "Passwort"
 
-#: src/moin/forms.py:308
+#: src/moin/forms.py:306
 msgid "This item doesn't exist."
 msgstr "Dieses Item existiert nicht."
 
-#: src/moin/forms.py:310
+#: src/moin/forms.py:308
 msgid "This item name is corrupt, delete and recreate."
 msgstr "Der Name dieses Items ist beschädigt. Lösch und erstell ihn neu."
 
-#: src/moin/config/default.py:431 src/moin/forms.py:322 src/moin/templates/all.html:6
-#: src/moin/templates/ticket/advanced.html:28 src/moin/templates/tickets.html:20 src/moin/templates/tickets.html:62
+#: src/moin/config/default.py:536 src/moin/forms.py:320 src/moin/templates/all.html:6
 msgid "Tags"
 msgstr "Schlagworte"
 
-#: src/moin/forms.py:328
+#: src/moin/forms.py:326
 msgid "Names"
 msgstr "Namen"
 
-#: src/moin/apps/admin/templates/admin/userbrowser.html:19 src/moin/forms.py:335
-#: src/moin/templates/usersettings_forms.html:149
+#: src/moin/apps/admin/templates/admin/userbrowser.html:19 src/moin/forms.py:333
+#: src/moin/templates/usersettings_forms.html:151
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: src/moin/forms.py:341 src/moin/templates/usersettings_forms.html:133 src/moin/themes/basic/templates/layout.html:105
+#: src/moin/forms.py:339 src/moin/templates/usersettings_forms.html:135 src/moin/themes/basic/templates/layout.html:105
 msgid "Quick Links"
 msgstr "Quick Links"
 
-#: src/moin/forms.py:344
+#: src/moin/forms.py:342
 msgid "Search Query"
 msgstr "Such-Anfrage"
 
-#: src/moin/forms.py:396
+#: src/moin/forms.py:397
 msgid "YYYY-MM-DD HH:MM:SS (example: 2013-12-31 23:59:59)"
 msgstr "JJJJ-MM-TT HH:MM:SS (z.B.: 2013-12-31 23:59:59)"
 
-#: src/moin/forms.py:397
+#: src/moin/forms.py:398
 msgid "Please use the following format: YYYY-MM-DD HH:MM:SS"
 msgstr "Bitte benutzen Sie folgendes Format: JJJJ-MM-TT HH:MM:SS"
 
-#: src/moin/forms.py:416
+#: src/moin/forms.py:417
 msgid "Invalid Reference."
 msgstr "Ungültige Referenz."
 
-#: src/moin/forms.py:424
+#: src/moin/forms.py:425
 msgid "(None)"
 msgstr "(Nichts)"
 
-#: src/moin/user.py:91
+#: src/moin/user.py:102
+#, python-brace-format
 msgid ""
 "Invalid user name '{name}'.\n"
 "Name may contain any Unicode alpha numeric character, with optional one\n"
@@ -134,173 +139,184 @@ msgstr ""
 "Der Benutzername muss aus einem oder zwei (mit einem Leerzeichen getrennten) Wörtern bestehen in denen nur "
 "Buchstaben und Ziffern vorkommen dürfen. Der Benutzername darf auch kein existierender Gruppenname sein."
 
-#: src/moin/user.py:99
+#: src/moin/user.py:108
 msgid "This user name already belongs to somebody else."
 msgstr "Dieser Benutzername ist bereits vergeben."
 
-#: src/moin/user.py:108
+#: src/moin/user.py:117
+#, python-brace-format
 msgid "Password not acceptable: {msg}"
 msgstr "Dieses Passwort ist nicht ausreichend: {msg}"
 
-#: src/moin/user.py:114
+#: src/moin/user.py:123
 msgid "Please provide your email address. If you lose your login information, you can get it by email."
 msgstr ""
 "Bitte geben Sie Ihre E-Mail-Adresse an. Wenn Sie Ihre Logindaten vergessen, können Sie Ihnen per E-Mail "
 "zugesendet werden."
 
-#: src/moin/apps/admin/views.py:146 src/moin/user.py:119
+#: src/moin/apps/admin/views.py:143 src/moin/user.py:128
 msgid "This email already belongs to somebody else."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 
-#: src/moin/user.py:860
+#: src/moin/user.py:884
+#, python-brace-format
 msgid "[{sitename}] Your wiki password recovery link"
 msgstr "[{sitename}] Passwort vergessen"
 
-#: src/moin/user.py:876
+#: src/moin/user.py:912
+#, python-brace-format
 msgid "[{sitename}] Please verify your email address"
 msgstr "[{sitename}] Bitte überprüfen Sie Ihre E-Mail-Addresse"
 
-#: src/moin/apps/admin/views.py:74 src/moin/config/default.py:433
+#: src/moin/apps/admin/views.py:71 src/moin/config/default.py:538
 msgid "Admin"
 msgstr "Admin"
 
-#: src/moin/apps/admin/views.py:83 src/moin/config/default.py:432
+#: src/moin/apps/admin/views.py:80 src/moin/config/default.py:537
 msgid "User"
 msgstr "Benutzer"
 
-#: src/moin/apps/admin/views.py:107 src/moin/apps/frontend/views.py:2002 src/moin/apps/frontend/views.py:2255
+#: src/moin/apps/admin/views.py:104 src/moin/apps/frontend/views.py:2292 src/moin/apps/frontend/views.py:2555
 msgid "Username"
 msgstr "Benutzername"
 
-#: src/moin/apps/admin/views.py:107
+#: src/moin/apps/admin/views.py:104
 msgid "User Name"
 msgstr "Benutzername"
 
-#: src/moin/apps/admin/views.py:109 src/moin/apps/frontend/views.py:2008 src/moin/apps/frontend/views.py:2035
+#: src/moin/apps/admin/views.py:106 src/moin/apps/frontend/views.py:2302 src/moin/apps/frontend/views.py:2329
 msgid "Register"
 msgstr "Registrieren"
 
 #: src/moin/apps/admin/templates/admin/index.html:5 src/moin/apps/admin/templates/admin/register_new_user.html:10
-#: src/moin/apps/admin/views.py:122
+#: src/moin/apps/admin/views.py:119
 msgid "Register New User"
 msgstr "Neuen Benutzer anlegen"
 
-#: src/moin/apps/admin/views.py:141
+#: src/moin/apps/admin/views.py:138
 msgid "User already exists"
 msgstr "Benutzer existiert bereits"
 
-#: src/moin/apps/admin/views.py:149
+#: src/moin/apps/admin/views.py:146
+#, python-brace-format
 msgid "Account for {username} created"
 msgstr "Der Account für {username} wurde erstellt."
 
-#: src/moin/apps/admin/views.py:159
+#: src/moin/apps/admin/views.py:156
+#, python-brace-format
 msgid "{username} has been sent a password recovery email."
 msgstr "Eine E-Mail zur Wiederherstellung des Passwortes wurde an{username} gesendet."
 
-#: src/moin/apps/admin/views.py:163
+#: src/moin/apps/admin/views.py:160
+#, python-brace-format
 msgid "{username} is an invalid user, no email has been sent."
 msgstr "{username} existiert nicht. Es wurde keine E-Mail versendet."
 
 #: src/moin/apps/admin/templates/admin/index.html:6 src/moin/apps/admin/templates/admin/userbrowser.html:10
-#: src/moin/apps/admin/views.py:203
+#: src/moin/apps/admin/views.py:200
 msgid "Users"
 msgstr "Benutzer"
 
-#: src/moin/apps/admin/views.py:214
+#: src/moin/apps/admin/views.py:211
+#, python-brace-format
 msgid "User profile of {username}: {email} {disabled}"
 msgstr "Benutzer-Profil von {username}: {email} {disabled}"
 
-#: src/moin/apps/admin/views.py:236
+#: src/moin/apps/admin/views.py:233
+#, python-brace-format
 msgid "{0} \"{1}\" status changed to \"{2}\""
 msgstr "{0} \"{1}\" Status geändert zu \"{2}\""
 
-#: src/moin/apps/admin/views.py:238
+#: src/moin/apps/admin/views.py:235
+#, python-brace-format
 msgid "modifying {0}.{1} failed"
 msgstr "Ändern von {0}.{1} schlug fehl."
 
-#: src/moin/apps/admin/views.py:256
+#: src/moin/apps/admin/views.py:253
+#, python-brace-format
 msgid "{0} has been sent a password recovery email."
 msgstr "Eine E-Mail zur Wiederherstellung des Passwortes wurde an{0} gesendet."
 
-#: src/moin/apps/admin/views.py:258
+#: src/moin/apps/admin/views.py:255
+#, python-brace-format
 msgid "{0} is an invalid user, no email has been sent."
 msgstr "{0} existiert nicht. Es wurde keine E-Mail versendet."
 
-#: src/moin/apps/admin/views.py:260
+#: src/moin/apps/admin/views.py:257
 msgid "No user name provided, no email sent."
 msgstr "Es wurde kein Benutzername eingegeben. Daher wurde keine E-Mail versendet."
 
 #: src/moin/apps/admin/templates/admin/index.html:10 src/moin/apps/admin/templates/admin/wikiconfig.html:50
-#: src/moin/apps/admin/views.py:309
+#: src/moin/apps/admin/views.py:306
 msgid "Show Wiki Configuration"
 msgstr "Wiki-Konfiguration anzeigen"
 
 #: src/moin/apps/admin/templates/admin/index.html:11 src/moin/apps/admin/templates/admin/wikiconfighelp.html:3
-#: src/moin/apps/admin/views.py:356
+#: src/moin/apps/admin/views.py:353
 msgid "Wiki Configuration Help"
 msgstr "Wiki-Konfigurations-Hilfe"
 
-#: src/moin/apps/admin/views.py:369
+#: src/moin/apps/admin/views.py:366
 msgid "Lexer description"
 msgstr "Lexer-Beschreibung"
 
-#: src/moin/apps/admin/views.py:369
+#: src/moin/apps/admin/views.py:366
 msgid "Lexer names"
 msgstr "Lexer-Namen"
 
-#: src/moin/apps/admin/views.py:369
+#: src/moin/apps/admin/views.py:366
 msgid "File patterns"
 msgstr "Datei-Muster"
 
-#: src/moin/apps/admin/views.py:369 src/moin/macros/HighlighterList.py:19
+#: src/moin/apps/admin/views.py:366 src/moin/macros/HighlighterList.py:19
 msgid "Mimetypes"
 msgstr "MIME-Typen"
 
 #: src/moin/apps/admin/templates/user/highlighterhelp.html:4 src/moin/apps/admin/templates/user/index_user.html:23
-#: src/moin/apps/admin/views.py:377
+#: src/moin/apps/admin/views.py:374
 msgid "Highlighters"
 msgstr "Highlighters"
 
-#: src/moin/apps/admin/views.py:384
+#: src/moin/apps/admin/views.py:381
 msgid "InterWiki name"
 msgstr "InterWiki-Name"
 
-#: src/moin/apps/admin/views.py:384 src/moin/templates/crash.html:13
+#: src/moin/apps/admin/views.py:381 src/moin/templates/crash.html:13
 msgid "URL"
 msgstr "URL"
 
-#: src/moin/apps/admin/views.py:386
+#: src/moin/apps/admin/views.py:383
 msgid "Interwiki Names"
 msgstr "InterWiki-Namen"
 
-#: src/moin/apps/admin/views.py:393 src/moin/converters/archive_in.py:68 src/moin/templates/history.html:49
-#: src/moin/templates/mychanges.html:22 src/moin/templates/utils.html:386
+#: src/moin/apps/admin/views.py:390 src/moin/converters/archive_in.py:78 src/moin/templates/history.html:49
+#: src/moin/templates/mychanges.html:22 src/moin/templates/utils.html:402
 msgid "Size"
 msgstr "Größe"
 
-#: src/moin/apps/admin/views.py:393 src/moin/templates/index.html:196
+#: src/moin/apps/admin/views.py:390 src/moin/templates/index.html:215
 msgid "Item name"
 msgstr "Item-Name"
 
-#: src/moin/apps/admin/views.py:400
+#: src/moin/apps/admin/views.py:395
 msgid "Item Sizes"
 msgstr "Item-Größen"
 
-#: src/moin/apps/admin/views.py:412
+#: src/moin/apps/admin/views.py:407
 msgid "Trashed Items"
 msgstr "Gelöschte Items"
 
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:16 src/moin/apps/admin/templates/admin/userbrowser.html:52
-#: src/moin/apps/admin/views.py:467
+#: src/moin/apps/admin/views.py:462
 msgid "User ACL Report"
 msgstr "Benutzer-ACL-Report"
 
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:4 src/moin/apps/admin/templates/admin/index.html:7
-#: src/moin/apps/admin/templates/admin/userbrowser.html:18 src/moin/apps/admin/views.py:495
+#: src/moin/apps/admin/templates/admin/userbrowser.html:18 src/moin/apps/admin/views.py:490
 msgid "Groups"
 msgstr "Gruppen"
 
-#: src/moin/apps/admin/views.py:540
+#: src/moin/apps/admin/views.py:539
 msgid "Item ACL Report"
 msgstr "Item-ACL-Report"
 
@@ -309,29 +325,37 @@ msgstr "Item-ACL-Report"
 msgid "Group ACL Report"
 msgstr "Gruppen-ACL-Report"
 
-#: src/moin/apps/admin/views.py:604
-msgid "Failed! Not authorized.<br>Item: {item_name}<br>ACL: {acl_rule}"
-msgstr "Gescheitert! Nicht berechtigt.<br>Item: {item_name}<br>ACL: {acl_rule}"
+#: src/moin/apps/admin/views.py:593
+#, python-brace-format
+msgid "Nothing changed, nothing saved. Item: {item_name} ACL: {acl_rule}"
+msgstr "Nichts geändert, nichts gespeichert. Item: {item_name} ACL: {acl_rule}"
 
-#: src/moin/apps/admin/views.py:611
-msgid "Success! ACL saved.<br>Item: {item_name}<br>ACL: {acl_rule}"
-msgstr "Erfolg! ACL gespeichert.<br>Item: {item_name}<br>ACL: {acl_rule}"
+#: src/moin/apps/admin/views.py:612
+#, python-brace-format
+msgid "Failed! Not authorized. Item: {item_name} ACL: {acl_rule}"
+msgstr "Gescheitert! Nicht berechtigt. Item: {item_name} ACL: {acl_rule}"
 
-#: src/moin/apps/admin/views.py:618
-msgid "Nothing changed, invalid ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
-msgstr "Keine Änderung, ungültige ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+#: src/moin/apps/admin/views.py:619
+#, python-brace-format
+msgid "Success! ACL saved. Item: {item_name} ACL: {acl_rule}"
+msgstr "Erfolg! ACL gespeichert. Item: {item_name} ACL: {acl_rule}"
+
+#: src/moin/apps/admin/views.py:626
+#, python-brace-format
+msgid "Failed! Invalid ACL syntax. Item: {item_name} ACL: {acl_rule}"
+msgstr "Gescheitert! Ungültige ACL-Syntax. Item: {item_name} ACL: {acl_rule}"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:17
 msgid "Group Name"
 msgstr "Gruppen-Name"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:21
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:21 src/moin/templates/index.html:139
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:21 src/moin/templates/index.html:162
 msgid "Namespace"
 msgstr "Namensraum"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:22
-#: src/moin/apps/admin/templates/admin/item_acl_report.html:18
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:26
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:22
 msgid "Item Names"
 msgstr "Item-Namen"
@@ -399,21 +423,26 @@ msgstr "Item-ACLs"
 msgid "Trash"
 msgstr "Papierkorb"
 
-#: src/moin/apps/admin/templates/admin/item_acl_report.html:13
-msgid "Show/Hide items with default ACLs"
-msgstr "Items mit Default-ACLs anzeigen/verstecken"
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:14
+msgid "Showing all items"
+msgstr "Alle Items werden angezeigt"
 
-#: src/moin/apps/admin/templates/admin/item_acl_report.html:15
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:16
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:21
 msgid "Number items:"
 msgstr "Anzahl Items"
 
-#: src/moin/apps/admin/templates/admin/item_acl_report.html:19 src/moin/items/__init__.py:550
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:19
+msgid "Showing items with modified ACLs"
+msgstr "Items mit geänderten ACLs werden angezeigt"
+
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:27 src/moin/items/__init__.py:608
 msgid "ACL"
 msgstr "ACL"
 
-#: src/moin/apps/admin/templates/admin/item_acl_report.html:31 src/moin/apps/frontend/views.py:2353
-#: src/moin/apps/frontend/views.py:2364 src/moin/apps/frontend/views.py:2375 src/moin/apps/frontend/views.py:2417
-#: src/moin/apps/frontend/views.py:2470 src/moin/apps/frontend/views.py:2488
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:39 src/moin/apps/frontend/views.py:2664
+#: src/moin/apps/frontend/views.py:2675 src/moin/apps/frontend/views.py:2688 src/moin/apps/frontend/views.py:2753
+#: src/moin/apps/frontend/views.py:2808 src/moin/apps/frontend/views.py:2828
 msgid "Save"
 msgstr "Speichern"
 
@@ -426,18 +455,18 @@ msgstr "Alter Name"
 msgid "Rev."
 msgstr "Rev."
 
-#: src/moin/apps/admin/templates/admin/trash.html:14 src/moin/converters/archive_in.py:68
+#: src/moin/apps/admin/templates/admin/trash.html:14 src/moin/converters/archive_in.py:78
 #: src/moin/templates/history.html:48 src/moin/templates/mychanges.html:21
 msgid "Timestamp"
 msgstr "Zeit"
 
 #: src/moin/apps/admin/templates/admin/trash.html:15 src/moin/templates/history.html:55
-#: src/moin/templates/utils.html:378
+#: src/moin/templates/utils.html:394
 msgid "Editor"
 msgstr "Author"
 
-#: src/moin/apps/admin/templates/admin/trash.html:16 src/moin/apps/frontend/views.py:741 src/moin/items/__init__.py:438
-#: src/moin/templates/mail/notification_main.html:24 src/moin/templates/utils.html:402
+#: src/moin/apps/admin/templates/admin/trash.html:16 src/moin/apps/frontend/views.py:859 src/moin/items/__init__.py:495
+#: src/moin/templates/mail/notification_main.html:24 src/moin/templates/utils.html:418
 msgid "Comment"
 msgstr "Kommentar"
 
@@ -446,28 +475,29 @@ msgstr "Kommentar"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/moin/apps/admin/templates/admin/trash.html:29 src/moin/config/default.py:461
+#: src/moin/apps/admin/templates/admin/trash.html:29 src/moin/config/default.py:565
 msgid "Show"
 msgstr "Anzeigen"
 
-#: src/moin/apps/admin/templates/admin/trash.html:34 src/moin/config/default.py:471
+#: src/moin/apps/admin/templates/admin/trash.html:34 src/moin/config/default.py:575 src/moin/macros/ShowIcons.py:26
+#: src/moin/macros/ShowSmileys.py:20
 msgid "Markup"
 msgstr "Hervorheben"
 
-#: src/moin/apps/admin/templates/admin/trash.html:39 src/moin/config/default.py:472
+#: src/moin/apps/admin/templates/admin/trash.html:39 src/moin/config/default.py:576
 msgid "Meta"
 msgstr "Metadaten"
 
-#: src/moin/apps/admin/templates/admin/trash.html:44 src/moin/config/default.py:429 src/moin/config/default.py:463
+#: src/moin/apps/admin/templates/admin/trash.html:44 src/moin/config/default.py:534 src/moin/config/default.py:567
 #: src/moin/templates/all.html:5 src/moin/templates/global_history.html:62
 msgid "History"
 msgstr "Historie"
 
-#: src/moin/apps/admin/templates/admin/trash.html:49 src/moin/templates/utils.html:493
+#: src/moin/apps/admin/templates/admin/trash.html:49 src/moin/templates/utils.html:509
 msgid "Revert deleted item"
 msgstr "Gelöschtes Item wiederherstellen"
 
-#: src/moin/apps/admin/templates/admin/trash.html:55 src/moin/config/default.py:476 src/moin/templates/index.html:126
+#: src/moin/apps/admin/templates/admin/trash.html:55 src/moin/config/default.py:580 src/moin/templates/index.html:145
 msgid "Destroy"
 msgstr "Vernichten"
 
@@ -537,11 +567,11 @@ msgstr "Diese Tabelle zeigt alle Einstellungen des Wikis, die dem Standardwert e
 msgid "Default Setting"
 msgstr "Standardeinstellung"
 
-#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:14 src/moin/items/__init__.py:1406
+#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:14 src/moin/items/__init__.py:1500
 msgid "Default"
 msgstr "Standardeinstellung"
 
-#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:15 src/moin/templates/ticket/modify.html:14
+#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:15
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -566,17 +596,17 @@ msgid "Reports"
 msgstr "Berichte"
 
 #: src/moin/apps/admin/templates/user/index_user.html:15 src/moin/apps/admin/templates/user/index_user.html:17
-#: src/moin/apps/frontend/views.py:1583 src/moin/apps/frontend/views.py:1584 src/moin/templates/mychanges.html:11
+#: src/moin/apps/frontend/views.py:1855 src/moin/apps/frontend/views.py:1856 src/moin/templates/mychanges.html:11
 msgid "My Changes"
 msgstr "Meine Änderungen"
 
-#: src/moin/apps/admin/templates/user/index_user.html:19 src/moin/apps/frontend/views.py:1907
-#: src/moin/apps/frontend/views.py:1909
+#: src/moin/apps/admin/templates/user/index_user.html:19 src/moin/apps/frontend/views.py:2197
+#: src/moin/apps/frontend/views.py:2199
 msgid "Wanted Items"
 msgstr "Fehlende Items"
 
-#: src/moin/apps/admin/templates/user/index_user.html:20 src/moin/apps/frontend/views.py:1922
-#: src/moin/apps/frontend/views.py:1924
+#: src/moin/apps/admin/templates/user/index_user.html:20 src/moin/apps/frontend/views.py:2212
+#: src/moin/apps/frontend/views.py:2214
 msgid "Orphaned Items"
 msgstr "Verwaiste Items"
 
@@ -592,219 +622,240 @@ msgstr "InterWiki-Namen"
 msgid "Namespaces"
 msgstr "Namensräume"
 
-#: src/moin/apps/admin/templates/user/index_user.html:27 src/moin/templates/index.html:162
+#: src/moin/apps/admin/templates/user/index_user.html:27 src/moin/templates/index.html:188
 msgid "all"
 msgstr "alle"
 
-#: src/moin/apps/feed/views.py:109
+#: src/moin/apps/feed/views.py:133
 msgid "MoinMoin feels unhappy."
 msgstr "MoinMoin ist unglücklich."
 
-#: src/moin/apps/frontend/views.py:187
+#: src/moin/apps/frontend/views.py:196
 msgid "Global Views"
 msgstr "Globale Ansichten"
 
-#: src/moin/apps/frontend/views.py:201
-msgid "search also in non-current revisions"
-msgstr "auch in nicht-aktuellen Revisionen suchen"
-
-#: src/moin/apps/frontend/views.py:202 src/moin/apps/frontend/views.py:230 src/moin/templates/lookup.html:6
+#: src/moin/apps/frontend/views.py:219 src/moin/apps/frontend/views.py:247 src/moin/templates/lookup.html:6
 msgid "Lookup"
 msgstr "Nachschlagen"
 
-#: src/moin/apps/frontend/views.py:468
+#: src/moin/apps/frontend/views.py:549 src/moin/apps/frontend/views.py:579
+#, python-brace-format
 msgid "QueryError: invalid search term: {search_term}"
 msgstr "QueryError: Ungültiger Suchbegriff: {search_term}"
 
-#: src/moin/apps/frontend/views.py:472
+#: src/moin/apps/frontend/views.py:585
+#, python-brace-format
+msgid "QueryError: invalid regex in search term: {search_term}"
+msgstr "QueryError: Ungültiger regulärer Ausdruck im Suchbegriff: {search_term}"
+
+#: src/moin/apps/frontend/views.py:588
+#, python-brace-format
 msgid "TermNotFound: field is not indexed: {search_term}"
 msgstr "TermNotFound: das Feld ist nicht indiziert: {search_term}"
 
-#: src/moin/apps/frontend/views.py:556 src/moin/apps/frontend/views.py:563
+#: src/moin/apps/frontend/views.py:675 src/moin/apps/frontend/views.py:682
 msgid "This item is deleted."
 msgstr "Dieses Item wurde gelöscht."
 
-#: src/moin/apps/frontend/views.py:559
+#: src/moin/apps/frontend/views.py:678
 msgid "This item revision is deleted."
 msgstr "Diese Item-Revision wurde gelöscht."
 
-#: src/moin/apps/frontend/views.py:605
+#: src/moin/apps/frontend/views.py:724
+#, python-brace-format
 msgid "Items with {field} {value}"
 msgstr "Items mit {field} {value}"
 
-#: src/moin/apps/frontend/views.py:732
+#: src/moin/apps/frontend/views.py:850
 msgid "New Content Type"
 msgstr "Neuer Content-Type"
 
-#: src/moin/apps/frontend/views.py:741 src/moin/items/__init__.py:439
+#: src/moin/apps/frontend/views.py:859 src/moin/items/__init__.py:496
 msgid "Comment about your change"
 msgstr "Kommentar zu Ihrer Änderung"
 
-#: src/moin/apps/frontend/views.py:742 src/moin/items/__init__.py:441
+#: src/moin/apps/frontend/views.py:860 src/moin/items/__init__.py:498
 msgid "OK"
 msgstr "OK"
 
-#: src/moin/apps/frontend/views.py:791
+#: src/moin/apps/frontend/views.py:909
 msgid "Item conversion failed"
 msgstr "Item-Konversion schlug fehl"
 
-#: src/moin/apps/frontend/views.py:836
+#: src/moin/apps/frontend/views.py:954
 msgid "Item converted successfully"
 msgstr "Item erfolgreich konvertiert"
 
-#: src/moin/apps/frontend/views.py:870 src/moin/items/__init__.py:447
+#: src/moin/apps/frontend/views.py:988 src/moin/items/__init__.py:504
 msgid "Target"
 msgstr "Ziel"
 
-#: src/moin/apps/frontend/views.py:871
+#: src/moin/apps/frontend/views.py:989
 msgid "The name of the target item"
 msgstr "Name des Ziel-Items"
 
-#: src/moin/apps/frontend/views.py:901
+#: src/moin/apps/frontend/views.py:1019
 msgid "Delete all subitems listed below if checked:"
 msgstr "Lösche alle unten aufgelisteten Subitems wenn ausgewählt:"
 
-#: src/moin/apps/frontend/views.py:906
+#: src/moin/apps/frontend/views.py:1024
 msgid "Destroy all subitems listed below if checked:"
 msgstr "Vernichte alle unten aufgelisteten Subitems wenn ausgewählt:"
 
-#: src/moin/apps/frontend/views.py:1101
+#: src/moin/apps/frontend/views.py:1197
+#, python-brace-format
 msgid "Item '{bad_name}' does not exist or you do not have permission to access it."
 msgstr "Das Item '{bad_name}' existiert nicht oder sie haben keine Berechtigung dafür."
 
-#: src/moin/apps/frontend/views.py:1121
+#: src/moin/apps/frontend/views.py:1217
+#, python-brace-format
 msgid "Access denied for a subitem of {bad_name}, check History for status."
 msgstr "Fehlende Berechtigung für ein Subitem von {bad_name}, prüfen Sie den Status in der Historie."
 
-#: src/moin/apps/frontend/views.py:1128
+#: src/moin/apps/frontend/views.py:1224
+#, python-brace-format
 msgid "Access denied processing '{bad_name}'."
 msgstr "Zugriff verweigert beim Verarbeiten von '{bad_name}'."
 
-#: src/moin/apps/frontend/views.py:1328
+#: src/moin/apps/frontend/views.py:1291
+#, python-brace-format
 msgid "File Successfully uploaded and renamed from {bad_name} to {good_name}. "
 msgstr "Datei erfolgreich hochgeladen und von {bad_name} zu {good_name} umbenannt."
 
-#: src/moin/apps/frontend/views.py:1338
+#: src/moin/apps/frontend/views.py:1305
+#, python-brace-format
 msgid "UnicodeDecodeError, upload failed, not a text file, nothing saved: '{file_name}'. Try changing the name."
 msgstr ""
 "UnicodeDecodeError, Hochladen fehlgeschlagen, kein Text-File, nichts gesichert: '{file_name}'. Ändern Sie den "
 "Namen."
 
-#: src/moin/apps/frontend/views.py:1365
+#: src/moin/apps/frontend/views.py:1315
+#, python-brace-format
 msgid "File Successfully uploaded, existing file overwritten: '{file_name}'."
 msgstr "Datei erfolgreich hochgeladen. Bereits existierende Datei wurde überschrieben: '{file_name}'."
 
-#: src/moin/apps/frontend/views.py:1373
+#: src/moin/apps/frontend/views.py:1321
+#, python-brace-format
 msgid "Permission denied, upload failed: '{file_name}'."
 msgstr "Zugriff verweigert, Hochladen fehlgeschlagen: '{file_name}'."
 
-#: src/moin/apps/frontend/views.py:1391
+#: src/moin/apps/frontend/views.py:1327
+#, python-brace-format
 msgid "File Successfully uploaded: '{item_name}'."
 msgstr "Datei erfolgreich hochgeladen: '{item_name}'."
 
-#: src/moin/apps/frontend/views.py:1418
+#: src/moin/apps/frontend/views.py:1588
 msgid "Apply Filter"
 msgstr "Filter anwenden"
 
-#: src/moin/apps/frontend/views.py:1493
+#: src/moin/apps/frontend/views.py:1759
 msgid "Global Index of All Namespaces"
 msgstr "Globaler Index aller Namensräume"
 
-#: src/moin/apps/frontend/views.py:1495 src/moin/macros/_base.py:269 src/moin/macros/_base.py:272
+#: src/moin/apps/frontend/views.py:1761 src/moin/macros/_base.py:270 src/moin/macros/_base.py:273
+#, python-brace-format
 msgid "Namespace '{name}' "
 msgstr "Namensraum '{name}' "
 
-#: src/moin/apps/frontend/views.py:1498
+#: src/moin/apps/frontend/views.py:1764
+#, python-brace-format
 msgid "subitems '{item_name}'"
 msgstr "Subitems '{item_name}'"
 
-#: src/moin/apps/frontend/views.py:1499 src/moin/macros/_base.py:313
+#: src/moin/apps/frontend/views.py:1765 src/moin/macros/_base.py:317
+#, python-brace-format
 msgid "Index of {what}"
 msgstr "Index von {what}"
 
-#: src/moin/apps/frontend/views.py:1501
+#: src/moin/apps/frontend/views.py:1767
+#, python-brace-format
 msgid "Index of subitems '{item_name}'"
 msgstr "Index der Subitems '{item_name}'"
 
-#: src/moin/apps/frontend/views.py:1503 src/moin/config/default.py:430 src/moin/templates/index.html:220
+#: src/moin/apps/frontend/views.py:1769 src/moin/config/default.py:535 src/moin/templates/index.html:236
 msgid "Global Index"
 msgstr "Globaler Index"
 
-#: src/moin/apps/frontend/views.py:1542
+#: src/moin/apps/frontend/views.py:1813
 msgid "You must be logged in to see your changes."
 msgstr "Sie müssen sich anmelden, um Ihre Änderungen zu sehen."
 
-#: src/moin/apps/frontend/views.py:1616
+#: src/moin/apps/frontend/views.py:1888
+#, python-brace-format
 msgid "Items that are referred by '{item_name}'"
 msgstr "Items, auf die von '{item_name}' verweisen wird"
 
-#: src/moin/apps/frontend/views.py:1661
+#: src/moin/apps/frontend/views.py:1932
+#, python-brace-format
 msgid "Items which refer to '{item_name}'"
 msgstr "Items, die auf '{item_name}' verweisen"
 
-#: src/moin/apps/frontend/views.py:1833 src/moin/apps/frontend/views.py:1839 src/moin/config/default.py:429
+#: src/moin/apps/frontend/views.py:2125 src/moin/apps/frontend/views.py:2131 src/moin/config/default.py:534
 msgid "Global History"
 msgstr "Globale Historie"
 
-#: src/moin/apps/frontend/views.py:1835
+#: src/moin/apps/frontend/views.py:2127
 msgid "Global History of All Namespaces"
 msgstr "Globale Historie aller Namensräume"
 
-#: src/moin/apps/frontend/views.py:1837
+#: src/moin/apps/frontend/views.py:2129
+#, python-brace-format
 msgid "History of Namespace '{namespace}'"
 msgstr "Historie des Namensraums '{namespace}'"
 
-#: src/moin/apps/frontend/views.py:1934 src/moin/apps/frontend/views.py:1958
+#: src/moin/apps/frontend/views.py:2224 src/moin/apps/frontend/views.py:2248
+#, python-brace-format
 msgid "You must login to use this action: {action}."
 msgstr "Sie müssen sich hierzu anmelden: {action}."
 
-#: src/moin/apps/frontend/views.py:1937
+#: src/moin/apps/frontend/views.py:2227
 msgid "A quicklink to this page could not be added for you."
 msgstr "Es konnte kein Quicklink zu dieser Item für Sie erstellt werden."
 
-#: src/moin/apps/frontend/views.py:1940
+#: src/moin/apps/frontend/views.py:2230
 msgid "Your quicklink to this page could not be removed."
 msgstr "Ihr Quicklink zu dieser Item konnte nicht entfernt werden."
 
-#: src/moin/apps/frontend/views.py:1960
+#: src/moin/apps/frontend/views.py:2250
 msgid "You are not allowed to subscribe to an item you may not read."
 msgstr "Sie dürfen kein Item abonnieren, für das Sie keine Leserechte haben."
 
-#: src/moin/apps/frontend/views.py:1965
+#: src/moin/apps/frontend/views.py:2255
 msgid "Can't remove the subscription! You are subscribed to this page, but not by itemid."
 msgstr "Das Abonnement kann nicht aufgehoben werden! Sie haben diese Seite abonniert, aber nicht über die Itemid."
 
-#: src/moin/apps/frontend/views.py:1967
+#: src/moin/apps/frontend/views.py:2257
 msgid "Please edit the subscription in your settings."
 msgstr "Bitte bearbeiten Sie die Abonnements in Ihren Einstellungen."
 
-#: src/moin/apps/frontend/views.py:1973
+#: src/moin/apps/frontend/views.py:2263
 msgid "You could not get subscribed to this item."
 msgstr "Sie konnten nicht zu den Abonnenten dieses Items hinzugefügt werden."
 
-#: src/moin/apps/frontend/views.py:1982 src/moin/apps/frontend/views.py:2166 src/moin/apps/frontend/views.py:2305
+#: src/moin/apps/frontend/views.py:2272 src/moin/apps/frontend/views.py:2467 src/moin/apps/frontend/views.py:2616
 msgid "The passwords do not match."
 msgstr "Die Passwörter stimmen nicht überein."
 
-#: src/moin/apps/frontend/views.py:2003
+#: src/moin/apps/frontend/views.py:2293
 msgid "The login username you want to use"
 msgstr "Der Anmelde-Name, den Sie benutzen wollen"
 
-#: src/moin/apps/frontend/views.py:2005 src/moin/apps/frontend/views.py:2192 src/moin/apps/frontend/views.py:2342
+#: src/moin/apps/frontend/views.py:2296 src/moin/apps/frontend/views.py:2493 src/moin/apps/frontend/views.py:2653
 msgid "The login password you want to use"
 msgstr "Das Anmelde-Passwort, das Sie benutzen wollen"
 
-#: src/moin/apps/frontend/views.py:2006 src/moin/apps/frontend/views.py:2195 src/moin/apps/frontend/views.py:2345
+#: src/moin/apps/frontend/views.py:2299 src/moin/apps/frontend/views.py:2496 src/moin/apps/frontend/views.py:2656
 msgid "Repeat the same password"
 msgstr "Wiederholen Sie das gleiche Passwort"
 
-#: src/moin/apps/frontend/views.py:2060
+#: src/moin/apps/frontend/views.py:2354
 msgid "Account verification required, please see the email we sent to your address."
 msgstr ""
 "Eine Überprüfung des Kontos ist notwendig, bitte prüfen Sie \"\n"
 "\"die E-Mail, die wir an Ihre Adresse gesandt haben."
 
-#: src/moin/apps/frontend/views.py:2063
+#: src/moin/apps/frontend/views.py:2358
+#, python-brace-format
 msgid ""
 "An error occurred while sending the verification email: \"{message}\" Please contact an administrator to activate"
 " your account."
@@ -812,921 +863,939 @@ msgstr ""
 "Während des Sendens der Überprüfungs-E-Mail ist ein Fehler aufgetreten: \"\n"
 "\"\"{message}\" Bitte kontaktieren Sie einen Administrator, um Ihr Konto zu aktivieren."
 
-#: src/moin/apps/frontend/views.py:2070
+#: src/moin/apps/frontend/views.py:2364
 msgid "Account created, please log in now."
 msgstr "Das Benutzerkonto wurde erstellt. Bitte melden Sie sich an."
 
-#: src/moin/apps/frontend/views.py:2086
-msgid "This email is already in use."
-msgstr "Diese E-Mail-Adresse wird bereits verwendet."
-
-#: src/moin/apps/frontend/views.py:2090
-msgid "Your account has been activated, you can log in now."
-msgstr "Ihr Account wurde aktiviert, Sie können sich jetzt anmelden."
-
-#: src/moin/apps/frontend/views.py:2092
-msgid "Your new email address has been confirmed."
-msgstr "Ihre neue E-Mail-Adresse wurde bestätigt."
-
-#: src/moin/apps/frontend/views.py:2098
+#: src/moin/apps/frontend/views.py:2383 src/moin/apps/frontend/views.py:2400
 msgid "Your username and/or token is invalid!"
 msgstr "Ihr Benutzername und/oder Token ist ungültig!"
 
-#: src/moin/apps/frontend/views.py:2110
+#: src/moin/apps/frontend/views.py:2385
+msgid "This email is already in use."
+msgstr "Diese E-Mail-Adresse wird bereits verwendet."
+
+#: src/moin/apps/frontend/views.py:2389
+msgid "Your account has been activated, you can log in now."
+msgstr "Ihr Account wurde aktiviert, Sie können sich jetzt anmelden."
+
+#: src/moin/apps/frontend/views.py:2391
+msgid "Your new email address has been confirmed."
+msgstr "Ihre neue E-Mail-Adresse wurde bestätigt."
+
+#: src/moin/apps/frontend/views.py:2412
 msgid "Your user name or your email address is needed."
 msgstr "Bitte geben Sie Ihren Benutzernamen oder Ihre E-Mail-Adresse an."
 
-#: src/moin/apps/frontend/views.py:2126 src/moin/apps/frontend/views.py:2187 src/moin/converters/archive_in.py:68
+#: src/moin/apps/frontend/views.py:2428 src/moin/apps/frontend/views.py:2488 src/moin/converters/archive_in.py:78
 #: src/moin/macros/ShowSmileys.py:20
 msgid "Name"
 msgstr "Name"
 
-#: src/moin/apps/frontend/views.py:2126 src/moin/apps/frontend/views.py:2187
+#: src/moin/apps/frontend/views.py:2428 src/moin/apps/frontend/views.py:2488
 msgid "Your login name"
 msgstr "Ihr Anmelde-Name"
 
-#: src/moin/apps/frontend/views.py:2128
+#: src/moin/apps/frontend/views.py:2430
 msgid "Recover password"
 msgstr "Passwort zurücksetzen"
 
-#: src/moin/apps/frontend/views.py:2136 src/moin/templates/lostpass.html:5
+#: src/moin/apps/frontend/views.py:2437 src/moin/templates/lostpass.html:5
 msgid "Lost Password"
 msgstr "Passwort vergessen"
 
-#: src/moin/apps/frontend/views.py:2158
+#: src/moin/apps/frontend/views.py:2459
 msgid "If this account exists, you will be notified."
 msgstr "Wenn dieses Benutzerkonto existiert, werden Sie benachrichtigt."
 
-#: src/moin/apps/frontend/views.py:2167 src/moin/apps/frontend/views.py:2307
+#: src/moin/apps/frontend/views.py:2468 src/moin/apps/frontend/views.py:2618
 msgid "New password is unacceptable, could not get processed."
 msgstr "Das neue Passwort kann nicht verwendet werden, da es nicht verarbeitet werden konnte."
 
-#: src/moin/apps/frontend/views.py:2188
+#: src/moin/apps/frontend/views.py:2489
 msgid "Recovery token"
 msgstr "Wiederherstellungscode"
 
-#: src/moin/apps/frontend/views.py:2189
+#: src/moin/apps/frontend/views.py:2490
 msgid "The recovery token that has been sent to you"
 msgstr "Das Recovery-Token, das an Sie gesendet wurde"
 
-#: src/moin/apps/frontend/views.py:2191 src/moin/apps/frontend/views.py:2341
+#: src/moin/apps/frontend/views.py:2492 src/moin/apps/frontend/views.py:2652
 msgid "New password"
 msgstr "Neues Passwort"
 
-#: src/moin/apps/frontend/views.py:2194 src/moin/apps/frontend/views.py:2344
+#: src/moin/apps/frontend/views.py:2495 src/moin/apps/frontend/views.py:2655
 msgid "New password (repeat)"
 msgstr "Neues Passwort (wiederholen)"
 
-#: src/moin/apps/frontend/views.py:2197 src/moin/apps/frontend/views.py:2347
+#: src/moin/apps/frontend/views.py:2498 src/moin/apps/frontend/views.py:2658
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: src/moin/apps/frontend/views.py:2205 src/moin/templates/recoverpass.html:5
+#: src/moin/apps/frontend/views.py:2505 src/moin/templates/recoverpass.html:5
 msgid "Recover Password"
 msgstr "Passwort zurücksetzen"
 
-#: src/moin/apps/frontend/views.py:2218
+#: src/moin/apps/frontend/views.py:2518
 msgid "Your password has been changed, you can log in now."
 msgstr "Ihr Passwort wurde geändert. Sie können sich jetzt anmelden."
 
-#: src/moin/apps/frontend/views.py:2220
+#: src/moin/apps/frontend/views.py:2520
 msgid "Your token is invalid!"
 msgstr "Ihr Code ist ungültig!"
 
-#: src/moin/apps/frontend/views.py:2230
+#: src/moin/apps/frontend/views.py:2530
 msgid "Either your username or password was invalid."
 msgstr "Ihr Benutzername oder Passwort war ungültig."
 
-#: src/moin/apps/frontend/views.py:2261
+#: src/moin/apps/frontend/views.py:2559
+msgid "Remember me"
+msgstr "Angemeldet bleiben"
+
+#: src/moin/apps/frontend/views.py:2564
 msgid "Log in"
 msgstr "Anmelden"
 
-#: src/moin/apps/frontend/views.py:2268 src/moin/templates/utils.html:482
-#: src/moin/themes/basic/templates/layout.html:172
+#: src/moin/apps/frontend/views.py:2571 src/moin/templates/utils.html:498
+#: src/moin/themes/basic/templates/layout.html:172 src/moin/themes/focus/templates/layout.html:72
+#: src/moin/themes/focus/templates/layout.html:74
 msgid "Login"
 msgstr "Anmelden"
 
-#: src/moin/apps/frontend/views.py:2282
+#: src/moin/apps/frontend/views.py:2585
 msgid "You are logged in."
 msgstr "Sie sind jetzt angemeldet."
 
-#: src/moin/apps/frontend/views.py:2294
+#: src/moin/apps/frontend/views.py:2605
 msgid "You are logged out."
 msgstr "Sie sind jetzt abgemeldet."
 
-#: src/moin/apps/frontend/views.py:2306
+#: src/moin/apps/frontend/views.py:2617
 msgid "The current password was wrong."
 msgstr "Das aktuelle Passwort war nicht korrekt."
 
-#: src/moin/apps/frontend/views.py:2310
+#: src/moin/apps/frontend/views.py:2621
 msgid "New password not acceptable: "
 msgstr "Neues Passwort ist nicht akzeptabel: "
 
-#: src/moin/apps/frontend/views.py:2338
+#: src/moin/apps/frontend/views.py:2649
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
 
-#: src/moin/apps/frontend/views.py:2339
+#: src/moin/apps/frontend/views.py:2650
 msgid "Your current login password"
 msgstr "Ihr aktuelles Anmelde-Passwort"
 
-#: src/moin/apps/frontend/views.py:2369
+#: src/moin/apps/frontend/views.py:2680
 msgid "Always use ISO 8601 date-time format"
 msgstr "Immer das ISO 8601 Datumsformat verwenden"
 
-#: src/moin/apps/frontend/views.py:2370
+#: src/moin/apps/frontend/views.py:2681
 msgid "Publish my email (not my wiki homepage) in author info"
 msgstr "Veröffentliche meine E-Mail-Adresse (statt meiner Wiki-Homepage) in den Autoreninformationen"
 
-#: src/moin/apps/frontend/views.py:2371
+#: src/moin/apps/frontend/views.py:2682
 msgid "Open editor on double click"
 msgstr "Editor durch Doppelklick öffnen"
 
-#: src/moin/apps/frontend/views.py:2372
+#: src/moin/apps/frontend/views.py:2683
+msgid "Use HTML editor"
+msgstr "HTML-Editor verwenden"
+
+#: src/moin/apps/frontend/views.py:2684
+msgid "Use Markdown editor"
+msgstr "Markdown-Editor verwenden"
+
+#: src/moin/apps/frontend/views.py:2685
 msgid "Scroll page after edit"
 msgstr "Seite im Editor Scrollen"
 
-#: src/moin/apps/frontend/views.py:2373
+#: src/moin/apps/frontend/views.py:2686
 msgid "Show comment sections"
 msgstr "Kommentarbereiche anzeigen"
 
-#: src/moin/apps/frontend/views.py:2374
+#: src/moin/apps/frontend/views.py:2687
 msgid "Disable this account forever"
 msgstr "Benutzerkonto dauerhaft deaktivieren"
 
-#: src/moin/apps/frontend/views.py:2383
+#: src/moin/apps/frontend/views.py:2696
 msgid "Invalid subscription syntax: "
 msgstr "Invalider Abonnement-Syntax"
 
-#: src/moin/apps/frontend/views.py:2384
+#: src/moin/apps/frontend/views.py:2697
 msgid "Invalid keyword: "
 msgstr "Invalides Schlüsselwort"
 
-#: src/moin/apps/frontend/views.py:2385
+#: src/moin/apps/frontend/views.py:2698
 msgid "Invalid RE syntax: "
 msgstr "Ungültige Syntax für Regulären Ausdruck:"
 
-#: src/moin/apps/frontend/views.py:2425 src/moin/templates/usersettings.html:19
+#: src/moin/apps/frontend/views.py:2761 src/moin/templates/usersettings.html:19
 msgid "User Settings"
 msgstr "Benutzer-Einstellungen"
 
-#: src/moin/apps/frontend/views.py:2436
+#: src/moin/apps/frontend/views.py:2772
 msgid "This name is already in use: "
 msgstr "Dieser Name wird bereits verwendet: "
 
-#: src/moin/apps/frontend/views.py:2437
+#: src/moin/apps/frontend/views.py:2773
 msgid "The Display-Name contains invalid characters: "
 msgstr "Der Anzeige-Name enthält ungültige Zeichen: "
 
-#: src/moin/apps/frontend/views.py:2438
+#: src/moin/apps/frontend/views.py:2774
 msgid "The Username contains invalid characters: "
 msgstr "Der Benutzername enthält ungültige Zeichen: "
 
-#: src/moin/apps/frontend/views.py:2459
+#: src/moin/apps/frontend/views.py:2795
 msgid "Usernames"
 msgstr "Benutzernamen"
 
-#: src/moin/apps/frontend/views.py:2459
+#: src/moin/apps/frontend/views.py:2796
 msgid "The login usernames you want to use"
 msgstr "Die Anmelde-Namen, die Sie benutzen wollen"
 
-#: src/moin/apps/frontend/views.py:2460
+#: src/moin/apps/frontend/views.py:2798
 msgid "Display-Name"
 msgstr "Anzeigename"
 
-#: src/moin/apps/frontend/views.py:2461
+#: src/moin/apps/frontend/views.py:2799
 msgid "Your display name (optional, rarely used)"
 msgstr "Ihr Anzeige-Name (informativ, selten genutzt)"
 
-#: src/moin/apps/frontend/views.py:2465
+#: src/moin/apps/frontend/views.py:2803
 msgid "Timezone"
 msgstr "Zeitzone"
 
-#: src/moin/apps/frontend/views.py:2467
+#: src/moin/apps/frontend/views.py:2805
 msgid "Locale"
 msgstr "Lokalisierung"
 
-#: src/moin/apps/frontend/views.py:2476
+#: src/moin/apps/frontend/views.py:2815
+msgid "(System Default)"
+msgstr "(Systemstandard)"
+
+#: src/moin/apps/frontend/views.py:2816
 msgid "Theme name"
 msgstr "Theme-Name"
 
-#: src/moin/apps/frontend/views.py:2479
-msgid "User CSS URL"
-msgstr "URL für benutzerdefiniertes CSS"
+#: src/moin/apps/frontend/views.py:2818
+msgid "User CSS file"
+msgstr "Benutzerdefinierte CSS-Datei"
 
-#: src/moin/apps/frontend/views.py:2480
-msgid "Give the URL of your custom CSS (optional)"
-msgstr "Geben Sie die URL Ihres benutzerspezifischen CSS an (optional)"
+#: src/moin/apps/frontend/views.py:2819
+msgid "Give the PATHNAME of your individual CSS file (optional)"
+msgstr "Geben Sie den PFADNAMEN Ihrer benutzerspezifischen CSS-Datei an (optional)"
 
-#: src/moin/apps/frontend/views.py:2482
+#: src/moin/apps/frontend/views.py:2822
 msgid "Number rows in edit textarea"
 msgstr "Anzahl Zeilen im Text Eingabefeld"
 
-#: src/moin/apps/frontend/views.py:2483
+#: src/moin/apps/frontend/views.py:2823
 msgid "Editor textarea height (0=auto)"
 msgstr "Höhe des Editors (0=automatisch)"
 
-#: src/moin/apps/frontend/views.py:2485
+#: src/moin/apps/frontend/views.py:2825
 msgid "History results per page"
 msgstr "Anzahl Historien-Ergebnisse pro Seite"
 
-#: src/moin/apps/frontend/views.py:2486
+#: src/moin/apps/frontend/views.py:2826
 msgid "Number of results per page (0=no paging)"
 msgstr "Anzahl der Ergebnisse pro Seite (0=nicht seitenweise)"
 
-#: src/moin/apps/frontend/views.py:2527
+#: src/moin/apps/frontend/views.py:2868
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: src/moin/apps/frontend/views.py:2536
+#: src/moin/apps/frontend/views.py:2877
 msgid "This email is already in use"
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 
-#: src/moin/apps/frontend/views.py:2557
+#: src/moin/apps/frontend/views.py:2899
 msgid "A confirmation email has been sent to your newly configured email address."
 msgstr "Eine Bestätigungs-E-Mail wurde an ihre neue E-Mail-Adresse gesendet."
 
-#: src/moin/apps/frontend/views.py:2571
+#: src/moin/apps/frontend/views.py:2913
 msgid "Your email address was not changed because sending the verification email failed. Please try again later."
 msgstr ""
 "Ihre E-Mail-Adresse wurde nicht geändert, weil das Senden der Überprüfungs-E-Mail fehlgeschlagen ist. Bitte "
 "versuchen Sie es später erneut."
 
-#: src/moin/apps/frontend/views.py:2586
+#: src/moin/apps/frontend/views.py:2927
 msgid "Nothing saved."
 msgstr "Nichts gespeichert."
 
-#: src/moin/apps/frontend/views.py:2590
+#: src/moin/apps/frontend/views.py:2931
 msgid "Your changes have been saved."
 msgstr "Ihre Änderungen wurden gespeichert."
 
-#: src/moin/apps/frontend/views.py:2647
+#: src/moin/apps/frontend/views.py:2985
 msgid "You must log in to use bookmarks."
 msgstr "Sie müssen sich anmelden, um Lesezeichen verwenden zu können."
 
-#: src/moin/apps/frontend/views.py:2741
+#: src/moin/apps/frontend/views.py:3078
 msgid "There is only one revision eligible for diff."
 msgstr "Es gibt nur eine Revision, die für die Differenz-Anzeige wählbar ist."
 
-#: src/moin/apps/frontend/views.py:2871
+#: src/moin/apps/frontend/views.py:3172
+msgid "Cannot generate a comparison view because revisions have different content types."
+msgstr "Es kann keine Vergleichsansicht erzeugt werden, da die Revisionen unterschiedliche Content-Types haben."
+
+#: src/moin/apps/frontend/views.py:3174
+#, python-brace-format
+msgid "Old content type: {old_ct}"
+msgstr "Alter Content-Type: {old_ct}"
+
+#: src/moin/apps/frontend/views.py:3176
+#, python-brace-format
+msgid "New content type: {new_ct}"
+msgstr "Neuer Content-Type: {new_ct}"
+
+#: src/moin/apps/frontend/views.py:3230
+#, python-brace-format
 msgid "Items with similar names to '{item_name}'"
 msgstr "Items mit ähnlichen Namen wie '{item_name}'"
 
-#: src/moin/apps/frontend/views.py:2971 src/moin/apps/frontend/views.py:2979
+#: src/moin/apps/frontend/views.py:3330 src/moin/apps/frontend/views.py:3338
 msgid "Global Tags"
 msgstr "Globale Schlagworte"
 
-#: src/moin/apps/frontend/views.py:2981
+#: src/moin/apps/frontend/views.py:3340
 msgid "Global Tags in All Namespaces"
 msgstr "Globale Schlagworte in allen Namensräumen"
 
-#: src/moin/apps/frontend/views.py:2983
+#: src/moin/apps/frontend/views.py:3342
+#, python-brace-format
 msgid "Tags in Namespace '{namespace}'"
 msgstr "Schlagworte im Namensraum '{namespace}'"
 
-#: src/moin/apps/frontend/views.py:3029
+#: src/moin/apps/frontend/views.py:3387
+#, python-brace-format
 msgid "Items tagged with {tag}"
 msgstr "Items, die mit dem Schlagwort {tag} markiert wurden"
 
-#: src/moin/auth/__init__.py:263 src/moin/auth/ldap_login.py:135
+#: src/moin/apps/frontend/views.py:3455
+msgid "Internal error"
+msgstr "Interner Fehler"
+
+#: src/moin/apps/frontend/views.py:3456
+msgid "An unexpected error occurred."
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
+#: src/moin/apps/frontend/views.py:3459 src/moin/templates/crash.html:6
+msgid ""
+"More details have been logged. The following data will be helpful for the site admin in locating the "
+"corresponding log entries:"
+msgstr ""
+"Mehr Details wurden geloggt. Die folgenden Daten könnten für die Administration hilfreich sein, um die passenden "
+"Log-Einträge zu finden:"
+
+#: src/moin/apps/frontend/views.py:3462 src/moin/templates/crash.html:9
+msgid "Error ID"
+msgstr "Fehler ID"
+
+#: src/moin/auth/__init__.py:286 src/moin/auth/ldap_login.py:224
 msgid "Missing password. Please enter user name and password."
 msgstr "Fehlendes Passwort. Bitte geben Sie Benutzername und Passwort ein."
 
-#: src/moin/auth/__init__.py:271 src/moin/auth/ldap_login.py:203 src/moin/auth/ldap_login.py:262
+#: src/moin/auth/__init__.py:296 src/moin/auth/ldap_login.py:182 src/moin/auth/ldap_login.py:291
 msgid "Invalid username or password."
 msgstr "Benutzername oder Passwort ungültig."
 
-#: src/moin/auth/__init__.py:277
+#: src/moin/auth/__init__.py:302
+#, python-brace-format
 msgid "If you do not have an account, <a href=\"{register_url}\">you can create one now</a>. "
 msgstr "Wenn Sie kein Benutzerkonto haben, <a href=\"{register_url}\">können Sie jetzt eines anlegen</a>. "
 
-#: src/moin/auth/__init__.py:280
+#: src/moin/auth/__init__.py:305
+#, python-brace-format
 msgid "<a href=\"{recover_url}\">Forgot your password?</a>"
 msgstr "<a href=\"{recover_url}\">Passwort vergessen?</a>"
 
-#: src/moin/auth/http.py:63
+#: src/moin/auth/http.py:60
 msgid "Please log in first."
 msgstr "Bitte melden Sie sich erst an."
 
-#: src/moin/auth/ldap_login.py:275
+#: src/moin/auth/ldap_login.py:307
+#, python-brace-format
 msgid "LDAP server {server} failed."
 msgstr "Verbindung zum LDAP-Server {server} fehlgeschlagen."
 
-#: src/moin/config/default.py:296
+#: src/moin/config/default.py:392
+#, python-brace-format
 msgid "For a password a minimum length of {min_length} characters is required."
 msgstr "Ein Passwort muss mindestens {min_length} Zeichen haben."
 
-#: src/moin/config/default.py:300
+#: src/moin/config/default.py:396
+#, python-brace-format
 msgid "For a password a minimum of {min_different:d} different characters is required."
 msgstr "Ein Passwort muss mindestens {min_different:d} verschiedene Zeichen beinhalten."
 
-#: src/moin/config/default.py:313
+#: src/moin/config/default.py:408
 msgid "Password is too easy to guess (password contains name or name contains password)."
 msgstr "Das Passwort ist zu leicht zu erraten (Passwort ist Teil des Benutzernamens oder umgekehrt)."
 
-#: src/moin/config/default.py:322
+#: src/moin/config/default.py:413
 msgid "Password is too easy to guess (keyboard sequence)."
 msgstr "Das Passwort ist zu leicht zu erraten (Zeichenfolge auf der Tastatur)."
 
-#: src/moin/config/default.py:428
+#: src/moin/config/default.py:533
 msgid "Home"
 msgstr "Start"
 
-#: src/moin/config/default.py:428
+#: src/moin/config/default.py:533
 msgid "Home Page"
 msgstr "HomePage"
 
-#: src/moin/config/default.py:430 src/moin/templates/all.html:7
+#: src/moin/config/default.py:535 src/moin/templates/all.html:7
 msgid "Index"
 msgstr "Index"
 
-#: src/moin/config/default.py:431
+#: src/moin/config/default.py:536
 msgid "Global Tags Index"
 msgstr "Globaler Schlagwort-Index"
 
-#: src/moin/config/default.py:433
+#: src/moin/config/default.py:538
 msgid "Administration & Docs"
 msgstr "Administration & Doku"
 
-#: src/moin/config/default.py:451
+#: src/moin/config/default.py:554
 msgid "Discussion"
 msgstr "Diskussion"
 
-#: src/moin/config/default.py:462 src/moin/templates/blog/utils.html:12 src/moin/templates/show.html:14
+#: src/moin/config/default.py:566 src/moin/templates/blog/utils.html:12 src/moin/templates/show.html:14
 msgid "Modify"
 msgstr "Bearbeiten"
 
-#: src/moin/config/default.py:462
+#: src/moin/config/default.py:566
 msgid "Edit or Upload"
 msgstr "Bearbeiten oder Hochladen"
 
-#: src/moin/config/default.py:463
+#: src/moin/config/default.py:567
 msgid "Revision History"
 msgstr "Revisions-Historie"
 
-#: src/moin/config/default.py:464 src/moin/templates/index.html:116 src/moin/themes/basic/templates/modify.html:30
+#: src/moin/config/default.py:568 src/moin/templates/index.html:125 src/moin/themes/basic/templates/modify.html:35
 msgid "Download"
 msgstr "Herunterladen"
 
-#: src/moin/config/default.py:465 src/moin/templates/index.html:121
+#: src/moin/config/default.py:569 src/moin/templates/index.html:135
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/moin/config/default.py:465
+#: src/moin/config/default.py:569
 msgid "Delete this item"
 msgstr "Dieses Item löschen"
 
-#: src/moin/config/default.py:466
+#: src/moin/config/default.py:570
 msgid "Create or remove a navigation link to this item"
 msgstr "Einen Navigations-Link zu diesem Item anlegen oder entfernen"
 
-#: src/moin/config/default.py:467
+#: src/moin/config/default.py:571
 msgid "Switch notifications about item changes on or off"
 msgstr "Benachrichtigungen über Item-Änderungen an- oder abschalten"
 
-#: src/moin/config/default.py:468
+#: src/moin/config/default.py:572
 msgid "Subitems"
 msgstr "Untergeordnete Items"
 
-#: src/moin/config/default.py:468
+#: src/moin/config/default.py:572
 msgid "Subitems Index"
 msgstr "Index der untergeordneten Items"
 
-#: src/moin/config/default.py:470
+#: src/moin/config/default.py:574
 msgid "Rename"
 msgstr "Umbenennen"
 
-#: src/moin/config/default.py:470
+#: src/moin/config/default.py:574
 msgid "Rename this item"
 msgstr "Dieses Item umbenennen"
 
-#: src/moin/config/default.py:471
+#: src/moin/config/default.py:575
 msgid "Show markup with Syntax-Highlighting"
 msgstr "Mit Syntax-Highlighting anzeigen"
 
-#: src/moin/config/default.py:472
+#: src/moin/config/default.py:576
 msgid "Display Metadata"
 msgstr "Metadaten anzeigen"
 
-#: src/moin/config/default.py:473
+#: src/moin/config/default.py:577
 msgid "Site Map"
 msgstr "Sitemap"
 
-#: src/moin/config/default.py:473
+#: src/moin/config/default.py:577
 msgid "Local Site Map of this item"
 msgstr "Lokale Sitemap dieses Items"
 
-#: src/moin/config/default.py:474
+#: src/moin/config/default.py:578
 msgid "Similar"
 msgstr "Ähnliches"
 
-#: src/moin/config/default.py:474
+#: src/moin/config/default.py:578
 msgid "Items with similar names"
 msgstr "Items mit ähnlichen Namen"
 
-#: src/moin/config/default.py:475
+#: src/moin/config/default.py:579
 msgid "Convert"
 msgstr "Konvertieren"
 
-#: src/moin/config/default.py:475
+#: src/moin/config/default.py:579
 msgid "Convert this item"
 msgstr "Dieses Item konvertieren"
 
-#: src/moin/config/default.py:476
+#: src/moin/config/default.py:580
 msgid "Completely destroy this item"
 msgstr "Dieses Item vollständig zerstören"
 
-#: src/moin/config/default.py:477 src/moin/templates/ticket/modify.html:23
+#: src/moin/config/default.py:581
 msgid "Comments"
 msgstr "Kommentare"
 
-#: src/moin/config/default.py:477 src/moin/templates/dictionary.js:15
+#: src/moin/config/default.py:581 src/moin/templates/dictionary.js:15
 msgid "Hide comments"
 msgstr "Kommentare verstecken"
 
-#: src/moin/config/default.py:478
+#: src/moin/config/default.py:582
 msgid "Transclusions"
 msgstr "Transklusionen"
 
-#: src/moin/config/default.py:478 src/moin/templates/dictionary.js:18
+#: src/moin/config/default.py:582 src/moin/templates/dictionary.js:18
 msgid "Show transclusions"
 msgstr "Transklusionen anzeigen"
 
-#: src/moin/config/default.py:731
+#: src/moin/config/default.py:832
 msgid "To request an account, see bottom of Home page."
 msgstr "Zur Anforderung eines Benutzerkontos, siehe unten auf der Startseite."
 
-#: src/moin/constants/contenttypes.py:163
+#: src/moin/constants/contenttypes.py:161
 msgid "This is a plain text item, there is no markup."
 msgstr "Dies ist ein reines Text Item, es gibt kein Markup."
 
-#: src/moin/constants/contenttypes.py:164
+#: src/moin/constants/contenttypes.py:162
 msgid "This item can not be edited, upload a revised file."
 msgstr "Dieses Item kann nicht bearbeitet werden, laden Sie eine neue Datei-Version hoch."
 
-#: src/moin/constants/contenttypes.py:167
+#: src/moin/constants/contenttypes.py:165
 msgid "Use a semicolon or comma to separate cells."
 msgstr "Nutze ein Semikolon oder Komma um Zellen zu trennen."
 
-#: src/moin/constants/contenttypes.py:168
+#: src/moin/constants/contenttypes.py:166
 msgid "If the first row is recognized as a header, the table will be sortable."
 msgstr "Wenn die erste Zeile als Kopfzeile erkannt wird, ist die Tabelle sortierbar."
 
-#: src/moin/constants/contenttypes.py:176
-msgid "Click for help on Moin Wiki markup."
-msgstr "Hilfe zur Moin Wiki Syntax."
+#: src/moin/constants/contenttypes.py:174
+msgid "Click for help on MoinWiki markup."
+msgstr "Klicken Sie hier für Hilfe zur MoinWiki-Syntax."
 
-#: src/moin/constants/contenttypes.py:177
+#: src/moin/constants/contenttypes.py:175
 msgid "Moinmoin 1.9 format is deprecated, convert to moin 2."
 msgstr "Das Moin 1.9 Format ist veraltet, konvertieren Sie zu Moin 2."
 
-#: src/moin/constants/contenttypes.py:178
+#: src/moin/constants/contenttypes.py:176
 msgid "Click for help on Media Wiki markup."
 msgstr "Hilfe zur Media Wiki Syntax."
 
-#: src/moin/constants/contenttypes.py:179
+#: src/moin/constants/contenttypes.py:177
 msgid "Click for help on Creole Wiki markup."
 msgstr "Hilfe zur Creole Wiki Syntax."
 
-#: src/moin/constants/contenttypes.py:180
+#: src/moin/constants/contenttypes.py:178
 msgid "Click for help on Markdown Wiki markup."
 msgstr "Hilfe zur Markdown Wiki Syntax."
 
-#: src/moin/constants/contenttypes.py:181
+#: src/moin/constants/contenttypes.py:179
 msgid "Click for help on reST Wiki markup."
 msgstr "Hilfe zur reST Wiki Syntax."
 
-#: src/moin/constants/contenttypes.py:182
+#: src/moin/constants/contenttypes.py:180
 msgid "Click for help on Docbook Wiki markup."
 msgstr "Hilfe zur Docbook Wiki Syntax."
 
-#: src/moin/constants/contenttypes.py:208
+#: src/moin/constants/contenttypes.py:206
 msgid "No help for unknown content type."
 msgstr "Keine Hilfe für unbekannten Dokumenttyp verfügbar."
 
-#: src/moin/converters/_wiki_macro.py:69
+#: src/moin/converters/_wiki_macro.py:71
 msgid "Include Macro above has invalid format, missing item name"
 msgstr "Ungültiges Format im obigen Include-Makro, fehlender Item Name"
 
-#: src/moin/converters/_wiki_macro.py:80
-msgid "Include Macro above has invalid format, expected sort=ascending or descending"
-msgstr "Das Include Makro oben hat ein ungültiges Format, erwartet wird sort=ascending oder descending"
+#: src/moin/converters/_wiki_macro.py:83
+msgid "Include Macro above has invalid format, expected sort=ascending or sort=descending"
+msgstr "Das Include Makro oben hat ein ungültiges Format, erwartet wird sort=ascending oder sort=descending"
 
-#: src/moin/converters/everything.py:33
+#: src/moin/converters/everything.py:54
+#, python-brace-format
 msgid "This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}"
 msgstr ""
 "Das gelöschte Item muss wiederhergestellt werden, bevor es angesehen und heruntergeladen werden kann, ItemID = "
 "{itemid}"
 
-#: src/moin/converters/html_in.py:159
+#: src/moin/converters/everything.py:59
+msgid "No DOM representation possible for this content."
+msgstr "Für diesen Inhalt ist keine DOM-Darstellung möglich."
+
+#: src/moin/converters/everything.py:65
+#, python-brace-format
+msgid "Download {item_name}."
+msgstr "{item_name} herunterladen."
+
+#: src/moin/converters/html_in.py:201
+#, python-brace-format
 msgid "Error: malformed HTML: {reason}."
 msgstr "Error: fehlerhafte HTML: {reason}."
 
-#: src/moin/converters/html_in.py:165
+#: src/moin/converters/html_in.py:207
 msgid "Error: malformed HTML. Try viewing source with Markup or Modify links."
 msgstr "Fehler: fehlerhaftes HTML. Versuche den Quelltext mit Highlight oder  Modify links anzusehen."
 
-#: src/moin/converters/html_in.py:298
+#: src/moin/converters/html_in.py:331
+#, python-brace-format
 msgid "Tag '{invalid_tag}' is not supported; all tag contents are discarded."
 msgstr "Tag '{invalid_tag}' ist nicht unterstützt; alle Tag Inhalte werden verworfen."
 
-#: src/moin/converters/html_in.py:306
+#: src/moin/converters/html_in.py:339
+#, python-brace-format
 msgid "Tag '{invalid_tag}' is not known; tag ignored but children are processed."
 msgstr "Tag '{invalid_tag}' ist nicht bekannt; Tag wird ignoriert, aber Unterelemente werden verarbeitet."
 
-#: src/moin/converters/html_out.py:694
+#: src/moin/converters/html_out.py:767
 msgid "Link to this heading"
 msgstr "Link zu dieser Überschrift"
 
-#: src/moin/converters/html_out.py:763
+#: src/moin/converters/html_out.py:829
 msgid "Contents"
 msgstr "Inhaltsverzeichnis"
 
-#: src/moin/converters/include.py:303
+#: src/moin/converters/include.py:320
 msgid "Access Denied, transcluded content suppressed."
 msgstr "Keine Berechtigung, transkludierter Inhalt unterdrückt."
 
-#: src/moin/converters/include.py:321
+#: src/moin/converters/include.py:338
+#, python-brace-format
 msgid "Error: no items found matching \"<<Include({0})>>\""
 msgstr "Fehler: keine entsprechenden Items gefunden \"<<Include({0})>>\""
 
-#: src/moin/converters/macro.py:60
+#: src/moin/converters/macro.py:65
 msgid "Error: invalid macro name."
 msgstr "Fehler: ungültiger Makro-Name."
 
-#: src/moin/converters/macro.py:69
+#: src/moin/converters/macro.py:74
+#, python-brace-format
 msgid "<<{macro_name}: execution failed [{error_msg}] (see also the log)>>"
 msgstr "<<{macro_name}: Ausführung fehlgeschlagen [{error_msg}] (Sie finden weitere Informationen im Log)>>"
 
-#: src/moin/converters/moinwiki_in.py:1008
+#: src/moin/converters/moinwiki_in.py:1019
 msgid "Error:"
 msgstr "Fehler:"
 
-#: src/moin/converters/moinwiki_in.py:1009
+#: src/moin/converters/moinwiki_in.py:1020
 msgid "is invalid within"
 msgstr "ist ungültig innerhalb von"
 
-#: src/moin/converters/nonexistent_in.py:33
-msgid "{item_name} does not exist. Create it? "
-msgstr "{item_name} existiert nicht, möchten Sie es jetzt erstellen?"
+#: src/moin/converters/nonexistent_in.py:42
+#, python-brace-format
+msgid "{item_name} does not exist. Create it?"
+msgstr "{item_name} existiert nicht. Erzeugen?"
 
-#: src/moin/converters/nowiki.py:40
+#: src/moin/converters/nowiki.py:49
+#, python-brace-format
 msgid "Defaulting to plain text due to invalid arguments: \"{arguments}\""
 msgstr "Falle zurück auf reinen Text wegen falscher Argumente: \"{arguments}\""
 
-#: src/moin/converters/text_csv_in.py:46
+#: src/moin/converters/text_csv_in.py:56
 msgid "Error parsing CSV file:"
 msgstr "Fehler beim parsen der CSV Datei:"
 
-#: src/moin/items/__init__.py:246
+#: src/moin/items/__init__.py:285
+#, python-brace-format
 msgid "Cannot create or rename item '{new_name}' because parent '{parent_name}' is missing."
 msgstr "Item '{new_name}' kann nicht erstellt oder umbenannt werden, übergeordnetes Item '{parent_name}' fehlt."
 
-#: src/moin/items/__init__.py:274
+#: src/moin/items/__init__.py:313
+#, python-brace-format
 msgid "Removed leading or trailing blanks from WikiDict line: '{key_val}'."
 msgstr "Führende oder abschliessende Leerzeichen entfernt in WikiDict Zeile: '{key_val}'."
 
-#: src/moin/items/__init__.py:279
+#: src/moin/items/__init__.py:318
 msgid "Empty line in Wiki Dict discarded."
 msgstr "Leerzeile in Wiki Dict zurückgewiesen."
 
-#: src/moin/items/__init__.py:288
+#: src/moin/items/__init__.py:327
+#, python-brace-format
 msgid "Removed leading or trailing blanks from WikiDict key: '{key_val}'."
 msgstr "Führende oder abschliessende Leerzeichen entfernt in WikiDict Schlüssel: '{key_val}'."
 
-#: src/moin/items/__init__.py:293
+#: src/moin/items/__init__.py:332
+#, python-brace-format
 msgid "Removed leading or trailing blanks from WikiDict value: '{key_val}'."
 msgstr "Führende oder abschliessende Leerzeichen entfernt in WikiDict Wert: '{key_val}'."
 
-#: src/moin/items/__init__.py:442
+#: src/moin/items/__init__.py:499
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/moin/items/__init__.py:443 src/moin/templates/index.html:306 src/moin/themes/basic/templates/modify.html:106
+#: src/moin/items/__init__.py:500 src/moin/templates/index.html:328
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/moin/items/__init__.py:481 src/moin/items/__init__.py:486
-msgid "The ACL string is invalid."
-msgstr "Der ACL String ist ungültig."
+#: src/moin/items/__init__.py:536
+#, python-brace-format
+msgid "The ACL string is invalid: {acl}"
+msgstr "Der ACL String ist ungültig: {acl}"
 
-#: src/moin/items/__init__.py:495
+#: src/moin/items/__init__.py:551
 msgid "The Wiki Dict is invalid. The format is 'key=value', one per line, no commas."
 msgstr "Das Wiki-Dict ist ungültig. Das Format ist 'Schlüssel=Wert', einzeln pro Zeile, ohne Kommas."
 
-#: src/moin/items/__init__.py:503
+#: src/moin/items/__init__.py:560
+#, python-brace-format
 msgid "Invalid key=value pair: '{invalid}'. Nothing saved."
 msgstr "Ungültiges Schlüssel=Wert Paar: '{invalid}'. Nichts gesichert."
 
-#: src/moin/items/__init__.py:514
+#: src/moin/items/__init__.py:571
 msgid "The User Group list is invalid."
 msgstr "Die Benutzer Gruppen Liste ist ungültig."
 
-#: src/moin/items/__init__.py:523
+#: src/moin/items/__init__.py:582
+#, python-brace-format
 msgid "Invalid user name, leading or trailing blanks not allowed: '{invalid}'. Nothing saved."
 msgstr "Ungültiger Benutzer Name, führende oder abschliessende Leerzeichen nicht erlaubt: '{invalid}'. Nichts gespeichert."
 
-#: src/moin/items/__init__.py:529
+#: src/moin/items/__init__.py:587
+#, python-brace-format
 msgid "Invalid user name, null string not allowed: '{invalid}'. Nothing saved."
 msgstr "Ungültiger Benutzer Name, leere Zeichenkette nicht erlaubt: '{invalid}'. Nichts gespeichert."
 
-#: src/moin/items/__init__.py:535
+#: src/moin/items/__init__.py:593
+#, python-brace-format
 msgid "Invalid user name, ',' not allowed: '{invalid}'. Nothing saved."
 msgstr "Ungültiger Benutzer Name, ',' nicht erlaubt: '{invalid}'. Nichts gespeichert."
 
-#: src/moin/items/__init__.py:539
+#: src/moin/items/__init__.py:597
+#, python-brace-format
 msgid "Duplicate user name: '{invalid}'. Nothing saved."
 msgstr "Doppelter Benutzer Name: '{invalid}'. Nichts gespeichert."
 
-#: src/moin/items/__init__.py:551
+#: src/moin/items/__init__.py:609
 msgid "Access Control List - Use 'None' for default"
 msgstr "Access Control List - Benutze 'None' für Standardverhalten"
 
-#: src/moin/items/__init__.py:554 src/moin/items/ticket.py:114 src/moin/items/ticket.py:127
-#: src/moin/templates/ticket/advanced.html:20 src/moin/templates/ticket/modify.html:52
-#: src/moin/templates/ticket/submit.html:13 src/moin/templates/tickets.html:54
+#: src/moin/items/__init__.py:612
 msgid "Summary"
 msgstr "Zusammenfassung"
 
-#: src/moin/items/__init__.py:554
+#: src/moin/items/__init__.py:612
 msgid "One-line summary of the item"
 msgstr "Einzeilige Zusammenfassung dieses Items"
 
-#: src/moin/items/__init__.py:807 src/moin/items/__init__.py:809 src/moin/items/__init__.py:838
+#: src/moin/items/__init__.py:898
+#, python-brace-format
 msgid "The item \"{name}\" was deleted."
 msgstr "Das Item \"{name}\" wurde gelöscht."
 
-#: src/moin/items/__init__.py:814 src/moin/items/__init__.py:818 src/moin/items/__init__.py:861
+#: src/moin/items/__init__.py:902 src/moin/items/__init__.py:941
+#, python-brace-format
 msgid "The item \"{name}\" was renamed to \"{new_name}\"."
 msgstr "Das Item \"{name}\" wurde umbenannt in \"{new_name}\"."
 
-#: src/moin/items/__init__.py:836
+#: src/moin/items/__init__.py:918
+#, python-brace-format
 msgid "The subitem \"{name}\" was deleted."
 msgstr "Das Subitem \"{name}\" wurde gelöscht."
 
-#: src/moin/items/__init__.py:881
+#: src/moin/items/__init__.py:960
+#, python-brace-format
 msgid "An item named {name} already exists in the namespace {namespace}."
 msgstr "Ein Item mit Namen {name} existiert bereits im Namensraum {namespace}."
 
-#: src/moin/items/__init__.py:927 src/moin/items/__init__.py:929 src/moin/items/__init__.py:941
+#: src/moin/items/__init__.py:1017
+#, python-brace-format
 msgid "The item \"{name}\" was destroyed."
 msgstr "Das Item \"{name}\" wurde gelöscht."
 
-#: src/moin/items/__init__.py:939
+#: src/moin/items/__init__.py:1026
+#, python-brace-format
 msgid "The subitem \"{name}\" was destroyed."
 msgstr "Das Subitem \"{name}\" wurde vernichtet."
 
-#: src/moin/items/__init__.py:946 src/moin/items/__init__.py:952
+#: src/moin/items/__init__.py:1030
+#, python-brace-format
 msgid "Error: The subitem \"{name}\" was not destroyed, permission denied."
 msgstr "Fehler: Das Unter-Item \"{name}\" wurde nicht zerstört, Zugriffsfehler."
 
-#: src/moin/items/__init__.py:961
+#: src/moin/items/__init__.py:1036
+#, python-brace-format
 msgid "Rev Number {rev_number} of the item \"{name}\" was destroyed."
 msgstr "Revision nummer {rev_number} des Items \"{name}\" wurde zerstört."
 
-#: src/moin/items/__init__.py:987
+#: src/moin/items/__init__.py:1068
 msgid "Wiki Dict"
 msgstr "Wiki-Dict"
 
-#: src/moin/items/__init__.py:992
+#: src/moin/items/__init__.py:1073
 msgid "User Group"
 msgstr "Benutzer-Gruppe"
 
-#: src/moin/items/__init__.py:1407
+#: src/moin/items/__init__.py:1501
 msgid "Wiki item"
 msgstr "Wiki-Item"
 
-#: src/moin/items/__init__.py:1485
+#: src/moin/items/__init__.py:1583
 msgid "Alert wiki admin that help items are not loaded"
 msgstr "Fragen Sie den Wiki Administrator nach den Hilfe-Texten in Ihrer Sprache."
 
-#: src/moin/items/__init__.py:1524
+#: src/moin/items/__init__.py:1631
+#, python-brace-format
 msgid "You do not have permission to create the item named \"{name}\"."
 msgstr "Sie haben nicht die Berechtigung, das Item \"{name}\" zu erzeugen."
 
-#: src/moin/items/__init__.py:1617
+#: src/moin/items/__init__.py:1657
 msgid "No preview available for empty items."
 msgstr "Vorschau nicht möglich für leere Items."
 
-#: src/moin/items/__init__.py:1637
+#: src/moin/items/__init__.py:1756
+msgid "Invalid data content received. Expecting text content."
+msgstr "Ungültige Daten empfangen. Erwartet wird Textinhalt."
+
+#: src/moin/items/__init__.py:1794
 msgid "Nothing changed, nothing saved."
 msgstr "Keine Änderungen durchgeführt."
 
-#: src/moin/items/__init__.py:1654
+#: src/moin/items/__init__.py:1811
 msgid "CONFLICT "
 msgstr "KONFLIKT "
 
-#: src/moin/items/__init__.py:1656
+#: src/moin/items/__init__.py:1813
 msgid "An edit conflict has occurred. Modify this item again to resolve conflicts."
 msgstr "Ein Bearbeitungskonflikt ist aufgetreten, diese Seite nochmals bearbeiten um den Konflikt zu beheben."
 
-#: src/moin/items/__init__.py:1701
+#: src/moin/items/__init__.py:1861
+#, python-brace-format
 msgid "You may recover your draft saved {number} {interval} ago by clicking the 'Load Draft' button."
 msgstr "Drücken Sie 'Entwurf laden' um Ihren vor {number} {interval} gesicherten Entwurf zu laden."
 
-#: src/moin/items/__init__.py:1709
+#: src/moin/items/__init__.py:1869
+#, python-brace-format
 msgid ""
 "Your draft saved {number} {interval} ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to "
 "merge conflicting updates."
 msgstr "'Entwurf laden' klicken, um den Entwurf {number} vor {interval} wiederherzustellen."
 
-#: src/moin/items/__init__.py:1755
+#: src/moin/items/__init__.py:1916
 msgid "User profile"
 msgstr "Benutzer-Profil"
 
-#: src/moin/items/__init__.py:1756
+#: src/moin/items/__init__.py:1917
 msgid "User profile item (not implemented yet!)"
 msgstr "Nutzerprofil Item (noch nicht implementiert!)"
 
-#: src/moin/items/blog.py:33
+#: src/moin/items/blog.py:36
 msgid "Supertags (Categories)"
 msgstr "Super-Tags (Kategorien)"
 
-#: src/moin/items/blog.py:34
+#: src/moin/items/blog.py:37
 msgid "Ordered comma separated list of tags"
 msgstr "Sortierte komma-separierte Liste von Schlagworten"
 
-#: src/moin/items/blog.py:39
+#: src/moin/items/blog.py:42
 msgid "Title (required)"
 msgstr "Titel (erforderlich)"
 
-#: src/moin/items/blog.py:40
+#: src/moin/items/blog.py:43
 msgid "One-line title of the blog entry"
 msgstr "Einzeiliger Titel des Blog-Eintrags"
 
-#: src/moin/items/blog.py:42
+#: src/moin/items/blog.py:45
 msgid "Publication time (UTC)"
 msgstr "Zeitpunkt der Veröffentlichung (UTC)"
 
-#: src/moin/items/blog.py:48
+#: src/moin/items/blog.py:51
 msgid "Blog"
 msgstr "Blog"
 
-#: src/moin/items/blog.py:49
+#: src/moin/items/blog.py:52
 msgid "Blog item"
 msgstr "Blog-Item"
 
-#: src/moin/items/blog.py:107
+#: src/moin/items/blog.py:108
 msgid "Blog entry"
 msgstr "Blog-Eintrag"
 
-#: src/moin/items/blog.py:108
+#: src/moin/items/blog.py:109
 msgid "Blog entry item"
 msgstr "Blog-Eintrags-Item"
 
-#: src/moin/items/content.py:438 src/moin/items/ticket.py:156
+#: src/moin/items/content.py:499
 msgid "Replace content with uploaded file:"
 msgstr "Ersetze den Inhalt mit der hochgeladenen Datei:"
 
-#: src/moin/items/content.py:456
+#: src/moin/items/content.py:517
 msgid "The items have the same data hash code (that means they very likely have the same data)."
 msgstr "Die Items haben die gleiche Hash-Code (das bedeutet, dass sie wahrscheinlich den selben Inhalt haben)."
 
-#: src/moin/items/content.py:458
+#: src/moin/items/content.py:519
 msgid "The items have different data."
 msgstr "Der Inhalt der Items ist verschieden."
 
-#: src/moin/items/content.py:469
+#: src/moin/items/content.py:530
+#, python-brace-format
 msgid "Impossible to convert the data to the contenttype: {contenttype}"
 msgstr "Es ist nicht möglich, die Daten zu diesem Contenttype umzuwandeln: {contenttype}"
 
-#: src/moin/items/content.py:949
+#: src/moin/items/content.py:1064
 msgid "Type your text here"
 msgstr "Tippen Sie hier"
 
-#: src/moin/items/content.py:1253
+#: src/moin/items/content.py:1189
+#, python-brace-format
+msgid "[... highlighted output truncated, showing first {count} characters ...]"
+msgstr "[... hervorgehobene Ausgabe gekürzt, die ersten {count} Zeichen werden angezeigt ...]"
+
+#: src/moin/items/content.py:1386
+#, python-brace-format
 msgid "Edit drawing {filename} (opens in new window)"
 msgstr "Zeichnung {filename} bearbeiten (öffnet in neuem Fenster)"
 
-#: src/moin/items/content.py:1257
+#: src/moin/items/content.py:1389
+#, python-brace-format
 msgid "Clickable drawing: {filename}"
 msgstr "Anklickbare Zeichnung: {filename}"
 
-#: src/moin/items/ticket.py:115
-msgid "Find Tickets"
-msgstr "Tickets finden"
+#: src/moin/macros/Anchor.py:18
+msgid "Anchor macro failed: missing anchor name."
+msgstr "Anchor Makro fehlgeschlagen: Name des Ankers fehlt."
 
-#: src/moin/items/ticket.py:117 src/moin/items/ticket.py:130 src/moin/templates/ticket/advanced.html:24
-#: src/moin/templates/tickets.html:58
-msgid "Effort"
-msgstr "Aufwand"
+#: src/moin/macros/Anchor.py:22
+msgid "Anchor macro failed: only one argument is allowed."
+msgstr "Anchor Makro fehlgeschlagen: nur ein Argument erlaubt."
 
-#: src/moin/items/ticket.py:118 src/moin/items/ticket.py:131 src/moin/templates/ticket/advanced.html:25
-#: src/moin/templates/tickets.html:59
-msgid "Difficulty"
-msgstr "Schwierigkeit"
+#: src/moin/macros/Anchor.py:27
+msgid "Anchor macro failed: spaces are not allowed in anchors."
+msgstr "Anchor Makro fehlgeschlagen: Leerzeichen sind in Ankern nicht erlaubt."
 
-#: src/moin/items/ticket.py:119 src/moin/items/ticket.py:132 src/moin/templates/ticket/advanced.html:26
-#: src/moin/templates/tickets.html:60
-msgid "Severity"
-msgstr "Schweregrad"
-
-#: src/moin/items/ticket.py:120 src/moin/items/ticket.py:133 src/moin/templates/ticket/advanced.html:27
-#: src/moin/templates/tickets.html:61
-msgid "Priority"
-msgstr "Priorität"
-
-#: src/moin/items/ticket.py:122 src/moin/items/ticket.py:135
-msgid "Assigned To"
-msgstr "Zugewiesen an"
-
-#: src/moin/items/ticket.py:123
-msgid "Author"
-msgstr "Autor"
-
-#: src/moin/items/ticket.py:128
-msgid "One-line summary"
-msgstr "Einzeilige Zusammenfassung"
-
-#: src/moin/items/ticket.py:136
-msgid "Superseded By"
-msgstr "Ersetzt von"
-
-#: src/moin/items/ticket.py:137
-msgid "Depends On"
-msgstr "Hängt ab von"
-
-#: src/moin/items/ticket.py:141
-msgid "Supersedes"
-msgstr "Ersetzt"
-
-#: src/moin/items/ticket.py:142
-msgid "Required By"
-msgstr "Benötigt von"
-
-#: src/moin/items/ticket.py:143
-msgid "Subscribers"
-msgstr "Abonnenten"
-
-#: src/moin/items/ticket.py:155
-msgid "Message"
-msgstr "Nachricht"
-
-#: src/moin/items/ticket.py:167
-msgid "Submit ticket"
-msgstr "Ticket absenden"
-
-#: src/moin/items/ticket.py:187
-msgid "Update ticket"
-msgstr "Ticket aktualisieren"
-
-#: src/moin/items/ticket.py:189 src/moin/templates/ticket/modify.html:39
-msgid "Update & reopen ticket"
-msgstr "Ticket aktualisieren & wieder eröffnen"
-
-#: src/moin/items/ticket.py:189 src/moin/templates/ticket/modify.html:41
-msgid "Update & close ticket"
-msgstr "Ticket aktualisieren & schließen"
-
-#: src/moin/items/ticket.py:211
-msgid "{key} changed from {original} to {new}"
-msgstr "{key} geändert von {original} nach {new}"
-
-#: src/moin/items/ticket.py:236
-msgid "{author} wrote on {timestamp}:"
-msgstr "{author} schrieb am {timestamp}:"
-
-#: src/moin/items/ticket.py:376
-msgid "Ticket"
-msgstr "Ticket"
-
-#: src/moin/items/ticket.py:377
-msgid "Ticket item"
-msgstr "Ticket-Item"
-
-#: src/moin/macros/Anchor.py:17
-msgid "Anchor macro failed - missing argument."
-msgstr "Anchor Makro fehlgeschlagen - fehlendes Argument."
-
-#: src/moin/macros/Anchor.py:21
-msgid "Anchor macro failed - only 1 argument allowed."
-msgstr "Anchor Makro fehlgeschlagen - nur ein Argument erlaubt."
-
-#: src/moin/macros/Anchor.py:26
-msgid "Anchor macro failed - space is not allowed in anchors."
-msgstr "Anchor Makro fehlgeschlagen - Leerzeichen im Namen nicht erlaubt."
-
-#: src/moin/macros/Date.py:73 src/moin/macros/DateTime.py:30
+#: src/moin/macros/Date.py:72 src/moin/macros/DateTime.py:30
 msgid "Invalid input parameter: None, float, int, or ISO 8601 formats are accepted."
 msgstr "Ungültige Eingabe Parameter: None, float, int, oder ISO 8601 Formate sind erlaubt."
 
-#: src/moin/macros/FontAwesome.py:30
+#: src/moin/macros/FontAwesome.py:29
 msgid "Missing font name, syntax is <<FontAwesome(name,color,size)>>"
 msgstr "Fehlernder Font-Name, die Syntax ist <<FontAwesome(name,color,size)>>"
 
-#: src/moin/macros/GetVal.py:24
+#: src/moin/macros/GetVal.py:23
 msgid "Invalid parameters, try <<GetVal(DictName, key)>>"
 msgstr "Ungültige Parameter, versuche <<GetVal(DictName, key)>>"
 
-#: src/moin/macros/GetVal.py:28
+#: src/moin/macros/GetVal.py:27
+#, python-brace-format
 msgid "Permission to read was denied: {item_name}"
 msgstr "Keine Leseberechtigung: {item_name}"
 
-#: src/moin/macros/GetVal.py:34
+#: src/moin/macros/GetVal.py:33
+#, python-brace-format
 msgid "WikiDict not found: {item_name}"
 msgstr "WikiDict nicht gefunden: {item_name}"
 
-#: src/moin/macros/GetVal.py:39
+#: src/moin/macros/GetVal.py:38
+#, python-brace-format
 msgid "Macro is invalid, {item_name} is missing key: {key_name}"
 msgstr "Marko ungültig, {item_name} fehlender Schlüssel: {key_name}"
 
@@ -1742,15 +1811,16 @@ msgstr "Lexer-Alias-Namen"
 msgid "File Patterns"
 msgstr "Datei-Muster"
 
-#: src/moin/macros/Icon.py:25
+#: src/moin/macros/Icon.py:24
 msgid "Icon macro failed due to missing icon name."
 msgstr "Icon Makro fehlgeschlagen wegen fehlendem Icon Namen."
 
-#: src/moin/macros/Icon.py:28
-msgid "Icon not rendered, invalid name"
-msgstr "Icon wird nicht dargestellt, ungültiger Name"
+#: src/moin/macros/Icon.py:27
+msgid "Icon not rendered (invalid name)"
+msgstr "Icon nicht dargestellt (ungültiger Name)"
 
-#: src/moin/macros/ItemList.py:93
+#: src/moin/macros/ItemList.py:94
+#, python-brace-format
 msgid ""
 "ItemList macro: Argument \"{arg}\" does not follow <key>=<val> format (arguments, if more than one, must be "
 "comma-separated)."
@@ -1759,26 +1829,30 @@ msgstr ""
 "durch ein Komma getrennt werden)."
 
 #: src/moin/macros/ItemList.py:110
+#, python-brace-format
 msgid "The value for \"{key}\" must be \"True\" or \"False\", got \"{val}\"."
 msgstr "Der Wert für \"{key}\" muss \"True\" oder \"False\" sein. (erhielt \"{val}\")"
 
 #: src/moin/macros/ItemList.py:121
+#, python-brace-format
 msgid "Unrecognized key \"{key}\"."
 msgstr "Unbekannter Schlüssel \"{key}\"."
 
-#: src/moin/macros/ItemList.py:133 src/moin/macros/RandomQuote.py:53
+#: src/moin/macros/ItemList.py:135 src/moin/macros/RandomQuote.py:63
+#, python-brace-format
 msgid "Item does not exist or read access blocked by ACLs: {0}"
 msgstr "Item existiert nicht, oder Lesezugriff blockiert durch die ACLs: {0}"
 
 #: src/moin/macros/ItemList.py:142
+#, python-brace-format
 msgid "Error in regex {0!r}: {1}"
 msgstr "Fehler im Regulären Ausdruck {0!r}: {1}"
 
-#: src/moin/macros/ItemList.py:151
+#: src/moin/macros/ItemList.py:148
 msgid "No matching items were found"
 msgstr "Keine passenden Items gefunden"
 
-#: src/moin/macros/MailTo.py:31
+#: src/moin/macros/MailTo.py:33
 msgid "Invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
 msgstr "Ungültiges Format, versuche: <<MailTo(nutzer AT example DOT org, schreib mir)>>"
 
@@ -1858,73 +1932,89 @@ msgstr "Sa"
 msgid "Sun"
 msgstr "So"
 
-#: src/moin/macros/RandomQuote.py:42
+#: src/moin/macros/RandomQuote.py:52
+#, python-brace-format
 msgid "Invalid value given for item name: {0}"
 msgstr "Ungültiger Wert für Item-Name: {0}"
 
-#: src/moin/macros/RandomQuote.py:62
+#: src/moin/macros/RandomQuote.py:73
+#, python-brace-format
 msgid "No quotes found in {0}"
 msgstr "Keine Zitate gefunden in {0}"
 
-#: src/moin/macros/ShowIcons.py:27 src/moin/macros/ShowSmileys.py:20
-msgid "Markup"
-msgstr "Textauszeichnung (Markup)"
+#: src/moin/macros/RandomQuote.py:88
+#, python-brace-format
+msgid "Unexpected conversion result for item {0}"
+msgstr "Unerwartetes Konvertierungsergebnis für Item {0}"
 
-#: src/moin/macros/ShowIcons.py:27 src/moin/macros/ShowSmileys.py:20
+#: src/moin/macros/ShowIcons.py:26 src/moin/macros/ShowSmileys.py:20
 msgid "Result"
 msgstr "Ergebnis"
 
 #: src/moin/macros/ShowUserGroup.py:21
-msgid "ShowUserGroup macro failed - metadata lacks \"usergroup\" attribute."
-msgstr "ShowUserGroup Marko fehlgeschlagen - das Attribut \"usergroup\" fehlt."
+msgid "ShowUserGroup macro failed: metadata lacks \"usergroup\" attribute."
+msgstr "ShowUserGroup Makro fehlgeschlagen: den Metadaten fehlt das Attribut \"usergroup\"."
 
 #: src/moin/macros/ShowWikiDict.py:21
-msgid "ShowWikiDict macro failed - metadata lacks \"wikidict\" attribute."
-msgstr "ShowWikiDict Marko fehlgeschlagen - das Attribut \"wikidict\" fehlt."
+msgid "ShowWikiDict macro failed: metadata lacks \"wikidict\" attribute."
+msgstr "ShowWikiDict Makro fehlgeschlagen: den Metadaten fehlt das Attribut \"wikidict\"."
 
-#: src/moin/macros/SlideShow.py:17
-msgid " Start SlideShow"
-msgstr " Starte Präsentation"
+#: src/moin/macros/SlideShow.py:19
+msgid " Start Slide Show"
+msgstr " Präsentation starten"
 
 #: src/moin/macros/TitleIndex.py:26
-msgid "TitleList macro does not support any arguments."
-msgstr "Das TitleList Makro unterstützt keine Argumente."
+msgid "TitleIndex macro does not support any arguments."
+msgstr "Das TitleIndex Makro unterstützt keine Argumente."
 
 #: src/moin/macros/TitleIndex.py:32
-msgid "<TitleList macro: No matching items were found.>"
-msgstr "<TitleList Makro: keine passenden Items gefunden.>"
+msgid "<TitleIndex macro: No matching items were found.>"
+msgstr "<TitleIndex Makro: keine passenden Items gefunden.>"
 
-#: src/moin/macros/_base.py:97
+#: src/moin/macros/_base.py:96
+#, python-brace-format
 msgid "{item_name} content type is not moinwiki or creole"
 msgstr "Der Content-Typ von {item_name} ist nicht moinwiki oder creole."
 
-#: src/moin/macros/_base.py:108
+#: src/moin/macros/_base.py:107
+#, python-brace-format
 msgid "No heading found in item: {item_name}"
 msgstr "Keine Überschrift in Item {item_name} gefunden"
 
-#: src/moin/macros/_base.py:153
+#: src/moin/macros/_base.py:152
 msgid "Block macros cannot be used inline"
 msgstr "Block Makros können nicht 'inline' benutzt werden."
 
-#: src/moin/macros/_base.py:242
+#: src/moin/macros/_base.py:240
+#, python-brace-format
 msgid "Unrecognized \"display\" value \"{display}\"."
 msgstr "Unbekannter Wert für \"display\": \"{display}\"."
 
-#: src/moin/mail/sendmail.py:54
+#: src/moin/mail/sendmail.py:53
 msgid "Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."
 msgstr ""
 "Administrator kontaktieren: Kann kein Passwort-Zurücksetzen-E-Mail senden, weil die E-Mail-Konfiguration "
 "unvollständig ist."
 
+#: src/moin/mail/sendmail.py:59
+msgid "No sender address configured."
+msgstr "Keine Absenderadresse konfiguriert."
+
 #: src/moin/mail/sendmail.py:65
 msgid "No recipients, nothing to do"
 msgstr "Keine Empfänger, nichts zu tun"
 
-#: src/moin/mail/sendmail.py:123
-msgid "Connection to mailserver '{server}' failed: {reason}"
-msgstr "Verbindung zum Mailserver '{server}' fehlgeschlagen: {reason}"
+#: src/moin/mail/sendmail.py:91
+#, python-brace-format
+msgid "SSL context creation failed: {reason}"
+msgstr "Erzeugen des SSL-Kontexts fehlgeschlagen: {reason}"
 
-#: src/moin/mail/sendmail.py:131
+#: src/moin/mail/sendmail.py:123
+#, python-brace-format
+msgid "Connection to mailserver failed: {reason}"
+msgstr "Verbindung zum Mailserver fehlgeschlagen: {reason}"
+
+#: src/moin/mail/sendmail.py:134
 msgid "Mail sent successfully"
 msgstr "E-Mail wurde erfolgreich versandt"
 
@@ -1936,19 +2026,29 @@ msgstr "Such-Anfrage ist zu kurz."
 msgid "Search"
 msgstr "Suche"
 
-#: src/moin/storage/middleware/indexing.py:1274
+#: src/moin/storage/middleware/indexing.py:1382
+#, python-brace-format
 msgid "Error: metadata validation failed, invalid field value(s) = {0}"
 msgstr "Fehler: Validierung der Metadaten fehlgeschlagen, ungültiger Wert: {0}"
 
-#: src/moin/storage/middleware/indexing.py:1295
+#: src/moin/storage/middleware/indexing.py:1480
 msgid "Error: nothing changed. Data unicode validation failed."
 msgstr "Fehler: nichts gespeichert. Unicode Validierung der Daten fehlgeschlagen."
+
+#: src/moin/templates/400.html:9
+msgid "HTTP 400 - Bad Request"
+msgstr "HTTP 400 - Ungültige Anfrage"
+
+#: src/moin/templates/400.html:14
+msgid "Please check the hostname in your URL or ask the wiki admin to check the flask configuration."
+msgstr "Bitte prüfen Sie den Hostnamen in Ihrer URL oder bitten Sie den Wiki-Admin, die Flask-Konfiguration zu prüfen."
 
 #: src/moin/templates/404.html:12
 msgid "Not Found"
 msgstr "Nicht gefunden"
 
 #: src/moin/templates/404.html:16
+#, python-brace-format
 msgid "The item '{item_name}' does not exist or you do not have permission to access it."
 msgstr "Das Item '{item_name}' existiert nicht oder sie haben keine Berechtigung dafür."
 
@@ -1956,63 +2056,68 @@ msgstr "Das Item '{item_name}' existiert nicht oder sie haben keine Berechtigung
 msgid "The full path is:"
 msgstr "Der volle Pfad ist:"
 
-#: src/moin/templates/ajaxsearch.html:12
-msgid "Please check these tickets if they cover your issue:"
-msgstr "Bitte prüfen Sie, ob diese Tickets Ihr Problem enthalten:"
-
-#: src/moin/templates/ajaxsearch.html:23
-msgid "{summary}"
-msgstr "{summary}"
-
-#: src/moin/templates/ajaxsearch.html:33
+#: src/moin/templates/ajaxsearch.html:15
 msgid "Whoosh query:"
 msgstr "Whoosh Abfrage:"
 
-#: src/moin/templates/ajaxsearch.html:37
+#: src/moin/templates/ajaxsearch.html:19
 msgid "Whoosh filter:"
 msgstr "Whoosh Filter:"
 
-#: src/moin/templates/ajaxsearch.html:42
-msgid "Common words omitted from query:"
-msgstr "Häufige Worte in der Abfrage ausgelassen:"
+#: src/moin/templates/ajaxsearch.html:24
+msgid "Common words omitted from content field query:"
+msgstr "Häufige Wörter in der Abfrage des Inhaltsfelds ausgelassen:"
 
-#: src/moin/templates/ajaxsearch.html:50
+#: src/moin/templates/ajaxsearch.html:32
+#, python-brace-format
 msgid "{found:d} items found, {items_filtered:d} more items filtered by content types."
 msgstr "{found:d} Items gefunden, {items_filtered:d} weitere Items nach Content-Typ gefiltert."
 
-#: src/moin/templates/ajaxsearch.html:52
+#: src/moin/templates/ajaxsearch.html:34
+#, python-brace-format
 msgid "{result_len:d} items found."
 msgstr "{result_len:d} Items gefunden."
 
-#: src/moin/templates/ajaxsearch.html:82
+#: src/moin/templates/ajaxsearch.html:64
 msgid "MATCHED TERMS:"
 msgstr "ÜBEREINSTIMMENDE BEGRIFFE:"
 
-#: src/moin/templates/ajaxsearch.html:89
+#: src/moin/templates/ajaxsearch.html:71
+#, python-brace-format
 msgid "REVISION: {revid}, SIZE: {size}, MODIFIED: {mtime}, CONTENT TYPE: {type}, SCORE: {score}"
 msgstr "REVISION: {revid}, GRÖSSE: {size}, GEÄNDERT: {mtime}, INHALTS-TYP: {type}, BEWERTUNG: {score}"
 
-#: src/moin/templates/ajaxsearch.html:94
+#: src/moin/templates/ajaxsearch.html:76
+#, python-brace-format
 msgid "COMMENT: {content}"
 msgstr "KOMMENTAR: {content}"
 
-#: src/moin/templates/ajaxsearch.html:97
+#: src/moin/templates/ajaxsearch.html:79
+#, python-brace-format
 msgid "TAGS: {content}"
 msgstr "SCHLAGWORTE: {content}"
 
-#: src/moin/templates/ajaxsearch.html:100
+#: src/moin/templates/ajaxsearch.html:82
+#, python-brace-format
 msgid "CONTENT: {content}"
 msgstr "INHALT: {content}"
 
-#: src/moin/templates/ajaxsearch.html:109
+#: src/moin/templates/ajaxsearch.html:91
+#, python-brace-format
 msgid "{count:d} items are not shown because read permission was denied."
 msgstr "{count:d} Items werden wegen fehlender Leseberechtigungen nicht angezeigt."
+
+#: src/moin/templates/ajaxsearch.html:98
+#, python-brace-format
+msgid "Create new page \"{name}\""
+msgstr "Neue Seite \"{name}\" erzeugen"
 
 #: src/moin/templates/all.html:3
 msgid "Global Views of All Namespaces"
 msgstr "Globale Ansicht aller Namensräume"
 
 #: src/moin/templates/convert.html:9
+#, python-brace-format
 msgid "Convert '{item_name}'"
 msgstr "Konvertiere '{item_name}'"
 
@@ -2027,18 +2132,6 @@ msgstr "Hoppla!"
 #: src/moin/templates/crash.html:3
 msgid "An error happened while processing your request."
 msgstr "Bei der Bearbeitung Ihrer Anfrage ist ein Fehler aufgetreten."
-
-#: src/moin/templates/crash.html:6
-msgid ""
-"More details have been logged. The following data will be helpful for the site admin in locating the "
-"corresponding log entries:"
-msgstr ""
-"Mehr Details wurden geloggt. Die folgenden Daten könnten für die Administration hilfreich sein, um die passenden "
-"Log-Einträge zu finden:"
-
-#: src/moin/templates/crash.html:9
-msgid "Error ID"
-msgstr "Fehler ID"
 
 #: src/moin/templates/crash.html:11
 msgid "Server time"
@@ -2062,7 +2155,8 @@ msgid ""
 msgstr ""
 "Wenn der Fehler auf dieser Website nur bei diesem einen Item auftritt,\n"
 "            kann das Problem darin bestehen, dass die aktuelle Revision ungültige oder\n"
-"            beschädigte Daten enthält oder dass eine Unstimmigkeit zwischen dem Content-Typ und den Daten besteht\n"
+"            beschädigte Daten enthält oder dass eine Unstimmigkeit zwischen dem Content-Typ und den Daten besteht"
+"\n"
 "            (z. B. ist der Content-Typ 'text/x.moin.wiki' und die Daten sind eine PNG-Datei). "
 
 #: src/moin/templates/crash.html:30
@@ -2110,10 +2204,12 @@ msgid "Create New Item"
 msgstr "Neues Item erstellen"
 
 #: src/moin/templates/delete.html:12
+#, python-brace-format
 msgid "Delete '{item_name}' with alias names {alias_names}"
 msgstr "Lösche '{item_name}' mit den Alias Namen {alias_names}"
 
 #: src/moin/templates/delete.html:14
+#, python-brace-format
 msgid "Delete '{item_name}'"
 msgstr "'{item_name}' löschen"
 
@@ -2126,14 +2222,17 @@ msgid "Content of item to be deleted:"
 msgstr "Inhalt des zu löschenden Items:"
 
 #: src/moin/templates/destroy.html:14
+#, python-brace-format
 msgid "Destroy '{item_name}' with alias names {alias_names}"
 msgstr "Zerstöre '{item_name}' mit den Alias Namen {alias_names}"
 
 #: src/moin/templates/destroy.html:16
+#, python-brace-format
 msgid "Destroy '{item_name}'"
 msgstr "'{item_name}' löschen"
 
 #: src/moin/templates/destroy.html:39
+#, python-brace-format
 msgid "DESTROY {item_name} REVISION NUMBER {rev_number}"
 msgstr "Zerstöre {item_name} REVISION NUMMER {rev_number}"
 
@@ -2165,7 +2264,7 @@ msgstr "Transklusionen verstecken"
 msgid "Hide tags"
 msgstr "Schlagworte verstecken"
 
-#: src/moin/templates/dictionary.js:20 src/moin/templates/tickets.html:20
+#: src/moin/templates/dictionary.js:20
 msgid "Show all tags"
 msgstr "Alle Schlagworte anzeigen"
 
@@ -2220,32 +2319,33 @@ msgid "Your saved draft has been loaded."
 msgstr "Gesicherter Entwurf wurde geladen."
 
 #: src/moin/templates/dictionary.js:33
-msgid "Your edit lock will expire in 1 minute: "
-msgstr "Ihre Schreibsperre wird in 1 Minute ablaufen: "
-
-#: src/moin/templates/dictionary.js:34
 msgid "Add optional comment for Delete change log. "
 msgstr "Lösch Kommentar zum Änderungslog zufügen (optional)."
 
-#: src/moin/templates/dictionary.js:35
+#: src/moin/templates/dictionary.js:34
 msgid "Add optional comment for Destroy change log. "
 msgstr "Lösch Kommentar zum Änderungslog zufügen (optional)"
 
-#: src/moin/templates/dictionary.js:36
+#: src/moin/templates/dictionary.js:35
 msgid "Action complete."
 msgstr "Aktion abgeschlossen."
 
 #: src/moin/templates/diff.html:10
+#, python-brace-format
 msgid "Diff for '{item_name}'"
 msgstr "Differenz für '{item_name}'"
 
-#: src/moin/templates/diff_text.html:18 src/moin/templates/history.html:137 src/moin/templates/utils.html:492
+#: src/moin/templates/diff_text.html:18 src/moin/templates/history.html:137 src/moin/templates/utils.html:508
 msgid "revert"
 msgstr "Wiederherstellen"
 
 #: src/moin/templates/diff_text.html:19
 msgid "Revert to Revision"
 msgstr "Version wiederherstellen"
+
+#: src/moin/templates/forms.html:191
+msgid "Upload"
+msgstr "Hochladen"
 
 #: src/moin/templates/global_history.html:46
 msgid "Set bookmark"
@@ -2256,10 +2356,12 @@ msgid "Delete bookmark"
 msgstr "Lesezeichen löschen"
 
 #: src/moin/templates/highlight.html:12
+#, python-brace-format
 msgid "Syntax highlighting of {name}"
 msgstr "Syntax-Hervorhebung von '{name}'"
 
 #: src/moin/templates/history.html:11
+#, python-brace-format
 msgid "History of {fqname}"
 msgstr "Historie von '{fqname}'"
 
@@ -2331,180 +2433,181 @@ msgstr "zerstöre diese Revision"
 msgid "Bookmark is set to"
 msgstr "Lesezeichen gesetzt auf"
 
-#: src/moin/templates/index.html:41
+#: src/moin/templates/index.html:43
 msgid "Item History"
 msgstr "Item Historie"
 
-#: src/moin/templates/index.html:58
+#: src/moin/templates/index.html:60
 msgid "This item has subitems that match your filter."
 msgstr "Dieses Item hat Subitems, die dem Filter entsprechen."
 
-#: src/moin/templates/index.html:85
+#: src/moin/templates/index.html:87
 msgid "These items have orphan sub-items. Click name to create or arrow to view sub-items."
 msgstr ""
 "Diese Items haben verwaiste Sub-Items. Klick auf den Namen um sie zu erstellen, oder auf den Pfeil um die Unter-"
 "Items zu betrachten."
 
-#: src/moin/templates/index.html:94
+#: src/moin/templates/index.html:96
 msgid "This missing item has subitems that match your filter."
 msgstr "Dieses fehlende Item hat Subitems, die dem Filter entsprechen."
 
-#: src/moin/templates/index.html:106
+#: src/moin/templates/index.html:114
 msgid "There are no items or read permission is denied for all."
 msgstr "Es gibt keine Items, oder der Zugriff auf alle wird verweigert."
 
-#: src/moin/templates/index.html:110
+#: src/moin/templates/index.html:118
 msgid "Toggle item selections"
 msgstr "Item Auswahl tauschen"
 
-#: src/moin/templates/index.html:112
+#: src/moin/templates/index.html:120
 msgid "Select All"
 msgstr "Alle selektieren"
 
-#: src/moin/templates/index.html:114
+#: src/moin/templates/index.html:123
 msgid "Download selected items"
 msgstr "Ausgewählte Items herunterladen"
 
-#: src/moin/templates/index.html:118
+#: src/moin/templates/index.html:133
 msgid "Delete selected items"
 msgstr "Ausgewählte Items löschen."
 
-#: src/moin/templates/index.html:123
+#: src/moin/templates/index.html:143
 msgid "Destroy selected items"
 msgstr "Ausgewählte Items vernichten."
 
-#: src/moin/templates/index.html:131
+#: src/moin/templates/index.html:152
 msgid "Filter items by content type"
 msgstr "Nach Content-Typ filtern"
 
-#: src/moin/templates/index.html:133
+#: src/moin/templates/index.html:154
 msgid "Filter"
 msgstr "Filter"
 
-#: src/moin/templates/index.html:137
+#: src/moin/templates/index.html:160
 msgid "Change namespace"
 msgstr "Namensraum wechseln"
 
-#: src/moin/templates/index.html:141
+#: src/moin/templates/index.html:166
 msgid "Open create item dialog"
 msgstr "Öffne Dialog zum Anlegen eines neuen Items"
 
-#: src/moin/templates/index.html:143
+#: src/moin/templates/index.html:168
 msgid "New Item"
 msgstr "Neues Item"
 
-#: src/moin/templates/index.html:149
+#: src/moin/templates/index.html:175
 msgid "Filter is on for these selected groups:"
 msgstr "Filter ist für diese ausgewählten Gruppen gesetzt:"
 
-#: src/moin/templates/index.html:160
+#: src/moin/templates/index.html:186
 msgid "Click home icon to view namespace home page or click name to view namespace index."
 msgstr ""
 "Drücken Sie das Home Symbol um die Startseite des Namespaces anzuzeigen oder klicken Sie auf den Namen um den "
 "Index zu sehen."
 
-#: src/moin/templates/index.html:179
+#: src/moin/templates/index.html:201
 msgid "items having unknown mime types"
 msgstr "Items mit unbekanntem Mime-Type"
 
-#: src/moin/templates/index.html:183
+#: src/moin/templates/index.html:204
 msgid "Toggle"
 msgstr "Umschalten"
 
-#: src/moin/templates/index.html:198 src/moin/templates/index.html:200
+#: src/moin/templates/index.html:216
 msgid "Enter item name here"
 msgstr "Hier den Item-Namen eingeben"
 
-#: src/moin/templates/index.html:202
+#: src/moin/templates/index.html:218
 msgid "Create"
 msgstr "Erzeugen"
 
-#: src/moin/templates/index.html:206
+#: src/moin/templates/index.html:222
 msgid ""
 "Enter Item name and click Create button above to edit or upload one item.\n"
-"                    To upload multiple files click the button below to open a file selection dialog,\n"
-"                    or drag and drop multiple files here."
+"                        To upload multiple files click the button below to open a file selection dialog,\n"
+"                        or drag and drop multiple files here."
 msgstr ""
-"Geben Sie einen Item-Namen ein und drücken Sie den 'Erzeugen' Button oben um ein Item anzulegen oder hochzuladen."
-" Um mehrere Dateien hochzuladen drücken Sie den 'Durchsuchen..' Button für einen Datei Auswahl-Dialog oder Ziehen"
-" Sie mehrere Dateien und legen Sie sie hier ab."
+"Geben Sie einen Item-Namen ein und drücken Sie den 'Erzeugen' Button oben, um ein Item zu bearbeiten oder "
+"hochzuladen. Um mehrere Dateien hochzuladen, drücken Sie den Button unten für einen Datei-Auswahl-Dialog, oder "
+"ziehen Sie mehrere Dateien hierher und legen Sie sie hier ab."
 
-#: src/moin/templates/index.html:246 src/moin/templates/index.html:251
+#: src/moin/templates/index.html:262 src/moin/templates/index.html:267
 msgid "Show All"
 msgstr "Alle anzeigen"
 
-#: src/moin/templates/index.html:268
+#: src/moin/templates/index.html:284
 msgid "Number Items"
 msgstr "Anzahl Items"
 
-#: src/moin/templates/index.html:288
-msgid "X"
-msgstr "X"
-
-#: src/moin/templates/index.html:288
+#: src/moin/templates/index.html:308
 msgid "Close"
 msgstr "Schliessen"
 
-#: src/moin/templates/index.html:289
+#: src/moin/templates/index.html:308
+msgid "X"
+msgstr "X"
+
+#: src/moin/templates/index.html:309
 msgid "Add optional comment for change log."
 msgstr "Kommentar zum Änderungslog zufügen (optional)."
 
-#: src/moin/templates/index.html:293
+#: src/moin/templates/index.html:316
 msgid "Selected names: "
 msgstr "Auswahl: "
 
-#: src/moin/templates/index.html:294
+#: src/moin/templates/index.html:317
 msgid "Alias names: "
 msgstr "Alias Namen: "
 
-#: src/moin/templates/index.html:297
+#: src/moin/templates/index.html:320
 msgid "Check to remove subitems"
 msgstr "Auswählen um Subitems zu löschen"
 
-#: src/moin/templates/index.html:299
+#: src/moin/templates/index.html:322
 msgid "Subitem names: "
 msgstr "Subitem-Namen: "
 
-#: src/moin/templates/index.html:300
+#: src/moin/templates/index.html:323
 msgid "Rejected names, permission denied: "
 msgstr "Unzulässige Namen, keine Berechtigung: "
 
-#: src/moin/templates/index.html:302
+#: src/moin/templates/index.html:325
 msgid "Enter your comment"
 msgstr "Geben Sie Ihren Kommentar ein"
 
-#: src/moin/templates/index.html:305
+#: src/moin/templates/index.html:327
 msgid "Submit"
 msgstr "Absenden"
 
-#: src/moin/templates/itemviews.html:21 src/moin/templates/ticket/ticket_macros.html:97
+#: src/moin/templates/itemviews.html:20
 msgid "Item Views"
 msgstr "Item-Ansichten"
 
-#: src/moin/templates/itemviews.html:86 src/moin/templates/ticket/base.html:26
-#: src/moin/templates/ticket/ticket_macros.html:101 src/moin/themes/__init__.py:266
+#: src/moin/templates/itemviews.html:84 src/moin/themes/__init__.py:272
+#: src/moin/themes/focus/templates/itemviews.html:114
 msgid "Remove Link"
 msgstr "Link entfernen"
 
-#: src/moin/templates/itemviews.html:88 src/moin/templates/ticket/base.html:28
-#: src/moin/templates/ticket/ticket_macros.html:103 src/moin/themes/__init__.py:264
+#: src/moin/templates/itemviews.html:86 src/moin/themes/__init__.py:270
+#: src/moin/themes/focus/templates/itemviews.html:116
 msgid "Add Link"
 msgstr "Link hinzufügen"
 
-#: src/moin/templates/itemviews.html:98 src/moin/templates/ticket/ticket_macros.html:45 src/moin/themes/__init__.py:270
+#: src/moin/templates/itemviews.html:96 src/moin/themes/__init__.py:276
+#: src/moin/themes/focus/templates/itemviews.html:126
 msgid "Unsubscribe"
 msgstr "Abbestellen"
 
-#: src/moin/templates/itemviews.html:100 src/moin/templates/ticket/ticket_macros.html:47
-#: src/moin/themes/__init__.py:272
+#: src/moin/templates/itemviews.html:98 src/moin/themes/__init__.py:278
+#: src/moin/themes/focus/templates/itemviews.html:128
 msgid "Subscribe"
 msgstr "Abonnieren"
 
-#: src/moin/templates/itemviews.html:124
+#: src/moin/templates/itemviews.html:122 src/moin/themes/focus/templates/itemviews.html:152
 msgid "Discuss contents of this item"
 msgstr "Inhalt diskutieren"
 
-#: src/moin/templates/layout.html:41 src/moin/themes/topside/templates/layout.html:45
+#: src/moin/templates/layout.html:40 src/moin/themes/topside/templates/layout.html:45
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -2525,26 +2628,36 @@ msgid "Please note that you only need to fill out one form field."
 msgstr "Sie müssen nur eines der Felder ausfüllen."
 
 #: src/moin/templates/meta.html:12
+#, python-brace-format
 msgid "Metadata of {item_name}"
 msgstr "Metadaten von {item_name}"
 
 #: src/moin/templates/modify.html:28 src/moin/themes/basic/templates/modify.html:13
+#: src/moin/themes/focus/templates/modify.html:28
+#, python-brace-format
 msgid "Modifying '{item_name}'"
 msgstr "'{item_name}' bearbeiten"
 
-#: src/moin/templates/modify.html:49
+#: src/moin/templates/modify.html:40 src/moin/themes/basic/templates/modify.html:29
+#: src/moin/themes/focus/templates/modify.html:40
+msgid "Your edit lock will expire in 1 minute"
+msgstr "Ihre Schreibsperre wird in 1 Minute ablaufen"
+
+#: src/moin/templates/modify.html:54 src/moin/themes/basic/templates/modify.html:56
+#: src/moin/themes/focus/templates/modify.html:78
 msgid "Load Draft"
 msgstr "Entwurf laden"
 
-#: src/moin/templates/modify.html:50
+#: src/moin/templates/modify.html:55 src/moin/themes/basic/templates/modify.html:57
+#: src/moin/themes/focus/templates/modify.html:79
 msgid "Clicking this button will delete draft!"
 msgstr "Wenn Sie diesen Button drücken, wird der Entwurf gelöscht!"
 
-#: src/moin/templates/modify.html:62
+#: src/moin/templates/modify.html:67
 msgid "Enter list of user names, one name per line."
 msgstr "Geben Sie die Liste der Benutzer-Namen einzeln pro Zeile ein."
 
-#: src/moin/templates/modify.html:70 src/moin/themes/basic/templates/modify.html:66
+#: src/moin/templates/modify.html:75 src/moin/themes/basic/templates/modify.html:75
 msgid "Enter \"key=value\" strings, one per line, no quotes, no blank lines."
 msgstr "Geben Sie \"Schlüssel=Wert\" Paare ein, einzeln pro Zeile, keine Anführungszeichen, keine leeren Zeilen."
 
@@ -2553,10 +2666,12 @@ msgid "Tags may have embedded blanks, use commas to separate."
 msgstr "Schlagworte können Leerzeichen enthalten, benutzen Sie Kommas zum trennen."
 
 #: src/moin/templates/modify_select_contenttype.html:13
+#, python-brace-format
 msgid "Create new item named '{name}'"
 msgstr "Neues Item mit Namen '{name}' anlegen"
 
 #: src/moin/templates/modify_select_contenttype.html:15
+#, python-brace-format
 msgid "Please select the contenttype of the new {itemtype} item."
 msgstr "Bitte wählen Sie den Content-Type des neuen {itemtype} Items."
 
@@ -2564,23 +2679,12 @@ msgstr "Bitte wählen Sie den Content-Type des neuen {itemtype} Items."
 msgid "Before creating a new item, review these existing items with similar names:"
 msgstr "Bevor Sie ein neues Item anlegen, prüfen Sie diese Items mit ähnlichem Namen:"
 
-#: src/moin/templates/modify_select_itemtype.html:11
-msgid "Item not found, create it now?"
-msgstr "Item nicht gefunden, jetzt neu erzeugen?"
-
-#: src/moin/templates/modify_select_itemtype.html:13
-msgid ""
-"Item '{fqname}' does not exist (yet), but you can try creating it now. Please select the type of the item you "
-"want to create."
-msgstr ""
-"Item '{fqname}' existiert (noch) nicht, aber Sie können versuchen, es jetzt zu erstellen. Bitte wählen Sie die "
-"Art des Items, das Sie erstellen wollen, aus."
-
 #: src/moin/templates/modify_select_template.html:11
 msgid "Create new item?"
 msgstr "Neues Item erstellen?"
 
 #: src/moin/templates/modify_select_template.html:13
+#, python-brace-format
 msgid "You can either <a href='{modifyhref}'>create the item from scratch</a> or select a template."
 msgstr ""
 "Sie können <a href='{modifyhref}'>mit einer leeren Item beginnen</a> oder eine Vorlage auswählen, um das Item zu "
@@ -2590,7 +2694,8 @@ msgstr ""
 msgid "Available template items"
 msgstr "Verfügbare Vorlagen"
 
-#: src/moin/templates/modify_text.html:20 src/moin/themes/basic/templates/modify_text.html:4
+#: src/moin/templates/modify_text.html:20 src/moin/templates/modify_text_html.html:30
+#: src/moin/templates/modify_text_markdown.html:28 src/moin/themes/basic/templates/modify_text.html:4
 msgid "Toggle font width"
 msgstr "Schriftbreite umschalten"
 
@@ -2607,6 +2712,7 @@ msgid "Create Account"
 msgstr "Benutzerkonto erstellen"
 
 #: src/moin/templates/rename.html:10
+#, python-brace-format
 msgid "Rename '{item_name}'"
 msgstr "'{item_name}' umbenennen"
 
@@ -2619,6 +2725,8 @@ msgid ""
 "If a parent name of the subitems below is removed, that parent's subitems will become subitems of the first name "
 "in the target field:"
 msgstr ""
+"Wenn ein Eltern-Name der folgenden Unter-Items entfernt wird, werden dessen Unter-Items zu Unter-Items des ersten"
+" Namens im Zielfeld:"
 
 #: src/moin/templates/rename.html:18
 msgid "The following subitems will be renamed:"
@@ -2637,6 +2745,7 @@ msgid "Content of item to be renamed:"
 msgstr "Inhalt des umzubenennenden Items:"
 
 #: src/moin/templates/revert.html:12
+#, python-brace-format
 msgid "Revert '{item_name}' to Revision Number '{rev_number}'"
 msgstr "Wiederherstellen von '{item_name}' auf Revisions Nummer '{rev_number}'"
 
@@ -2661,26 +2770,29 @@ msgid "For help on searching see:"
 msgstr "Weitere Hilfe zur Suche siehe:"
 
 #: src/moin/templates/search.html:35
-msgid "Search Options"
-msgstr "Such-Optionen"
+msgid "More Search Options"
+msgstr "Weitere Such-Optionen"
 
-#: src/moin/templates/search.html:71
+#: src/moin/templates/search.html:78
 msgid "An Ajax transaction is submitted each time a radio or checkbox is clicked."
 msgstr "Mit jedem Klick auf ein Kontrollkästchen wird eine Ajax-Transaktion ausgelöst."
 
-#: src/moin/templates/show.html:27 src/moin/themes/basic/templates/show.html:21
+#: src/moin/templates/show.html:27 src/moin/themes/basic/templates/show.html:20
+#, python-brace-format
 msgid "Summary: {summary}"
 msgstr "Zusammenfassung: {summary}"
 
-#: src/moin/templates/show_nonexistent.html:3 src/moin/themes/__init__.py:76
+#: src/moin/templates/show_nonexistent.html:3 src/moin/themes/__init__.py:86
 msgid "Item not found or access denied"
 msgstr "Item nicht gefunden oder keine Berechtigung"
 
-#: src/moin/templates/show_nonexistent.html:5 src/moin/themes/__init__.py:77
+#: src/moin/templates/show_nonexistent.html:5 src/moin/themes/__init__.py:87
+#, python-brace-format
 msgid "Item '{name}' does not exist or you do not have permission to access it."
 msgstr "Das Item '{name}' existiert nicht oder sie haben keine Berechtigung um es Anzusehen."
 
 #: src/moin/templates/sitemap.html:17
+#, python-brace-format
 msgid "SiteMap of '{item_name}'"
 msgstr "Sitemap von '{item_name}'"
 
@@ -2692,11 +2804,11 @@ msgstr "Vorwärts-Referenzen"
 msgid "Backward References"
 msgstr "Rückwärts-Referenzen"
 
-#: src/moin/templates/snippets.html:57 src/moin/templates/snippets.html:71
+#: src/moin/templates/snippets.html:55 src/moin/templates/snippets.html:69
 msgid "This site uses the MoinMoin Wiki software."
 msgstr "Diese Website nutzt MoinMoin Wiki Software."
 
-#: src/moin/templates/snippets.html:59 src/moin/templates/snippets.html:73
+#: src/moin/templates/snippets.html:57 src/moin/templates/snippets.html:71
 msgid "MoinMoin is written in Python."
 msgstr "MoinMoin ist in Python geschrieben."
 
@@ -2711,74 +2823,6 @@ msgstr "von"
 #: src/moin/templates/snippets.html:91
 msgid "tags:"
 msgstr "Schlagworte:"
-
-#: src/moin/templates/tickets.html:5 src/moin/templates/tickets.html:8
-msgid "Tickets"
-msgstr "Tickets"
-
-#: src/moin/templates/tickets.html:11
-msgid "Filter:"
-msgstr "Filter:"
-
-#: src/moin/templates/tickets.html:16
-msgid "Show {status} tickets"
-msgstr "Zeige {status} Tickets"
-
-#: src/moin/templates/ticket/advanced.html:6 src/moin/templates/ticket/advanced.html:8
-#: src/moin/templates/tickets.html:22
-msgid "Advanced Search"
-msgstr "Erweiterte Suche"
-
-#: src/moin/templates/tickets.html:26
-msgid "Find tickets"
-msgstr "Tickets finden"
-
-#: src/moin/templates/tickets.html:31
-msgid "Create ticket"
-msgstr "Ticket erzeugen"
-
-#: src/moin/templates/blog/utils.html:29 src/moin/templates/tickets.html:36
-msgid "Tags:"
-msgstr "Schlagworte:"
-
-#: src/moin/templates/tickets.html:50
-msgid "{result_len:d} Tickets found."
-msgstr "{result_len:d} Tickets gefunden."
-
-#: src/moin/templates/ticket/advanced.html:21 src/moin/templates/tickets.html:55
-msgid "Status"
-msgstr "Status"
-
-#: src/moin/templates/ticket/advanced.html:22 src/moin/templates/tickets.html:56
-msgid "Updated"
-msgstr "Aktualisiert"
-
-#: src/moin/templates/ticket/advanced.html:23 src/moin/templates/tickets.html:57
-msgid "Assignee"
-msgstr "Zugewiesen an"
-
-#: src/moin/templates/ticket/advanced.html:35 src/moin/templates/ticket/advanced.html:40
-#: src/moin/templates/tickets.html:69
-msgid "ITEMID: {itemid}"
-msgstr "ItemId: {itemid}"
-
-#: src/moin/templates/ticket/advanced.html:45 src/moin/templates/tickets.html:74
-msgid "Closed"
-msgstr "Geschlossen"
-
-#: src/moin/templates/ticket/advanced.html:45 src/moin/templates/tickets.html:74
-msgid "Open"
-msgstr "Offen"
-
-#: src/moin/templates/tickets.html:107
-msgid "Tip: Sort multiple columns simultaneously by holding down the Shift key and clicking on additional column headers!"
-msgstr ""
-"Tip: Sortieren Sie mehrere Spalten gleichzeitig durch Drücken der Shift-Taste und Klicken auf zusätzliche Spalten"
-" Überschriften!"
-
-#: src/moin/templates/ticket/advanced.html:76 src/moin/templates/tickets.html:111
-msgid "No tickets found."
-msgstr "Keine Tickets gefunden."
 
 #: src/moin/templates/usersettings_forms.html:39
 msgid "Changing your email address requires you to verify it. A link will be sent to you."
@@ -2812,141 +2856,152 @@ msgstr "Um einen Link zu einer externen Webseite zuzufügen, nutzen Sie die voll
 msgid "Other types of links, such as mailto: may be added"
 msgstr "Andere Arten von Links, wie z. B. 'mailto:' können hinzugefügt werden"
 
-#: src/moin/templates/usersettings_forms.html:97
+#: src/moin/templates/usersettings_forms.html:99
 msgid "MyItemName"
 msgstr "MeinItemName"
 
-#: src/moin/templates/usersettings_forms.html:98
+#: src/moin/templates/usersettings_forms.html:100
 msgid "MyTagName"
 msgstr "MeinSchlagwort"
 
-#: src/moin/templates/usersettings_forms.html:99
+#: src/moin/templates/usersettings_forms.html:101
 msgid "MyNameSpace"
 msgstr "MeinNamensRaum"
 
-#: src/moin/templates/usersettings_forms.html:100
+#: src/moin/templates/usersettings_forms.html:102
 msgid "My"
 msgstr "Mein"
 
-#: src/moin/templates/usersettings_forms.html:101
+#: src/moin/templates/usersettings_forms.html:103
 msgid "item id"
 msgstr "Item-ID"
 
-#: src/moin/templates/usersettings_forms.html:108
+#: src/moin/templates/usersettings_forms.html:110
 msgid "Formats for entering subscriptions:"
 msgstr "Formate um Abonnements einzutragen:"
 
-#: src/moin/templates/usersettings_forms.html:114
+#: src/moin/templates/usersettings_forms.html:116
 msgid "is created/removed by clicking a Subscribe/Unsubscribe link"
 msgstr "wird zugefügt/gelöscht durch Klicken auf den 'Abonnieren'/'Abbestellen' Link"
 
-#: src/moin/templates/usersettings_forms.html:125
+#: src/moin/templates/usersettings_forms.html:127
 msgid "Appearance"
 msgstr "Ansicht"
 
-#: src/moin/templates/usersettings_forms.html:129
+#: src/moin/templates/usersettings_forms.html:131
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: src/moin/templates/usersettings_forms.html:137
+#: src/moin/templates/usersettings_forms.html:139
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: src/moin/templates/usersettings_forms.html:141
+#: src/moin/templates/usersettings_forms.html:143
 msgid "Options"
 msgstr "Optionen"
 
-#: src/moin/templates/usersettings_forms.html:145
+#: src/moin/templates/usersettings_forms.html:147
 msgid "Personal"
 msgstr "Personalisierung"
 
-#: src/moin/templates/utils.html:18 src/moin/templates/utils.html:314 src/moin/templates/utils.html:346
+#: src/moin/templates/utils.html:27 src/moin/templates/utils.html:330 src/moin/templates/utils.html:362
 msgid "older"
 msgstr "älter"
 
-#: src/moin/templates/utils.html:21
+#: src/moin/templates/utils.html:30
 msgid "no older revision"
 msgstr "keine älteren Revisionen"
 
-#: src/moin/templates/utils.html:25
+#: src/moin/templates/utils.html:34
 msgid "Revision "
 msgstr "Revision "
 
-#: src/moin/templates/utils.html:32 src/moin/templates/utils.html:325 src/moin/templates/utils.html:357
+#: src/moin/templates/utils.html:41 src/moin/templates/utils.html:341 src/moin/templates/utils.html:373
 msgid "newer"
 msgstr "neuer"
 
-#: src/moin/templates/utils.html:36
+#: src/moin/templates/utils.html:45
 msgid "no newer revision"
 msgstr "keine neueren Revisionen"
 
-#: src/moin/templates/utils.html:43
+#: src/moin/templates/utils.html:52
 msgid "Revert to this revision"
 msgstr "Auf diese Revision zurücksetzen"
 
-#: src/moin/templates/utils.html:224
+#: src/moin/templates/utils.html:138
+msgid "Key"
+msgstr "Schlüssel"
+
+#: src/moin/templates/utils.html:138
+msgid "Value"
+msgstr "Wert"
+
+#: src/moin/templates/utils.html:245
 msgid "Alias Names"
 msgstr "Alias Namen"
 
-#: src/moin/templates/utils.html:257
+#: src/moin/templates/utils.html:279 src/moin/themes/focus/templates/layout.html:94
 msgid "Page Trail"
 msgstr "Zuletzt besuchte Seiten"
 
-#: src/moin/templates/utils.html:319 src/moin/templates/utils.html:351 src/moin/templates/utils.html:369
+#: src/moin/templates/utils.html:335 src/moin/templates/utils.html:367 src/moin/templates/utils.html:385
 msgid "Revision"
 msgstr "Revision"
 
-#: src/moin/templates/utils.html:330
+#: src/moin/templates/utils.html:346
 msgid "newest"
 msgstr "neueste"
 
-#: src/moin/templates/utils.html:341
+#: src/moin/templates/utils.html:357
 msgid "oldest"
 msgstr "älteste"
 
-#: src/moin/templates/utils.html:394
+#: src/moin/templates/utils.html:410
 msgid "Time"
 msgstr "Zeit"
 
-#: src/moin/templates/utils.html:427
+#: src/moin/templates/utils.html:443
 msgid "Deletions are marked like this."
 msgstr "Löschungen sind auf diese Art markiert."
 
-#: src/moin/templates/utils.html:428
+#: src/moin/templates/utils.html:444
 msgid "Additions are marked like this."
 msgstr "Hinzufügungen sind auf diese Art markiert."
 
-#: src/moin/templates/utils.html:433 src/moin/templates/utils.html:434
+#: src/moin/templates/utils.html:449 src/moin/templates/utils.html:450
 msgid "Line"
 msgstr "Zeile"
 
-#: src/moin/templates/utils.html:463 src/moin/templates/utils.html:465 src/moin/themes/basic/templates/layout.html:156
-#: src/moin/themes/basic/templates/layout.html:158
+#: src/moin/templates/utils.html:479 src/moin/templates/utils.html:481 src/moin/themes/basic/templates/layout.html:156
+#: src/moin/themes/basic/templates/layout.html:158 src/moin/themes/focus/templates/layout.html:53
+#: src/moin/themes/focus/templates/layout.html:55
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/moin/templates/utils.html:472 src/moin/templates/utils.html:474 src/moin/themes/basic/templates/layout.html:163
-#: src/moin/themes/basic/templates/layout.html:165
+#: src/moin/templates/utils.html:488 src/moin/templates/utils.html:490 src/moin/themes/basic/templates/layout.html:163
+#: src/moin/themes/basic/templates/layout.html:165 src/moin/themes/focus/templates/layout.html:62
+#: src/moin/themes/focus/templates/layout.html:64
 msgid "Logout"
 msgstr "Abmelden"
 
-#: src/moin/templates/utils.html:498
+#: src/moin/templates/utils.html:514
 msgid "show diff based on bookmark"
 msgstr "Zeige Differenz basierend auf Lesezeichen"
 
-#: src/moin/templates/utils.html:502
+#: src/moin/templates/utils.html:518
 msgid "show diff with prior revision"
 msgstr "Zeige Differenz zur vorhergehenden Version"
 
-#: src/moin/templates/utils.html:543
+#: src/moin/templates/utils.html:559
 msgid "Previous"
 msgstr "Vorhergehende"
 
-#: src/moin/templates/utils.html:546
+#: src/moin/templates/utils.html:562
+#, python-brace-format
 msgid "Page {page_num} of {pages}"
 msgstr "Zeite {page_num} von {pages}"
 
-#: src/moin/templates/utils.html:550
+#: src/moin/templates/utils.html:566
 msgid "Next"
 msgstr "Nachfolgende"
 
@@ -2967,6 +3022,7 @@ msgid "There are no entries in this blog."
 msgstr "Es gibt keine Einträge in diesem Blog."
 
 #: src/moin/templates/blog/main.html:6
+#, python-brace-format
 msgid "There are no entries in the '{tag}' blog category."
 msgstr "Es gibt keine Einträge in der Blog-Kategorie '{tag}'."
 
@@ -2978,6 +3034,10 @@ msgstr "Kategorie:"
 msgid "Published on"
 msgstr "Veröffentlicht am"
 
+#: src/moin/templates/blog/utils.html:29
+msgid "Tags:"
+msgstr "Schlagworte:"
+
 #: src/moin/templates/blog/utils.html:40
 msgid "Discussion page"
 msgstr "Diskussions-Seite"
@@ -2986,7 +3046,7 @@ msgstr "Diskussions-Seite"
 msgid "Categories"
 msgstr "Kategorien"
 
-#: src/moin/templates/blog/utils.html:65
+#: src/moin/templates/blog/utils.html:66
 msgid "only this blog"
 msgstr "nur dieses Blog"
 
@@ -3002,12 +3062,12 @@ msgstr "Differenz Link:"
 msgid "Content"
 msgstr "Inhalt"
 
-#: src/moin/templates/mail/notification_main.html:32 src/moin/templates/ticket/modify.html:48
-#: src/moin/templates/ticket/submit.html:32
+#: src/moin/templates/mail/notification_main.html:32
 msgid "Metadata"
 msgstr "Metadaten"
 
 #: src/moin/templates/mail/notification_main.html:37
+#, python-brace-format
 msgid ""
 "You received this message because you have subscribed to a wiki\n"
 "            item on {wiki_name} for change notifications."
@@ -3019,43 +3079,7 @@ msgstr ""
 msgid "Unsubscribe from this item notifications"
 msgstr "Benachrichtigung für dieses Item abbestellen"
 
-#: src/moin/templates/ticket/advanced.html:19
-msgid "ID"
-msgstr "ID"
-
-#: src/moin/templates/ticket/base.html:17 src/moin/themes/basic/templates/show.html:80
-msgid "User Actions"
-msgstr "Benutzer-Aktionen"
-
-#: src/moin/templates/ticket/base.html:44
-msgid "Closed:"
-msgstr "Geschlossen:"
-
-#: src/moin/templates/ticket/modify.html:29
-msgid "Add Comment"
-msgstr "Kommentar hinzufügen"
-
-#: src/moin/templates/ticket/modify.html:63 src/moin/templates/ticket/submit.html:39
-msgid "Suggested Tags: "
-msgstr "Vorgeschlagene Schlagworte: "
-
-#: src/moin/templates/ticket/modify.html:76
-msgid "Back references"
-msgstr "Rückwärts-Referenzen"
-
-#: src/moin/templates/ticket/modify.html:84
-msgid "Files"
-msgstr "Dateien"
-
-#: src/moin/templates/ticket/submit.html:9
-msgid "Create new ticket"
-msgstr "Neues Ticket erstellen"
-
-#: src/moin/templates/ticket/submit.html:23
-msgid "Describe the ticket"
-msgstr "Ticket beschreiben"
-
-#: src/moin/themes/__init__.py:628
+#: src/moin/themes/__init__.py:581
 msgid "anonymous"
 msgstr "anonym"
 
@@ -3063,7 +3087,7 @@ msgstr "anonym"
 msgid "Site Navigation"
 msgstr "Website Navigation"
 
-#: src/moin/themes/basic/templates/modify.html:60
+#: src/moin/themes/basic/templates/modify.html:69
 msgid "Enter list of user names, one name per line. No leading or trailing blanks, no blank lines."
 msgstr ""
 "Geben Sie die Liste der Benutzernamen einzeln pro Zeile ein. Ohne führende oder abschliessende Leerzeichen, ohne "
@@ -3073,15 +3097,24 @@ msgstr ""
 msgid "Tags and names may have embedded blanks, use commas to separate."
 msgstr "Schlagworte und Namnen können Leerzeichen enthalten, benutzen Sie Kommas zum trennen."
 
-#: src/moin/themes/basic/templates/show.html:54
+#: src/moin/themes/basic/templates/show.html:53
 msgid "View Options"
 msgstr "Anzeige-Optionenen"
 
-#: src/moin/themes/basic/templates/show.html:92
+#: src/moin/themes/basic/templates/show.html:79
+msgid "User Actions"
+msgstr "Benutzer-Aktionen"
+
+#: src/moin/themes/basic/templates/show.html:91
 msgid "Item Actions"
 msgstr "Item-Aktionen"
 
-#: src/moin/utils/edit_locking.py:277
+#: src/moin/themes/focus/templates/itemviews.html:43
+msgid "More"
+msgstr "Mehr"
+
+#: src/moin/utils/edit_locking.py:282
+#, python-brace-format
 msgid ""
 "Edit lock for {user_name} timed out {number} {interval} ago, click 'Cancel' to yield more time, clicking 'Save' "
 "may require {user_name} to resolve conflicting edits."
@@ -3089,103 +3122,126 @@ msgstr ""
 "Die Sperre für {user_name} ist vor {number} {interval} abgelaufen, klicken Sie auf 'Abbrechen', um mehr Zeit zu "
 "erhalten. Wenn Sie auf 'Speichern' klicken, muss {user_name} Konflikte zwischen den Bearbeitungen beheben."
 
-#: src/moin/utils/edit_locking.py:286
+#: src/moin/utils/edit_locking.py:290
+#, python-brace-format
 msgid "Item '{item_name}' is locked by {user_name}. Try again in {number} {interval}."
 msgstr "Item '{item_name}' ist durch {user_name} gesperrt. Versuchen Sie es in {number} {interval} erneut."
 
-#: src/moin/utils/edit_locking.py:299
+#: src/moin/utils/edit_locking.py:304
+#, python-brace-format
 msgid "Someone else updated '{item_name}' after your edit lock timed out. Conflicting changes must be manually merged. "
 msgstr ""
-"Jemand anderes hat '{item_name}' geändert nachdem Ihre Schreibsperre abgelaufen ist. "
-"Bearbeitungskonflikte müssen manuell behoben werden."
+"Jemand anderes hat '{item_name}' geändert nachdem Ihre Schreibsperre abgelaufen ist. Bearbeitungskonflikte müssen"
+" manuell behoben werden."
 
-#: src/moin/utils/edit_locking.py:337
+#: src/moin/utils/edit_locking.py:342
+#, python-brace-format
 msgid "Item '{item_name}' is locked by {user_name}. Edit lock error, check Item History to verify no changes were lost."
 msgstr ""
 "Item '{item_name}' ist durch {user_name} gesperrt. Fehler der Schreibsperre, prüfen Sie die Historie um "
 "sicherzustellen, dass keine Änderungen verloren gegangen sind."
 
-#: src/moin/utils/notifications.py:56
+#: src/moin/utils/notifications.py:55
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been created by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} angelegt:"
 
-#: src/moin/utils/notifications.py:57
+#: src/moin/utils/notifications.py:56
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been modified by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} geändert:"
 
-#: src/moin/utils/notifications.py:58
+#: src/moin/utils/notifications.py:57
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been renamed by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} umbenannt:"
 
-#: src/moin/utils/notifications.py:59
+#: src/moin/utils/notifications.py:58
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been copied by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} kopiert:"
 
-#: src/moin/utils/notifications.py:60
+#: src/moin/utils/notifications.py:59
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been converted by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} konvertiert:"
 
-#: src/moin/utils/notifications.py:61
+#: src/moin/utils/notifications.py:60
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been reverted by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} zurück gesetzt:"
 
-#: src/moin/utils/notifications.py:62
+#: src/moin/utils/notifications.py:61
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been deleted by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} gelöscht:"
 
-#: src/moin/utils/notifications.py:63
+#: src/moin/utils/notifications.py:62
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has one revision destroyed by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' hat eine Revision, die von {user_name} vernichtet wurde:"
 
-#: src/moin/utils/notifications.py:64
+#: src/moin/utils/notifications.py:63
+#, python-brace-format
 msgid "The '{fqname}' item on '{wiki_name}' has been destroyed by {user_name}:"
 msgstr "Das '{fqname}' Item von '{wiki_name}' wurde von {user_name} vernichtet:"
 
-#: src/moin/utils/notifications.py:223
+#: src/moin/utils/notifications.py:219
 msgid "An error has occurred, the current or prior revision of this item may be corrupt."
 msgstr "Es ist ein Fehler aufgetreten, die aktuelle oder eine vorhergehende Version dieses Items kann beschädigt sein."
 
-#: src/moin/utils/notifications.py:229
+#: src/moin/utils/notifications.py:225
+#, python-brace-format
 msgid "[{moin_name}] Update of \"{fqname}\" by {user_name}"
 msgstr "[{moin_name}] Aktualisierung von \"{fqname}\" durch {user_name}"
 
 #: src/moin/utils/paramparser.py:329
+#, python-brace-format
 msgid "Argument \"{name}\" must be a boolean value, not \"{value}\""
 msgstr "Argument \"{name}\" muss ein boolescher Wert sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:331
+#, python-brace-format
 msgid "Argument must be a boolean value, not \"{value}\""
 msgstr "Argument muss ein boolescher Wert sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:357
+#, python-brace-format
 msgid "Argument \"{name}\" must be an integer value, not \"{value}\""
 msgstr "Argument \"{name}\" muss ein ganzzahliger Wert sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:360
+#, python-brace-format
 msgid "Argument must be an integer value, not \"{value}\""
 msgstr "Argument muss ein ganzzahliger Wert sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:385
+#, python-brace-format
 msgid "Argument \"{name}\" must be a floating point value, not \"{value}\""
 msgstr "Argument \"{name}\" muss eine Fließkommazahl sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:388
+#, python-brace-format
 msgid "Argument must be a floating point value, not \"{value}\""
 msgstr "Argument muss eine Fließkommazahl sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:414
+#, python-brace-format
 msgid "Argument \"{name}\" must be a complex value, not \"{value}\""
 msgstr "Argument \"{name}\" muss ein komplexer Wert sein, nicht \"{value}\""
 
 #: src/moin/utils/paramparser.py:416
+#, python-brace-format
 msgid "Argument must be a complex value, not \"{value}\""
 msgstr "Argument muss ein komplexer Wert sein, nicht \"{value}\""
 
-#: src/moin/utils/paramparser.py:471
+#: src/moin/utils/paramparser.py:469
+#, python-brace-format
 msgid "Argument \"{name}\" must be one of \"{choices}\").format(not \"{value}\""
 msgstr "Argument \"{name}\" muss eines von \"{choices}\" sein, nicht \"{value}\""
 
-#: src/moin/utils/paramparser.py:479
+#: src/moin/utils/paramparser.py:478
+#, python-brace-format
 msgid "Argument must be one of \"{choices}\").format(not \"{value}\""
 msgstr "Argument muss eines von \"{choices}\" sein, nicht \"{value}\""
 
@@ -3198,10 +3254,12 @@ msgid "Cannot have arguments without name following named arguments"
 msgstr "Unbenannte Argumente können nicht auf benannte Argumente folgen"
 
 #: src/moin/utils/paramparser.py:723
+#, python-brace-format
 msgid "Argument \"{name}\" is required"
 msgstr "Argument \"{name}\" wird benötigt"
 
 #: src/moin/utils/paramparser.py:735
+#, python-brace-format
 msgid "No argument named \"{name}\""
 msgstr "Kein Argument mit dem Namen \"{name}\""
 
@@ -3232,6 +3290,3 @@ msgstr "Monate"
 #: src/moin/utils/show_time.py:34
 msgid "years"
 msgstr "Jahre"
-
-msgid "More"
-msgstr "Mehr"

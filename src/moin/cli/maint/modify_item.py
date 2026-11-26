@@ -25,6 +25,7 @@ from moin import help as moin_help
 from moin.app import create_app, before_wiki
 from moin.log import getLogger
 from moin.constants.keys import CONTENTTYPE, CURRENT, ITEMID, DATAID, NAMESPACE, REVID, SIZE, MTIME, NAME
+from moin.utils.mime import get_charset
 from moin.utils.names import split_fqname
 from moin.items import Item
 
@@ -59,7 +60,7 @@ def get_item(name: str, meta_file: str, data_file: str, revid: str, newline: str
         # Input data will have \r\n line endings; output will use the specified endings.
         # Those running on Windows with git autocrlf=true will want --crlf.
         # Those running on Linux or with autocrlf=input will want --no-crlf.
-        charset = content_type.split("charset=")[1]
+        charset = get_charset(content_type)
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
         # add trailing line ending which may have been removed by splitlines,
@@ -99,7 +100,7 @@ def put_item(meta_file: str, data_file: str, overwrite: bool) -> None:
 
     # we want \r\n line endings in data out because \r\n is required in form textareas
     if "charset" in meta[CONTENTTYPE]:
-        charset = meta[CONTENTTYPE].split("charset=")[1]
+        charset = get_charset(meta[CONTENTTYPE])
         with open(data_file, "rb") as df:
             data = df.read().decode(charset)
         if "\r\n" not in data and "\n" in data:

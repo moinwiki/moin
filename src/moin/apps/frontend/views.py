@@ -17,7 +17,7 @@ Views that render the pages and actions a typical wiki user sees.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 import os
 import re
@@ -2857,7 +2857,7 @@ def usersettings():
             form = form_classes[part].from_flat(request.form)
 
             # save response to a dict as we can't use HTTP redirects or flash() for XHR requests
-            response = dict(form=None, flash=[], redirect=None)
+            response: dict[str, Any] = {"part": part, "values": [], "flash": [], "redirect": None}
 
             if form.validate():
                 # successfully modified everything
@@ -2932,9 +2932,9 @@ def usersettings():
                 response["flash"].append((msg, "info"))
 
             if is_xhr:
-                # if it is a XHR request, render the part from the usersettings_ajax.html template
+                # if it is a XHR request, set the form values in the response object
                 # and send the response encoded as an JSON object
-                response["form"] = render_template("usersettings_ajax.html", part=part, form=form)
+                response["values"] = form.flatten()
                 return jsonify(**response)
 
             # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
@@ -3241,7 +3241,8 @@ def sitemap(item_name):
     """
     sitemap view shows item link structure relative to item_name.
 
-    * If there are multiple links to same item, only first link to same item is processed.
+    * If there are multiple links to same item, the item is only listed once: as close
+       to item_name as possible.
     * Missing items are marked as missing in template rendering.
     * Links to items where current user lacks read authority are generated, but
        suppressed in template rendering.
@@ -3255,9 +3256,12 @@ def sitemap(item_name):
         abort(404, item_name)
     item_may = get_item_permissions(item_name, item)
 
-    backrefs, junk, junk2 = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
+    max_depth, max_items = current_app.cfg.sitemap_max_depth, current_app.cfg.sitemap_max_items
+    backrefs_builder = NestedItemListBuilder(max_depth=max_depth, max_items=max_items)
+    backrefs, junk, junk2 = backrefs_builder.build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
-    sitemap, no_read_auth, missing = NestedItemListBuilder().recurse_build([fq_name])
+    sitemap_builder = NestedItemListBuilder(max_depth=max_depth, max_items=max_items)
+    sitemap, no_read_auth, missing = sitemap_builder.build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template(
         "sitemap.html",
@@ -3269,28 +3273,72 @@ def sitemap(item_name):
         no_read_auth=no_read_auth,
         missing=missing,
         may=item_may,
+        sitemap_cut=sitemap_builder.cut,
+        backrefs_cut=backrefs_builder.cut,
     )
 
 
 class NestedItemListBuilder:
-    def __init__(self):
+    """
+    Build the nested list of the items linked from (or to) an item, transitively.
+
+    The walk is limited: items more than max_depth levels below the starting item are not
+    listed, and the links of at most max_items items are looked up. Without these limits,
+    one request could walk the whole link graph of the wiki (and with backrefs, run an index
+    query per item). If a limit was hit, self.cut is True.
+    """
+
+    def __init__(self, max_depth=None, max_items=None):
         self.children = set()
         self.no_read_auth = set()
         self.missing = set()
+        self.max_depth = max_depth
+        self.items_left = max_items
+        self.cut = False
 
-    def recurse_build(self, fq_names, backrefs=False):
+    def build(self, fq_names, backrefs=False):
         """
         Return a list of fqnames and lists containing more fqnames that represent a sitemap.
+
+        The link graph is walked breadth-first (level by level), so each item is listed once,
+        at its shortest distance from the starting item(s), below the first item of the level
+        above that links to it. A depth-first walk would list an item where it happens to
+        come across it first, maybe at the depth limit - and its links would then be missing,
+        although they are within the limit.
         """
-        result = []
-        for fq_name in fq_names:
-            self.children.add(fq_name)
-            result.append(fq_name)
-            childs = self.childs(fq_name, backrefs=backrefs)
-            if childs:
-                childs, no_read_auth, missing = self.recurse_build(childs, backrefs=backrefs)
-                result.append(childs)
-        return result, self.no_read_auth, self.missing
+        childs_of = {}  # fq_name -> the fq_names we first came across when looking up its links
+        self.children.update(fq_names)
+        level = list(fq_names)  # the fq_names <depth> levels below the starting item(s)
+        depth = 0
+        while level:
+            next_level = []
+            for fq_name in level:
+                if self.max_depth is not None and depth >= self.max_depth:
+                    # do not even look up the links of this item, we would not list them anyway
+                    self.cut = True
+                    break
+                if self.items_left is not None:
+                    if self.items_left <= 0:
+                        self.cut = True
+                        break
+                    self.items_left -= 1
+                childs = self.childs(fq_name, backrefs=backrefs)
+                if childs:
+                    self.children.update(childs)
+                    childs_of[fq_name] = childs
+                    next_level.extend(childs)
+            level = next_level
+            depth += 1
+
+        def nested(fq_names):
+            result = []
+            for fq_name in fq_names:
+                result.append(fq_name)
+                if fq_name in childs_of:
+                    result.append(nested(childs_of[fq_name]))
+            return result
+
+        return nested(fq_names), self.no_read_auth, self.missing
 
     def childs(self, fq_name, backrefs=False):
         """

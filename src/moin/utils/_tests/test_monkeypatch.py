@@ -9,11 +9,20 @@ from __future__ import annotations
 
 import threading
 import time
+from io import BytesIO
 from types import SimpleNamespace
 
-from flask_theme import ThemeManager
+import pytest
 
-from moin.utils import monkeypatch  # noqa: F401  ensures the patch below is applied
+from flask_theme import ThemeManager
+from whoosh.fields import ID, TEXT, Schema
+from whoosh.filedb import structfile
+from whoosh.filedb.filestore import FileStorage
+from whoosh.filedb.structfile import BufferFile, StructFile
+from whoosh.query import Term
+
+# importing moin.utils.monkeypatch applies the patches tested below
+from moin.utils.monkeypatch import BufferReader
 
 
 def _slow_loader(app):
@@ -108,3 +117,87 @@ def test_theme_manager_concurrent_refresh_is_race_free():
         t.join()
 
     assert not errors, f"{len(errors)} reads saw a spurious KeyError during a concurrent refresh"
+
+
+# whoosh BufferFile: read without copying the buffer
+
+DATA = b"first line\nsecond line\n\nlast line without newline"
+
+
+def apply(f, op):
+    name, *args = op
+    return getattr(f, name)(*args)
+
+
+@pytest.mark.parametrize(
+    "ops",
+    [
+        [("read", 5), ("read", 3), ("tell",), ("read",)],
+        [("read", 0), ("read", -1), ("read", 1), ("read", None)],
+        [("seek", 3), ("read", 4), ("seek", 2, 1), ("read", 2), ("seek", -4, 2), ("read", 10), ("tell",)],
+        [("seek", 1000), ("read", 3), ("tell",), ("readline",)],
+        [("readline",), ("readline",), ("readline",), ("readline",), ("readline",)],
+        [("readline", 4), ("readline", 100), ("readline", 0), ("tell",)],
+    ],
+)
+def test_reader_like_bytesio(ops):
+    for buf in (DATA, memoryview(DATA)):
+        reader, bytesio = BufferReader(buf), BytesIO(DATA)
+        assert [apply(reader, op) for op in ops] == [apply(bytesio, op) for op in ops]
+
+
+def test_reader_long_line_and_iteration():
+    data = b"x" * 10000 + b"\n" + b"y" * 5000
+    assert list(BufferReader(memoryview(data))) == list(BytesIO(data))
+
+
+def test_reader_errors():
+    reader = BufferReader(DATA)
+    with pytest.raises(ValueError):
+        reader.seek(-1)
+    with pytest.raises(ValueError):
+        reader.seek(0, 3)
+    reader.close()
+    assert reader.closed
+    with pytest.raises(ValueError):
+        reader.read()
+
+
+def test_buffer_file_reads_without_copy(monkeypatch):
+    out = StructFile(BytesIO())
+    out.write_varint(300)
+    out.write_int(-7)
+    out.write_string(b"moin")
+    out.write_long(2**40)
+    data = out.file.getvalue()
+
+    def no_copy(*args):
+        raise AssertionError("BufferFile must not copy its buffer into a BytesIO")
+
+    monkeypatch.setattr(structfile, "BytesIO", no_copy)
+    f = BufferFile(memoryview(data))
+    assert (f.read_varint(), f.read_int(), f.read_string(), f.read_long()) == (300, -7, b"moin", 2**40)
+    f.seek(0)
+    assert f.read_varint() == 300
+    sub = f.subset(0, 2)
+    assert sub.read_varint() == 300
+    f.close()
+
+
+def test_index_on_disk(tmp_path, monkeypatch):
+    # whoosh memory-maps the segment files of a FileStorage index and reads them via BufferFile
+    schema = Schema(name=ID(stored=True, unique=True), content=TEXT(stored=True))
+    ix = FileStorage(str(tmp_path)).create_index(schema)
+    for i in range(3):  # one segment per commit
+        with ix.writer() as writer:
+            writer.add_document(name=f"item{i}", content=f"some text number{i}")
+
+    def no_copy(*args):
+        raise AssertionError("BufferFile must not copy its buffer into a BytesIO")
+
+    monkeypatch.setattr(structfile, "BytesIO", no_copy)
+    with ix.searcher() as searcher:
+        assert searcher.doc_count() == 3
+        assert [hit["name"] for hit in searcher.search(Term("content", "number1"))] == ["item1"]
+        assert searcher.document(name="item2")["content"] == "some text number2"
+        assert sorted(searcher.lexicon("name")) == [b"item0", b"item1", b"item2"]
