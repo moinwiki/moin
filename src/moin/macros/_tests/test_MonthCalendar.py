@@ -8,7 +8,10 @@ MoinMoin - tests for moin.macros.MonthCalendar.
 from emeraldtree.tree import Element
 import pytest
 
+from moin import flaskg
+from moin._tests import update_item
 from moin.macros.MonthCalendar import Macro, parseargs, yearmonthplusoffset
+from moin.utils.tree import xlink
 
 
 def test_parseargs_one():
@@ -78,3 +81,36 @@ def test_Macro():
 )
 def test_yearmonthplusoffset(year, month, month_offset, expected_year, expected_month):
     assert yearmonthplusoffset(year, month, month_offset) == (expected_year, expected_month)
+
+
+def _calendar_links(may_create, monkeypatch, anniversary=False):
+    """Render February 2024 of the TEST-CALENDAR calendar, return the paths of the linked days."""
+    monkeypatch.setattr(flaskg.user.may, "create", lambda itemname: may_create, raising=False)
+    day = "02-14" if anniversary else "2024-02-14"
+    update_item(f"TEST-CALENDAR/{day}", {}, "an existing day item")
+    arguments = Element("arguments")
+    arguments.append(f'item="TEST-CALENDAR",year=2024,month=2,anniversary={str(anniversary).lower()}')
+    result = Macro().macro("content", arguments, "page_url", "alternative")
+    return {
+        str(elem.attrib[xlink.href].path)
+        for elem in result.iter()
+        if isinstance(elem, Element) and elem.tag.name == "a"
+    }
+
+
+@pytest.mark.usefixtures("_req_ctx")
+def test_Macro_links_empty_days_only_for_creators(monkeypatch):
+    """
+    Days without an item are only linked if the user may create that item. Otherwise the link
+    just leads to an "item not found" page, and crawlers request all of them.
+    """
+    assert _calendar_links(False, monkeypatch) == {"/TEST-CALENDAR/2024-02-14"}
+    links = _calendar_links(True, monkeypatch)
+    assert len(links) == 29
+    assert "/TEST-CALENDAR/2024-02-01" in links
+
+
+@pytest.mark.usefixtures("_req_ctx")
+def test_Macro_anniversary_finds_existing_days(monkeypatch):
+    """An anniversary calendar must recognize its existing BasePage/mm-dd day items, too."""
+    assert _calendar_links(False, monkeypatch, anniversary=True) == {"/TEST-CALENDAR/02-14"}

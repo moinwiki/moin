@@ -752,7 +752,7 @@ ul#moin-rev-navigation { text-align: center; background-color: var(--bg-zebra); 
 .calendar thead,
 .calendar tr { padding: 0; border: 3px solid var(--border-cal); text-align: center; }
 .calendar caption { padding: .5em 0 .3em; color: var(--cal-text); font-size: 1.1em; font-weight: bold; border: 3px solid var(--border-cal); }
-.calendar td { width: 14%; padding: .5em .2em .3em; text-align: center; border: inherit; }
+.calendar td { width: 14%; padding: .5em .2em .3em; text-align: center; border: inherit; color: var(--cal-text); }
 
 table.calendar { table-layout: fixed; }
 .cal-header   { background-color: var(--bg-cal-header); }
