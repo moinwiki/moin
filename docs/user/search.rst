@@ -12,12 +12,12 @@ Deleted items (trash) are excluded.
 
 The search results view provides a form for refining the search through
 AJAX updates. Click the More Search Options link to see the form.
-A transaction is started each time a character is added or removed
-in the search field. If typing is rapid, it is possible that results will be
-processed out of order. The Whoosh query shows the last term processed.
+A transaction is started when typing in the search field pauses briefly.
+An earlier transaction that is still running is then canceled, so the results
+shown always belong to the current input.
 
 Clicking the Search Options link displays alternatives for modifying the search.
-AJAX updates will be made whenever a radio button or checkbox is changed.
+AJAX updates will be made shortly after a radio button or checkbox is changed.
 
 Below the search form is the query processed by Whoosh, and Whoosh-generated
 suggestions for additional searches by input, item name, and item content.
