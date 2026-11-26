@@ -7,6 +7,19 @@
 
 {% import "utils.html" as utils with context %}
 
+{#
+    A per-revision row action. This is a submit button of the empty "moin-history-actions" form
+    rather than a link on purpose: an item with n revisions would otherwise offer crawlers
+    about 4*n urls, each of them loading or rendering a revision. Crawlers ignore rel=nofollow,
+    but they do not submit forms. The button belongs to that separate form (see its "form"
+    attribute), so it does not submit the rev1/rev2 radio buttons of the diff form around it.
+#}
+{% macro row_action(url, icon_class, title) -%}
+    <button type="submit" form="moin-history-actions" formaction="{{ url }}" class="moin-history-row-action" title="{{ title }}" aria-label="{{ title }}">
+        <span class="fa {{ icon_class }}"></span>
+    </button>
+{%- endmacro %}
+
 {% set summary = history[0].get('summary', None) if history else None %}
 {% set heading = _("History of {fqname}").format(fqname=utils.item_moniker(item.meta, [fqname])) %}
 {% set first_itemid = history[0].itemid %}
@@ -38,6 +51,8 @@
         {{ utils.page_links(page_num, pages, url) }}
 
         <div class="moin-clr"></div>
+        {#- the row action buttons submit this form, see row_action() #}
+        <form id="moin-history-actions" method="GET"></form>
         <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
             <div id="moin-page-history">
                 <table class="zebra">
@@ -104,39 +119,27 @@
                                     {%- set revid = doc.revid %}
                                 {%- endif %}
                                 <td>
-                                    <a href="{{ url_for('frontend.show_item', item_name=fqname, rev=revid) }}" title="{{ _('show') }}">
-                                        <span class="fa fa-eye"></span>
-                                    </a>
+                                    {{ row_action(url_for('frontend.show_item', item_name=fqname, rev=revid), 'fa-eye', _('show')) }}
                                 </td>
                                 <td>
-                                    <a href="{{ url_for('frontend.highlight_item', item_name=fqname, rev=revid) }}" title="{{ _('highlight') }}">
-                                        <span class="fa fa-code"></span>
-                                    </a>
+                                    {{ row_action(url_for('frontend.highlight_item', item_name=fqname, rev=revid), 'fa-code', _('highlight')) }}
                                 </td>
                                 <td>
-                                    <a href="{{ url_for('frontend.show_item_meta', item_name=fqname, rev=revid) }}" title="{{ _('meta') }}">
-                                        <span class="fa fa-table"></span>
-                                    </a>
+                                    {{ row_action(url_for('frontend.show_item_meta', item_name=fqname, rev=revid), 'fa-table', _('meta')) }}
                                 </td>
                                 <td>
-                                    <a href="{{ url_for('frontend.download_item', item_name=fqname, rev=revid) }}" title="{{ _('download') }}">
-                                        <span class="fa fa-download"></span>
-                                    </a>
+                                    {{ row_action(url_for('frontend.download_item', item_name=fqname, rev=revid), 'fa-download', _('download')) }}
                                 </td>
                                 {%- if may.write and not doc.trash -%}
                                     {%- if loop.first %}
                                         <td>
-                                            <a href="{{ url_for('frontend.delete_item', item_name=fqname) }}" title="{{ _('delete item') }}">
-                                                <span class="fa fa-trash"></span>
-                                            </a>
+                                            {{ row_action(url_for('frontend.delete_item', item_name=fqname), 'fa-trash', _('delete item')) }}
                                         </td>
                                     {%- else %}
                                         <td>
                                             {#- do not create invalid revert link if item was deleted and recreated with same name, different itemid #}
                                             {%- if doc.itemid == first_itemid %}
-                                                <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
-                                                    <span class="fa fa-reply"></span>
-                                                </a>
+                                                {{ row_action(url_for('frontend.revert_item', item_name=fqname, rev=revid), 'fa-reply', _('revert')) }}
                                             {%- endif %}
                                         </td>
                                     {%- endif %}
@@ -146,15 +149,11 @@
                                 {%- if may.destroy -%}
                                     {%- if loop.first %}
                                         <td>
-                                            <a href="{{ url_for('frontend.destroy_item', item_name=fqname) }}" title="{{ _('destroy all revisions') }}">
-                                                <span class="fa fa-fire"></span>
-                                            </a>
+                                            {{ row_action(url_for('frontend.destroy_item', item_name=fqname), 'fa-fire', _('destroy all revisions')) }}
                                         </td>
                                     {%- else %}
                                         <td>
-                                            <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}" title="{{ _('destroy this revision') }}">
-                                                <span class="fa fa-fire"></span>
-                                            </a>
+                                            {{ row_action(url_for('frontend.destroy_item', item_name=fqname, rev=revid), 'fa-fire', _('destroy this revision')) }}
                                         </td>
                                     {%- endif %}
                                 {%- else %}

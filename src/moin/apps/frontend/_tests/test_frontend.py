@@ -1054,6 +1054,36 @@ def test_history_shows_revisions_from_before_a_rename(client):
     assert b"after rename" in rv.data
 
 
+def test_history_offers_no_links_to_revisions(client):
+    """
+    Links to per-revision views (show, highlight, meta, download, ...) in the
+    history would offer crawlers several urls per revision, each loading or
+    rendering that revision. The row actions must be offered as buttons of a
+    separate GET form instead.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+
+    item_name = "HistoryActionsItem"
+    revids = []
+    for content in ("AAA\n", "BBB\n", "CCC\n"):
+        modify_item(client, item_name, make_modify_form_data(item_name, content=content, comment=content))
+        revids.append(flaskg.storage[item_name][CURRENT].meta[REVID])
+
+    rv = client.get(url_for("frontend.history", item_name=item_name))
+    assert rv.status_code == 200
+    tree = etree.HTML(rv.data.decode())
+    hrefs = tree.xpath("//a/@href")
+    assert not [href for href in hrefs if any(revid in href for revid in revids)]
+    assert tree.xpath('//form[@id="moin-history-actions"]/@method') == ["GET"]
+    actions = tree.xpath('//button[@form="moin-history-actions"]/@formaction')
+    for view in ("show_item", "highlight_item", "show_item_meta", "download_item"):
+        assert url_for(f"frontend.{view}", item_name=item_name, rev=revids[0]) in actions
+    # a row action button does what the link did
+    rv = client.get(url_for("frontend.show_item_meta", item_name=item_name, rev=revids[0]))
+    assert rv.status_code == 200
+
+
 def test_diffraw_nonexistent_revid_returns_404(client):
     """
     Regression test: _diff_raw() indexed item[revid1]/item[revid2] without
