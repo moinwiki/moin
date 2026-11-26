@@ -253,6 +253,9 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .moin-diff-info-caption { display: inline-block; min-width: 5em; }
 .moin-diff-revision-caption { text-align: center; font-weight: bold; font-size: 1.25em; padding-bottom: 5px; }
 .moin-diff-revision-caption i { padding: 0 6px; }
+.moin-diff-nav { display: inline; }
+.moin-diff-nav-button { background: none; border: none; padding: 0; margin: 0; font: inherit; color: var(--link); cursor: pointer; }
+.moin-diff-nav-button:hover { color: var(--link-hover); }
 .moin-diff-line-number { background-color: var(--bg-diff); }
 .moin-diff-added { background-color: var(--bg-diff-added); vertical-align: top; width: 50%;
     white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
