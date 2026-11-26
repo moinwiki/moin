@@ -39,6 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
             loaded += upload.loaded;
             total += upload.total;
         }
+        if (!overallBar) {
+            return;
+        }
         overallBar.textContent = "  Overall Progress";
         overallBar.style.padding = "1em 0 1em 0";
         overallBar.style.width = `${percent(loaded, total)}%`;
@@ -149,6 +152,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         xhr.addEventListener("error", function () {
             finish({ message: `Upload failed: ${file.name} (network error)`, css_class: "jfu-failed" });
+        });
+        xhr.addEventListener("abort", function () {
+            finish({ message: `Upload aborted: ${file.name}`, css_class: "jfu-failed" });
+        });
+        xhr.addEventListener("timeout", function () {
+            finish({ message: `Upload failed: ${file.name} (timeout)`, css_class: "jfu-failed" });
         });
         xhr.send(formData);
     }
