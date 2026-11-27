@@ -27,7 +27,7 @@ import re
 
 from dataclasses import asdict, dataclass, field
 from io import BytesIO, IOBase
-from time import time, strftime
+from time import gmtime, time, strftime
 from operator import attrgetter
 
 from flask import request, Response, redirect, abort, url_for, flash
@@ -1918,6 +1918,28 @@ class Userprofile(Item):
     description = L_("User profile item (not implemented yet!)")
 
 
+# Day items named like the MonthCalendar macro names them (BasePage/yyyy-mm-dd).
+DATE_ITEM_RE = re.compile(r"/(\d{4,})-\d\d-\d\d$")
+# How many years away from now the date of a nonexistent day item may be
+# for it to get the full "item not found" page.
+DATE_ITEM_MAX_YEARS = 2
+
+
+def is_far_away_date_item(name: str) -> bool:
+    """
+    Is <name> a day item name (as the MonthCalendar macro links them) with a year far away from now?
+
+    Crawlers walk lots of those, mostly harvested from calendars with month/year navigation
+    (like the one moin 1.9 had), and each nonexistent one used to cost a full page rendering.
+    """
+    match = DATE_ITEM_RE.search(name)
+    if match is None:
+        return False
+    year = match.group(1)
+    # check the length first: int() refuses strings with thousands of digits
+    return len(year) > 4 or abs(int(year) - gmtime().tm_year) > DATE_ITEM_MAX_YEARS
+
+
 @register
 class NonExistent(Item):
     """
@@ -1938,6 +1960,10 @@ class NonExistent(Item):
         # First, check if the current user has the required privileges
         if flaskg.user.may.create(self.fqname):
             content = self._select_itemtype()
+        elif is_far_away_date_item(self.name):
+            # nobody can create it here, so this is no broken link a human would want to follow
+            # up on - just answer cheaply, without rendering a whole page.
+            return Response(_("Item not found or access denied"), 404, mimetype="text/plain")
         else:
             content = render_template("show_nonexistent.html", item_name=self.name, fqname=self.fqname)
         return Response(content, 404)

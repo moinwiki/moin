@@ -185,9 +185,12 @@ class ThemeSupport:
             "frontend.highlight_item",
             "frontend.backrefs",
             "frontend.index",
-            "frontend.sitemap",
-            "frontend.similar_names",
         ]
+
+        if self.user.valid:
+            # Only for logged in users: these views are expensive (the site map walks all items
+            # linked from and to this item, transitively), and crawlers ignore rel=nofollow.
+            navtabs_endpoints += ["frontend.sitemap", "frontend.similar_names"]
 
         if self.user.may.write(fqname):  # TODO: use new may function
             navtabs_endpoints.append("frontend.modify_item")
