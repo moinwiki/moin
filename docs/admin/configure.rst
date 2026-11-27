@@ -409,9 +409,6 @@ For MoinMoin we require the following XStatic Packages in pyproject.toml:
 * `jquery <https://pypi.org/project/XStatic-jQuery>`_
   for jquery lib functions loaded in the template file base.html
 
-* `jquery_file_upload <https://pypi.org/project/XStatic-jQuery-File-Upload>`_
-  loaded in the template file of index view. It allows to upload many files at once.
-
 * `bootstrap <https://pypi.org/project/XStatic-Bootstrap>`_
   used by the basic theme.
 
@@ -440,7 +437,7 @@ These packages are imported in wikiconfig by::
 
     # names below must be package names
     mod_names = [
-        'jquery', 'jquery_file_upload',
+        'jquery',
         'bootstrap',
         'font_awesome',
         'ckeditor',

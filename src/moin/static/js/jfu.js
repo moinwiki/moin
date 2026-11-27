@@ -1,83 +1,193 @@
 /*
- * Copyright 2010, Sebastian Tschan, https://blueimp.net
- * Licensed under the MIT license:
- * https://creativecommons.org/licenses/MIT/
- *
- * Copyright 2021 MoinMoin:RogerHaase, modified for moinmoin2
+ * Copyright 2021 MoinMoin:RogerHaase
  * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
  *
- * Upload multiple jpg files using jquery-file-upload. Tested with version 10.31.0.
+ * Upload multiple files from the +index view, without any 3rd party upload library.
  *
- * Reference: https://github.com/blueimp/jQuery-File-Upload/wiki/Basic-plugin#how-to-display-individual-upload-progress-with-the-basic-plugin
+ * Files can be selected with the file input's dialog or dropped anywhere on the page.
+ * Each file is POSTed in a separate request (as multipart/form-data field "file_storage")
+ * to the URL given in the file input's data-url attribute (the +jfu-server view), which
+ * answers with JSON: {message, url, size} or {message, css_class: "jfu-failed"}.
  *
- * Uploads are started when files are selected, there are no limits on file size
+ * Uploads start as soon as files are selected. There are no limits on file size
  * nor number of files.
  */
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     "use strict";
-    $('#jfu-fileupload').fileupload({
-        dataType: 'json',
-        start: function (e) {
-            $("#jfu-progress").removeClass("hidden");
-        },
-        add: function(e, data) {
-            // show file upload progress bar and overall progress bar after user selects files
-            const progress = Object.assign(document.createElement('p'), { className: 'jfu-file' });
-            progress.textContent = 'Uploading... ';
-            const fileName = Object.assign(document.createElement('b'), { textContent: data.files[0].name });
-            progress.appendChild(fileName);
-            const progressContainer = document.getElementById('jfu-progress');
-            if (progressContainer) {
-                progressContainer.appendChild(progress);
-            }
-            data.context = progress;
-            data.submit();
-        },
-        progressall: function (e, data) {
-            // overall progress bar
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('#jfu-progress .jfu-bar').text('\u00a0 Overall Progress');
-            $('#jfu-progress .jfu-bar').css('padding', '1em 0 1em 0');
-            $('#jfu-progress .jfu-bar').css('width', `${progress}%`);
-        },
-        progress: function(e, data) {
-            // create file progress bar for each file selected
-            var progress = parseInt((data.loaded / data.total) * 100, 10);
-            data.context.style.backgroundPositionX = `${100 - progress}%`;
-        },
-        done: function (e, data) {
-            const response = data.result;
-            // show success/fail message for the file uploaded file
-            data.context.textContent = response.message;
+    const fileInput = document.getElementById("jfu-fileupload");
+    const progressContainer = document.getElementById("jfu-progress");
+    if (!fileInput || !progressContainer) {
+        return;
+    }
+    const overallBar = progressContainer.querySelector(".jfu-bar");
+    const submitUrl = fileInput.dataset.url;
+    // bytes loaded / total per upload of the current batch, used for the overall progress bar.
+    // Finished uploads stay in there (else the bar would jump back whenever a file is done),
+    // a new batch begins when a file gets added while no upload is active.
+    const uploads = new Set();
+    let activeUploads = 0;
+
+    function percent(loaded, total) {
+        return total ? Math.floor(loaded / total * 100) : 100;
+    }
+
+    function updateOverallProgress() {
+        let loaded = 0;
+        let total = 0;
+        for (const upload of uploads) {
+            loaded += upload.loaded;
+            total += upload.total;
+        }
+        if (!overallBar) {
+            return;
+        }
+        overallBar.textContent = "  Overall Progress";
+        overallBar.style.padding = "1em 0 1em 0";
+        overallBar.style.width = `${percent(loaded, total)}%`;
+    }
+
+    function addIndexRow(response) {
+        // if the upload succeeded add a row to the index table; not all cells are populated
+        const tbody = document.querySelector("table.moin-index tbody");
+        if (!tbody) {
+            return;
+        }
+        const row = document.createElement("tr");
+        row.className = "jfu-recent";
+
+        const iconsCell = document.createElement("td");
+        iconsCell.className = "moin-index-icons";
+        const selectSpan = document.createElement("span");
+        selectSpan.className = "moin-select-item";
+        const checkbox = document.createElement("input");
+        checkbox.className = "moin-item";
+        checkbox.type = "checkbox";
+        checkbox.value = response.url;
+        selectSpan.appendChild(checkbox);
+        const iconSpan = document.createElement("span");
+        const icon = document.createElement("i");
+        icon.className = "fa fa-upload";
+        iconSpan.appendChild(icon);
+        iconsCell.append(selectSpan, iconSpan);
+
+        const nameCell = document.createElement("td");
+        const link = document.createElement("a");
+        link.href = response.url;
+        link.textContent = response.url;
+        nameCell.appendChild(link);
+
+        const sizeCell = document.createElement("td");
+        sizeCell.className = "moin-integer";
+        sizeCell.textContent = response.size;
+
+        const revCell = document.createElement("td");
+        revCell.className = "moin-integer";
+        revCell.textContent = "1";
+
+        row.append(iconsCell, nameCell, sizeCell, revCell, document.createElement("td"), document.createElement("td"));
+        tbody.insertAdjacentElement("afterbegin", row);
+
+        // update item count in upper left of table
+        const numRows = document.querySelector(".moin-num-rows");
+        if (numRows) {
+            numRows.textContent = tbody.querySelectorAll("tr").length;
+        }
+    }
+
+    function uploadFile(file) {
+        // show a progress bar for this file
+        const progress = document.createElement("p");
+        progress.className = "jfu-file";
+        progress.textContent = "Uploading... ";
+        const fileName = document.createElement("b");
+        fileName.textContent = file.name;
+        progress.appendChild(fileName);
+        progressContainer.appendChild(progress);
+        progressContainer.classList.remove("hidden");
+
+        if (activeUploads === 0) {
+            uploads.clear();
+        }
+        const upload = { loaded: 0, total: file.size };
+        uploads.add(upload);
+        activeUploads += 1;
+        updateOverallProgress();
+
+        function finish(response) {
+            upload.loaded = upload.total;
+            activeUploads -= 1;
+            updateOverallProgress();
+            // show success/fail message for the uploaded file
+            progress.textContent = response.message;
             // class is passed when upload fails, 403s are returned as 200 with error message
-            data.context.classList.add(response.css_class);
-            // if the upload succeeded add a row to the index table; not all cells are populated
-            if (!response.css_class) {
-                const rawHtmlFragment = `
-                    <tr class="jfu-recent">
-                        <td class="moin-index-icons">
-                        <span class="moin-select-item">
-                            <input class="moin-item" type="checkbox" value="${response.url}" />
-                        </span>
-                        <span><i class="fa fa-upload"></i></span>
-                        </td>
-                        <td><a href="${response.url}">${response.url}</a></td>
-                        <td class="moin-integer">${response.size}</td>
-                        <td class="moin-integer">1</td>
-                        <td></td>
-                        <td></td>
-                    </tr>`.trim();
-                const template = document.createElement('template');
-                template.innerHTML = window.moinPolicy.createHTML(rawHtmlFragment)
-                const newRow = template.content.firstElementChild;
-                const tbody = document.querySelector('table.moin-index tbody');
-                if (tbody && newRow) {
-                    tbody.insertAdjacentElement('afterbegin', newRow);
-                }
-                // update item count in upper left of table
-                $(".moin-num-rows").text($('.moin-index tbody tr').length);
+            if (response.css_class) {
+                progress.classList.add(response.css_class);
+            } else {
+                progress.style.backgroundPositionX = "0%";
+                addIndexRow(response);
             }
-        },
+        }
+
+        const formData = new FormData();
+        formData.append(fileInput.name, file);
+        // XMLHttpRequest instead of fetch, because fetch can not report upload progress
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", submitUrl);
+        xhr.responseType = "json";
+        xhr.upload.addEventListener("progress", function (e) {
+            if (e.lengthComputable) {
+                upload.loaded = e.loaded;
+                upload.total = e.total;
+                progress.style.backgroundPositionX = `${100 - percent(e.loaded, e.total)}%`;
+                updateOverallProgress();
+            }
+        });
+        xhr.addEventListener("load", function () {
+            if (xhr.status === 200 && xhr.response && typeof xhr.response.message === "string") {
+                finish(xhr.response);
+            } else {
+                finish({ message: `Upload failed: ${file.name} (HTTP ${xhr.status})`, css_class: "jfu-failed" });
+            }
+        });
+        xhr.addEventListener("error", function () {
+            finish({ message: `Upload failed: ${file.name} (network error)`, css_class: "jfu-failed" });
+        });
+        xhr.addEventListener("abort", function () {
+            finish({ message: `Upload aborted: ${file.name}`, css_class: "jfu-failed" });
+        });
+        xhr.addEventListener("timeout", function () {
+            finish({ message: `Upload failed: ${file.name} (timeout)`, css_class: "jfu-failed" });
+        });
+        xhr.send(formData);
+    }
+
+    function uploadFiles(files) {
+        for (const file of files) {
+            uploadFile(file);
+        }
+    }
+
+    fileInput.addEventListener("change", function () {
+        uploadFiles(Array.from(fileInput.files));
+        // allow selecting the same file(s) again
+        fileInput.value = "";
+    });
+
+    // files dropped anywhere on the page get uploaded
+    function hasFiles(e) {
+        return e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files");
+    }
+    document.addEventListener("dragover", function (e) {
+        if (hasFiles(e)) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "copy";
+        }
+    });
+    document.addEventListener("drop", function (e) {
+        if (hasFiles(e)) {
+            e.preventDefault();
+            uploadFiles(Array.from(e.dataTransfer.files));
+        }
     });
 });
