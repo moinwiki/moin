@@ -419,9 +419,6 @@ For MoinMoin we require the following XStatic Packages in pyproject.toml:
   used in template file modify_text_html. A WYSIWYG editor similar to word processing
   desktop editing applications.
 
-* `autosize <https://pypi.org/project/XStatic-autosize>`_
-  used by basic theme to adjust textarea on modify view.
-
 * `svgedit_moin <https://pypi.org/project/XStatic-svg-edit-moin>`_
   is loaded at template modify_svg-edit. It is a fast, web-based, JavaScript-driven
   SVG editor.
@@ -441,7 +438,6 @@ These packages are imported in wikiconfig by::
         'bootstrap',
         'font_awesome',
         'ckeditor',
-        'autosize',
         'svgedit_moin',
         'jquery_tablesorter',
         'pygments',
