@@ -13,8 +13,9 @@ from urllib.robotparser import RobotFileParser
 
 import pytest
 
-from flask import url_for
+from flask import current_app, url_for
 
+from moin.constants.keys import THEME_NAME
 from moin.apps._tests.utils import create_user, login, modify_item, make_modify_form_data
 from moin.security import DefaultSecurityPolicy
 
@@ -87,14 +88,18 @@ def test_far_away_day_items_that_exist_are_shown(client):
     assert b"party" in rv.data
 
 
-def test_sitemap_and_similar_names_not_offered_to_anonymous(client):
+@pytest.mark.parametrize("theme", ["topside", "focus", "basic", "modernized"])
+def test_sitemap_and_similar_names_not_offered_to_anonymous(client, monkeypatch, theme):
     """The site map and similar names views are expensive, crawlers shall not find links to them."""
+    monkeypatch.setattr(current_app.cfg, "theme_default", theme)
+    monkeypatch.setitem(current_app.cfg.user_defaults, THEME_NAME, theme)
     create_user("moin", "Xiwejr622")
     login(client, "moin", "Xiwejr622")
     modify_item(client, "ViewsItem", make_modify_form_data("ViewsItem", content="hello\n"))
     sitemap_url = url_for("frontend.sitemap", item_name="ViewsItem")
     similar_url = url_for("frontend.similar_names", item_name="ViewsItem")
     rv = client.get(url_for("frontend.show_item", item_name="ViewsItem"))
+    assert f"/_themes/{theme}/".encode() in rv.data
     assert sitemap_url.encode() in rv.data
     assert similar_url.encode() in rv.data
     client.get(url_for("frontend.logout", logout_submit=1))
