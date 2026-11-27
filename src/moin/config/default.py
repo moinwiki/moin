@@ -117,6 +117,7 @@ class ConfigFunctionality:
     locale_default: str
     mail_enabled: bool
     mail_from: str | None
+    mail_local_hostname: str | None
     mail_password: str | None
     mail_smarthost: str | None
     mail_username: str | None
@@ -830,6 +831,11 @@ options: dict[str, OptionsGroup] = {
             Option("username", None, "Username for SMTP server authentication (None = don't use auth)."),
             Option("password", None, "Password for SMTP server authentication (None = don't use auth)."),
             Option("smarthost", None, "Address of SMTP server to use for sending mail (None = don't use SMTP server)."),
+            Option(
+                "local_hostname",
+                None,
+                "Host name of the wiki server, sent to the SMTP server (None = look it up via DNS, once per process).",
+            ),
         ),
     ),
     "registration": OptionsGroup(

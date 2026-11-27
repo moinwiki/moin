@@ -7,16 +7,20 @@ MoinMoin - tests for moin.utils.notifications.
 
 from io import BytesIO
 
-from flask import url_for
+from flask import has_app_context, has_request_context, url_for
 
 from moin import current_app, flaskg
+from moin.apps._tests.utils import create_user, login, make_modify_form_data
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, NAME, ITEMTYPE, PARENTID
+from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, ITEMID, NAME, NAMESPACE, ITEMTYPE, PARENTID
 from moin.items import Item
 from moin.storage.middleware import indexing as msmi
 from moin.utils.diff_datastruct import diff as dict_diff
-from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL
+from moin.utils import notifications
+from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL, send_after_response, send_notifications
 from moin.utils.names import split_fqname
+from moin.utils.subscriptions import Subscriber
+from moin.user import User
 
 import pytest
 
@@ -97,3 +101,97 @@ class TestNotifications:
         assert notification.generate_diff_url(domain) == "{}{}".format(
             domain, url_for("frontend.diff", item_name=self.item_name, rev1=rev1.revid, rev2=rev2.revid)
         )
+
+    @pytest.mark.parametrize("mail_enabled", [False, True])
+    def test_send_notifications_mail_disabled(self, monkeypatch, mail_enabled):
+        # without mail, the subscribers are not even looked up
+        lookups = []
+        monkeypatch.setattr(current_app.cfg, "mail_enabled", mail_enabled)
+        monkeypatch.setattr(notifications, "get_subscribers", lambda **meta: lookups.append(meta) or set())
+        meta = {ITEMID: "0" * 32, NAME: [self.item_name], NAMESPACE: ""}
+        send_notifications(current_app, self.fqname, ACTION_SAVE, new_data=BytesIO(b"x"), new_meta=meta)
+        assert len(lookups) == int(mail_enabled)
+
+    def test_send_notifications_bcc(self, monkeypatch):
+        # subscribers must not see each other's addresses
+        subscribers = {
+            Subscriber("1" * 32, "one", "one@example.org", "en"),
+            Subscriber("2" * 32, "two", "two@example.org", "en"),
+            Subscriber("3" * 32, "three", "three@example.org", "de"),
+        }
+        mails = []
+        monkeypatch.setattr(current_app.cfg, "mail_enabled", True)
+        monkeypatch.setattr(notifications, "get_subscribers", lambda **meta: subscribers)
+        monkeypatch.setattr(notifications, "send_after_response", mails.extend)
+        meta = {ITEMID: "0" * 32, NAME: [self.item_name], NAMESPACE: ""}
+        send_notifications(current_app, self.fqname, ACTION_SAVE, new_data=BytesIO(b"x"), new_meta=meta)
+        assert sorted(sorted(mail["bcc"]) for mail in mails) == [
+            ["one@example.org", "two@example.org"],
+            ["three@example.org"],
+        ]
+        assert not any(mail.get("to") or mail.get("cc") for mail in mails)
+
+
+MAILS = [
+    dict(subject="first", text="text", to=["user@example.org"]),
+    dict(subject="second", text="text", to=["other@example.org"]),
+]
+
+
+@pytest.fixture
+def sent(monkeypatch):
+    """Record the sendmail calls of moin.utils.notifications, the first one fails."""
+    sent = []
+
+    def sendmail(**mail):
+        sent.append((mail["subject"], has_app_context()))
+        if len(sent) == 1:
+            raise OSError("mail server not reachable")
+
+    monkeypatch.setattr(notifications, "sendmail", sendmail)
+    return sent
+
+
+def test_send_after_response(app, sent):
+    with app.test_request_context("/"):
+        send_after_response(MAILS)
+        response = app.process_response(app.response_class("response body"))
+    assert sent == []
+    # the WSGI server closes the response after sending it
+    response.close()
+    # a failing mail does not keep the other mails from being sent
+    assert sent == [("first", True), ("second", True)]
+
+
+def test_send_after_response_wsgi(app, monkeypatch):
+    # a whole WSGI request: Flask tears down the request and app contexts before the WSGI server
+    # closes the response, so the mails must be sent within an app context of their own
+    sent = []
+
+    def sendmail(**mail):
+        sent.append(
+            (mail["bcc"], has_request_context(), has_app_context() and current_app._get_current_object() is app)
+        )
+
+    monkeypatch.setattr(app.cfg, "mail_enabled", True)
+    monkeypatch.setattr(notifications, "sendmail", sendmail)
+    with app.app_context():
+        create_user("subscriber", "Xiwejr622", email="subscriber@example.org")
+        assert User(name="subscriber").subscribe(NAME, "Foo", "")
+        create_user("editor", "Xiwejr622", email="editor@example.org")
+        client = app.test_client()
+        login(client, "editor", "Xiwejr622")
+        url = url_for("frontend.modify_item", item_name="Foo")
+    response = client.post(url, data=make_modify_form_data("Foo", content="new content"))
+    assert response.status_code == 302
+    assert not has_app_context()
+    assert sent == []
+    response.close()
+    assert sent == [(["subscriber@example.org"], False, True)]
+
+
+def test_send_without_request(_app_ctx, monkeypatch):
+    sent = []
+    monkeypatch.setattr(notifications, "sendmail", lambda **mail: sent.append(mail["subject"]))
+    send_after_response(MAILS)
+    assert sent == ["first", "second"]

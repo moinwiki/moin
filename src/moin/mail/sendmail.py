@@ -7,11 +7,13 @@
 MoinMoin - Email helper functions.
 """
 
+import functools
 import smtplib
+import socket
 import ssl
 
 from email.message import EmailMessage
-from email.utils import formatdate, make_msgid
+from email.utils import formatdate, getaddresses, make_msgid
 
 from moin import current_app, log
 from moin.i18n import _
@@ -20,6 +22,25 @@ logging = log.getLogger(__name__)
 
 SMTP_TIMEOUT = 20.0
 _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
+
+
+@functools.cache
+def _default_local_hostname():
+    """Return the host name for the SMTP EHLO command and the Message-ID, like smtplib determines it.
+
+    smtplib and make_msgid do this for every mail and need DNS lookups for it, which can take
+    seconds if DNS does not work well. Do it only once per process.
+    """
+    fqdn = socket.getfqdn()
+    if "." in fqdn:
+        return fqdn
+    # no FQDN found, use a domain literal (RFC 2821)
+    addr = "127.0.0.1"
+    try:
+        addr = socket.gethostbyname(socket.gethostname())
+    except socket.gaierror:
+        pass
+    return f"[{addr}]"
 
 
 def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=None):
@@ -35,7 +56,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     :type to: list of str
     :param cc: recipients (CC)
     :type cc: list of str
-    :param bcc: recipients (BCC)
+    :param bcc: recipients (BCC), not shown to any recipient
     :type bcc: list of str
     :param mail_from: override default mail_from
     :type mail_from: str
@@ -64,6 +85,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     if not to and not cc and not bcc:
         return 1, _("No recipients, nothing to do")
 
+    local_hostname = cfg.mail_local_hostname or _default_local_hostname()
+
     msg = EmailMessage()
 
     msg.set_content(text)
@@ -75,9 +98,18 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
         msg["To"] = to
     if cc:
         msg["CC"] = cc
+    if not to and not cc:
+        # only BCC recipients, they must not see each other
+        msg["To"] = "undisclosed-recipients:;"
+    # the BCC recipients are only given to the SMTP server, never put into a header
+    recipients = []
+    for field in (to, cc, bcc):
+        if field:
+            # a field may also be a single string like "a@example.org, b@example.org"
+            recipients += [addr for _, addr in getaddresses([field] if isinstance(field, str) else field) if addr]
     msg["Subject"] = subject
     msg["Date"] = formatdate()
-    msg["Message-ID"] = make_msgid()
+    msg["Message-ID"] = make_msgid(domain=local_hostname)
     msg["Auto-Submitted"] = "auto-generated"  # RFC 3834 section 5
 
     # Connect to SMTP server
@@ -90,15 +122,24 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
         logging.exception("SSL context creation failed: {reason}".format(reason=str(e)))
         return 0, _("SSL context creation failed: {reason}").format(reason=str(e))
 
-    logging.debug("Connecting to SMTP host=%s port=%s ssl=%s timeout=%s", host, port, use_ssl, SMTP_TIMEOUT)
+    logging.debug(
+        "Connecting to SMTP host=%s port=%s ssl=%s timeout=%s local_hostname=%s",
+        host,
+        port,
+        use_ssl,
+        SMTP_TIMEOUT,
+        local_hostname,
+    )
 
     try:
         server = None
         if use_ssl:
-            server = smtplib.SMTP_SSL(host=host, port=port, timeout=SMTP_TIMEOUT, context=ssl_context)
+            server = smtplib.SMTP_SSL(
+                host=host, port=port, local_hostname=local_hostname, timeout=SMTP_TIMEOUT, context=ssl_context
+            )
             server.ehlo()
         else:
-            server = smtplib.SMTP(host=host, port=port, timeout=SMTP_TIMEOUT)
+            server = smtplib.SMTP(host=host, port=port, local_hostname=local_hostname, timeout=SMTP_TIMEOUT)
             server.ehlo()
             try:  # try to use TLS
                 if server.has_extn("starttls"):
@@ -114,7 +155,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             server.login(cfg.mail_username, cfg.mail_password)
 
         # Send the message
-        server.send_message(msg)
+        server.send_message(msg, to_addrs=recipients)
 
     except (smtplib.SMTPException, OSError) as e:
         logging.exception(
