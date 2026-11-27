@@ -7,9 +7,10 @@ MoinMoin - tests for moin.utils.notifications.
 
 from io import BytesIO
 
-from flask import has_app_context, url_for
+from flask import has_app_context, has_request_context, url_for
 
 from moin import current_app, flaskg
+from moin.apps._tests.utils import create_user, login, make_modify_form_data
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, ITEMID, NAME, NAMESPACE, ITEMTYPE, PARENTID
 from moin.items import Item
@@ -19,6 +20,7 @@ from moin.utils import notifications
 from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL, send_after_response, send_notifications
 from moin.utils.names import split_fqname
 from moin.utils.subscriptions import Subscriber
+from moin.user import User
 
 import pytest
 
@@ -159,6 +161,33 @@ def test_send_after_response(app, sent):
     response.close()
     # a failing mail does not keep the other mails from being sent
     assert sent == [("first", True), ("second", True)]
+
+
+def test_send_after_response_wsgi(app, monkeypatch):
+    # a whole WSGI request: Flask tears down the request and app contexts before the WSGI server
+    # closes the response, so the mails must be sent within an app context of their own
+    sent = []
+
+    def sendmail(**mail):
+        sent.append(
+            (mail["bcc"], has_request_context(), has_app_context() and current_app._get_current_object() is app)
+        )
+
+    monkeypatch.setattr(app.cfg, "mail_enabled", True)
+    monkeypatch.setattr(notifications, "sendmail", sendmail)
+    with app.app_context():
+        create_user("subscriber", "Xiwejr622", email="subscriber@example.org")
+        assert User(name="subscriber").subscribe(NAME, "Foo", "")
+        create_user("editor", "Xiwejr622", email="editor@example.org")
+        client = app.test_client()
+        login(client, "editor", "Xiwejr622")
+        url = url_for("frontend.modify_item", item_name="Foo")
+    response = client.post(url, data=make_modify_form_data("Foo", content="new content"))
+    assert response.status_code == 302
+    assert not has_app_context()
+    assert sent == []
+    response.close()
+    assert sent == [(["subscriber@example.org"], False, True)]
 
 
 def test_send_without_request(_app_ctx, monkeypatch):
