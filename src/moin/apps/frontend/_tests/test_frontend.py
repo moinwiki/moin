@@ -12,6 +12,7 @@ from io import BytesIO
 
 import json
 import os
+import sqlite3
 import time
 
 import pytest
@@ -31,6 +32,7 @@ from moin.apps._tests.utils import (
     set_user_in_client_session,
 )
 from moin.apps.frontend import views
+from moin.utils.edit_locking import DB_NAME, SQL
 
 if TYPE_CHECKING:
     from flask.testing import FlaskClient
@@ -1279,6 +1281,31 @@ def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
     assert b"moin-highlight" in rv2.data
 
 
+def _start_edit_then_store_concurrent_rev_with_same_number(client, name):
+    """
+    Create revisions 1 and B (number 2) of item <name>, let the logged-in user start
+    editing B (this records B's revid in the edit draft), then store a revision C
+    like a concurrent writer that had read revision 1 would: also numbered 2.
+
+    Return the revisions B and C.
+    """
+    modify_item(client, name, make_modify_form_data(name, content="one\ntwo\nthree\n"))
+    rev1_meta = dict(flaskg.storage[name][CURRENT].meta)
+    modify_item(client, name, make_modify_form_data(name, content="one\ntwo\nthree\nfour\n"))
+    rev_b = flaskg.storage[name][CURRENT]
+    assert rev_b.meta[REV_NUMBER] == 2
+
+    assert client.get(url_for("frontend.modify_item", item_name=name)).status_code == 200
+
+    meta = {k: v for k, v in rev1_meta.items() if k not in (REVID, DATAID, SIZE, MTIME, HASH_ALGORITHM)}
+    meta.update({PARENTID: rev1_meta[REVID], REV_NUMBER: 2, COMMENT: "concurrent"})
+    flaskg.unprotected_storage[name].store_revision(meta, BytesIO(b"ONE\ntwo\nthree\n"))
+    rev_c = flaskg.storage[name][CURRENT]
+    assert rev_c.revid != rev_b.revid
+    assert rev_c.meta[REV_NUMBER] == rev_b.meta[REV_NUMBER]
+    return rev_b, rev_c
+
+
 def test_modify_detects_conflict_despite_equal_rev_number(client):
     """
     Regression test: the edit conflict check on Save compared revision numbers
@@ -1292,24 +1319,7 @@ def test_modify_detects_conflict_despite_equal_rev_number(client):
     create_user("moin", "Xiwejr622")
     login(client, "moin", "Xiwejr622")
     name = "ConflictItem"
-
-    modify_item(client, name, make_modify_form_data(name, content="one\ntwo\nthree\n"))
-    rev1 = flaskg.storage[name][CURRENT]
-    rev1_meta = dict(rev1.meta)
-    modify_item(client, name, make_modify_form_data(name, content="one\ntwo\nthree\nfour\n"))
-    rev_b = flaskg.storage[name][CURRENT]
-    assert rev_b.meta[REV_NUMBER] == 2
-
-    # user starts editing revision B, this records B's revid in the edit draft
-    assert client.get(url_for("frontend.modify_item", item_name=name)).status_code == 200
-
-    # a concurrent writer that had read revision 1 stores its revision C, also numbered 2
-    meta = {k: v for k, v in rev1_meta.items() if k not in (REVID, DATAID, SIZE, MTIME, HASH_ALGORITHM)}
-    meta.update({PARENTID: rev1_meta[REVID], REV_NUMBER: 2, COMMENT: "concurrent"})
-    flaskg.unprotected_storage[name].store_revision(meta, BytesIO(b"ONE\ntwo\nthree\n"))
-    rev_c = flaskg.storage[name][CURRENT]
-    assert rev_c.revid != rev_b.revid
-    assert rev_c.meta[REV_NUMBER] == rev_b.meta[REV_NUMBER]
+    _start_edit_then_store_concurrent_rev_with_same_number(client, name)
 
     # user saves their edit of revision B
     modify_item(client, name, make_modify_form_data(name, content="one\nTWO\nthree\nfour\n", comment="mine"))
@@ -1319,6 +1329,31 @@ def test_modify_detects_conflict_despite_equal_rev_number(client):
     text = current.data.read().decode("utf-8")
     assert "ONE" in text  # the concurrent change was merged, not lost
     assert "TWO" in text  # the user's change was saved
+
+
+def test_modify_warns_after_lock_timeout_despite_equal_rev_number(client):
+    """
+    Regression test: when the user's edit lock is gone and they open the editor
+    again, lock_item() warns if someone else updated the item meanwhile. It
+    compared revision numbers (current rev_number > draft rev_number), so it did
+    not warn when the other update got the same number as the revision the user
+    started editing. It now compares the revid the edit started from with the
+    current revid.
+    """
+    create_user("moin", "Xiwejr622")
+    login(client, "moin", "Xiwejr622")
+    name = "LockTimeoutItem"
+    _start_edit_then_store_concurrent_rev_with_same_number(client, name)
+
+    # the user's edit lock timed out and the other editor's session ended: no lock row left
+    con = sqlite3.connect(os.path.join(current_app.cfg.instance_dir, SQL, DB_NAME))
+    with con:
+        con.execute("DELETE FROM editlock")
+    con.close()
+
+    rv = client.get(url_for("frontend.modify_item", item_name=name))
+    assert rv.status_code == 200
+    assert b"after your edit lock timed out" in rv.data
 
 
 def _sitemap_chain(client, length=7):
