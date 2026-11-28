@@ -389,7 +389,8 @@ def itemsize():
     """Display a table with item sizes."""
     headings = [_("Size"), _("Item name")]
     query = And([Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
-    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    # no sortedby: the rows are sorted below, and sorting by a field without a column walks the whole index
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
     rows = [(rev[SIZE], CompositeName(rev[NAMESPACE], NAME_EXACT, rev[NAME][0])) for rev in revs]
     rows = sorted(rows, reverse=True)
     return render_template("user/itemsize.html", title_name=_("Item Sizes"), headings=headings, rows=rows)
@@ -435,7 +436,7 @@ def _trashed(namespace):
 @require_permission(SUPERUSER)
 def user_acl_report(uid):
     query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
-    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME_EXACT], limit=None)
     theuser = user.User(uid=uid)
     itemwise_acl = []
     for meta in all_metas:
@@ -500,7 +501,7 @@ def item_acl_report():
     If there are multiple names, the first name is used for sorting.
     """
     query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
-    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME_EXACT], limit=None)
     items_acls = []
     number_modified_acls = 0
     for meta in all_metas:
@@ -559,7 +560,7 @@ def group_acl_report(group_name):
     WikiGroup or ConfigGroup name.
     """
     query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
-    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME_EXACT], limit=None)
     group_items = []
     for meta in all_metas:
         acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, meta.get(ACL, ""))
