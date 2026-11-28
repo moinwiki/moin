@@ -158,8 +158,9 @@ class Edit_Utils:
         user clicks Cancel or Save/OK. The row is overwritten if the user abandons the edit
         and clicks Modify for a different item.
 
-        The rev_number field is used to detect conflicting updates where first user's edit times
+        The rev_id field is used to detect conflicting updates where first user's edit times
         out, second user edits and saves, first user wakes up and does a save.
+        It is also the base revision for the 3-way merge of conflicting updates.
         """
         rev_id = self.rev_id
         draft_rev_number = self.rev_number
@@ -301,7 +302,7 @@ class Edit_Utils:
                 draft, data = self.get_draft()
                 if draft:
                     u_name, i_id, i_name, rev_number, save_time, rev_id = draft
-                    if self.rev_number > rev_number:
+                    if i_id == self.item_id and rev_id != self.rev_id:
                         # current user timed out, then other user updated and saved
                         msg = L_(
                             "Someone else updated '{item_name}' after your edit lock timed out. "
