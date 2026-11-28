@@ -8,6 +8,9 @@ MoinMoin - Tests for moin.items
 
 import pytest
 
+from whoosh.query import Prefix
+
+from moin import flaskg
 from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry, _build_contenttype_query, wiki_matches
 from moin.utils.names import CompositeName
@@ -28,7 +31,7 @@ from moin.constants.keys import (
     ACTION,
     ACTION_REVERT,
 )
-from moin.constants.namespaces import NAMESPACE_DEFAULT
+from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_DEFAULT
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_DEFAULT
 
@@ -223,6 +226,27 @@ class TestItem:
         assert isinstance(item, NonExistent)
         assert item.names == []
         assert item.get_index() == ([], [])
+
+    def testGlobalIndexSortedByName(self, monkeypatch):
+        # The global index is sorted by name and must not query an empty name prefix,
+        # which whoosh would expand to an OR of all names in the index.
+        for name in ["Zeta/sub", "Beta", "Alpha", "Zeta", "Gamma/sub"]:
+            Item.create(name)._save({CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: "default"}, "x")
+        searches = []
+        search_meta = flaskg.storage.search_meta
+
+        def recording_search_meta(q, **kw):
+            searches.append((q, kw))
+            return search_meta(q, **kw)
+
+        monkeypatch.setattr(flaskg.storage, "search_meta", recording_search_meta)
+        for index_name in ["", NAMESPACE_ALL]:
+            searches.clear()
+            dirs, files = Item.create(index_name).get_index()
+            assert [d.relname for d in dirs] == ["Gamma", "Zeta"]
+            assert [f.relname for f in files] == ["Alpha", "Beta", "Gamma/sub", "Zeta", "Zeta/sub"]
+            ((query, _),) = searches
+            assert not any(isinstance(q, Prefix) for q in query.leaves()), query
 
     def test_meta_filter(self):
         name = "Test_item"

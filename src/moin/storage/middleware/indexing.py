@@ -134,6 +134,9 @@ def backend_to_index(meta: MetaData, content: str, schema: Schema, backend_name:
             # we have UNIX UTC timestamp (int), whoosh wants datetime
             doc[key] = utcfromtimestamp(doc[key])
     doc[NAME_EXACT] = doc[NAME]
+    # Column value for sorting by NAME_EXACT: the first name. Whoosh would take the first list element
+    # itself, but fails for an item without a name (e.g. a deleted item).
+    doc["_stored_" + NAME_EXACT] = doc[NAME][0] if doc[NAME] else ""
     if CONTENT in schema:
         doc[CONTENT] = content
     doc[BACKENDNAME] = backend_name
@@ -315,7 +318,8 @@ class IndexingMiddleware:
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
-            NAME_EXACT: ID(field_boost=1.0),
+            # sortable: see MTIME below; the column holds the first name (see backend_to_index).
+            NAME_EXACT: ID(field_boost=1.0, sortable=True),
             # history and mychanges views show old name for deleted items
             NAME_OLD: TEXT(stored=True),
             # revision id (aka meta id)
@@ -411,7 +415,7 @@ class IndexingMiddleware:
             NAMESPACE: ID(stored=True),
             NAME: TEXT(stored=True),
             NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
-            NAME_EXACT: ID(field_boost=1.0),
+            NAME_EXACT: ID(field_boost=1.0, sortable=True),
             REVID: ID(unique=True, stored=True),
             REV_NUMBER: NUMERIC(stored=True, sortable=True),
             PARENTID: ID(stored=True),

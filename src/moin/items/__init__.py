@@ -39,7 +39,7 @@ from markupsafe import Markup
 
 from urllib.parse import unquote
 
-from whoosh.query import Term, Prefix, And, Or, Not, NullQuery
+from whoosh.query import Term, Prefix, And, Or, Not, NullQuery, Every
 
 from moin import current_app, flaskg, log
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
@@ -1471,7 +1471,12 @@ class Item:
         idx_name = LATEST_META if short else LATEST_REVS
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
         query = self.build_index_query(startswith, selected_groups, isglobalindex)
-        if not fqname.value.startswith(NAMESPACE_ALL + "/") and fqname.value != NAMESPACE_ALL:
+        namespaced = not fqname.value.startswith(NAMESPACE_ALL + "/") and fqname.value != NAMESPACE_ALL
+        if query == Prefix(NAME_EXACT, ""):
+            # An empty prefix matches every name; whoosh would expand it to an OR of all names in the index.
+            # Items without a name contribute nothing to the index lists anyway, so do not query names at all.
+            query = Term(NAMESPACE, fqname.namespace) if namespaced else Every()
+        elif namespaced:
             query = Term(NAMESPACE, fqname.namespace) & query
         revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=NAME_EXACT, limit=None, regex=regex)
         return self.make_flat_index(revs, isglobalindex)

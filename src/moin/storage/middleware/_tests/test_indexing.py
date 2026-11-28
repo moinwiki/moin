@@ -17,7 +17,7 @@ from io import BytesIO
 import hashlib
 import pytest
 
-from whoosh.query import Term
+from whoosh.query import Every, Term
 from whoosh.searching import Searcher
 
 from moin import flaskg
@@ -332,6 +332,25 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
             Term(ITEMID, item.itemid), idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None
         )
         assert [meta[REVID] for meta in metas] == [revids[2], revids[1], revids[3]]
+
+    def test_sort_by_name_uses_columns(self):
+        # NAME_EXACT is sortable (stored as a column holding the first name), so sorting by it does not need
+        # to walk the whole index. An item without a name (e.g. a deleted one) must be indexable as well.
+        for names in (["b"], ["c", "a2"], ["a1"]):
+            item = self.get_item(names[0])
+            meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: names, ITEMTYPE: ITEMTYPE_DEFAULT}
+            assert item.store_revision(meta, BytesIO(b"x"), trusted=True, return_rev=True)
+        item = self.get_item("gone")
+        for names in (["gone"], []):
+            meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: names, NAMESPACE: "", ITEMTYPE: ITEMTYPE_DEFAULT}
+            assert item.store_revision(meta, BytesIO(b"x"), trusted=True, return_rev=True)
+        for idx_name in (ALL_REVS, LATEST_REVS, LATEST_META):
+            with self.imw.ix[idx_name].searcher() as searcher:
+                assert searcher.reader().has_column(NAME_EXACT), idx_name
+            metas = self.imw.search_meta(Every(), idx_name=idx_name, sortedby=NAME_EXACT, limit=None)
+            # sorted by first name, the nameless revision first; only ALL_REVS has the old revision of "gone"
+            expected = [[], ["a1"], ["b"], ["c", "a2"]] + ([["gone"]] if idx_name == ALL_REVS else [])
+            assert [meta[NAME] for meta in metas] == expected, idx_name
 
     def test_search_meta_invalid_regex_returns_empty(self):
         # A regex that does not compile ("[[[" leaves the character
