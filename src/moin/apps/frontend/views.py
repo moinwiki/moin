@@ -2165,7 +2165,8 @@ def _compute_item_sets(wanted=False):
     existing = set()
     who_wants = {}
     query = And([Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
-    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    # no sortedby: the results only go into sets, and sorting by a field without a column walks the whole index
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
     if wanted:
         for meta in metas:
             existing |= set(meta[FQNAMES])
@@ -3399,7 +3400,8 @@ def global_tags(namespace):
         headline = _("Global Tags in All Namespaces")
     else:
         headline = _("Tags in Namespace '{namespace}'").format(namespace=namespace)
-    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    # no sortedby: only the tag counts are used, and sorting by a field without a column walks the whole index
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
     tags_counts = {}
     for meta in metas:
         tags = meta.get(TAGS, [])
