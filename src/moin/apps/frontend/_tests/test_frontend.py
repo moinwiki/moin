@@ -1281,6 +1281,21 @@ def test_item_view_with_invalid_highlight_regex_does_not_crash(client):
     assert b"moin-highlight" in rv2.data
 
 
+def test_item_view_with_catastrophic_highlight_regex_is_bounded(client):
+    """An item view with a ReDoS ?regex= must render content in bounded time (issue #2234)."""
+    create_user("testuser_redos", "Testpass123")
+    login(client, "testuser_redos", "Testpass123")
+    content = "a" * 40 + "!"
+    modify_item(client, "ReDoSTestPage", make_modify_form_data("ReDoSTestPage", content=content))
+    for regex in ["(a|a)+$", 'r"(a|a)+$"']:
+        t0 = time.monotonic()
+        rv = client.get("/ReDoSTestPage", query_string={"regex": regex})
+        assert time.monotonic() - t0 < 10
+        assert rv.status_code == 200
+        assert content.encode() in rv.data
+        assert b"moin-highlight" not in rv.data
+
+
 def _start_edit_then_store_concurrent_rev_with_same_number(client, name):
     """
     Create revisions 1 and B (number 2) of item <name>, let the logged-in user start
